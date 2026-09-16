@@ -85,8 +85,16 @@ export const faq = [
     a: "It says so. Every result states what it checked and what it couldn't.",
   },
   {
-    q: "Why not CADDi?",
-    a: "CADDi is an enterprise platform that deploys with on-site consultants. Vertex runs from one container behind your firewall and authors drawings; CADDi doesn't.",
+    q: "Which CAD formats do you support natively?",
+    a: "SolidWorks (SLDPRT, SLDDRW), Autodesk Inventor (IPT, IDW), PTC Creo, Siemens NX, CATIA, and standard STEP, IGES, and DXF/DWG. Geometry, feature trees, and parametric dimension chains are parsed directly without needing an active CAD seat license.",
+  },
+  {
+    q: "Can Vertex integrate with our existing PDM or PLM system?",
+    a: "Yes. Vertex connects to SolidWorks PDM, Windchill, Teamcenter, or simple Windows file shares. It reads files directly where they live, requiring no database migrations or workflow changes.",
+  },
+  {
+    q: "Who signs off on a generated drawing?",
+    a: "Vertex never signs drawings autonomously. When all automated checks pass, the sheet enters your sign-off queue. A designated, named engineer must review the diff and authenticate before the drawing is marked approved.",
   },
 ];
 
