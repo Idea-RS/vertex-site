@@ -253,23 +253,12 @@ p {
   }
 }
 
-/* Exploded-sheet planes: hover, tap and focus lift one plane and dim the rest */
+/* The one vocabulary: a lit plane goes to full vx-100 strokes and lifts 4px; the
+   rest dim to 25%. 350ms ease-out, nothing else moves. */
 .plane-layer {
-  transition: opacity 220ms ease;
-}
-.plane-lift {
-  transition: transform 220ms ease;
-  transform-style: preserve-3d;
-}
-[data-stage][data-exploded="true"] .plane-layer[data-state="dimmed"] {
-  opacity: 0.35 !important;
-}
-[data-stage][data-exploded="true"] .plane-layer[data-state="lifted"] .plane-lift {
-  transform: translateZ(48px);
-}
-/* only painted marks and hit areas take the pointer; the empty sheet does not */
-.plane-layer {
+  transition: opacity 350ms ease-out, transform 350ms ease-out;
   pointer-events: none;
+  outline: none;
 }
 .plane-layer svg * {
   pointer-events: visiblePainted;
@@ -277,15 +266,26 @@ p {
 .plane-layer svg .hit {
   pointer-events: fill;
 }
-/* below lg the stage is a still: the six planes already separated */
-@media (max-width: 63.99rem) {
-  [data-stack] {
-    transform: translate(-6%, -10%) rotateX(40deg) rotateZ(-8deg) scale(0.6);
+.plane-layer[data-state="dim"] {
+  opacity: 0.25;
+}
+.plane-layer[data-state="active"] {
+  transform: translateY(-4px);
+  --color-vx-400: var(--color-vx-100);
+  --color-vx-600: var(--color-vx-100);
+}
+.plane-layer:focus-visible svg {
+  outline: 2px solid var(--color-dim);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+/* steps: the one in the centre band is at full strength, the rest recede */
+@media (min-width: 64rem) {
+  .step {
+    opacity: 0.35;
+    transition: opacity 350ms ease-out;
   }
-  [data-stack] > .plane-layer:nth-child(2) { transform: translateZ(-180px); filter: blur(1px); opacity: 0.82; }
-  [data-stack] > .plane-layer:nth-child(3) { transform: translateZ(-108px); filter: blur(0.5px); }
-  [data-stack] > .plane-layer:nth-child(4) { transform: translateZ(-36px); }
-  [data-stack] > .plane-layer:nth-child(5) { transform: translateZ(36px); }
-  [data-stack] > .plane-layer:nth-child(6) { transform: translateZ(108px); }
-  [data-stack] > .plane-layer:nth-child(7) { transform: translateZ(180px); }
+  .step[data-lit="true"] {
+    opacity: 1;
+  }
 }
