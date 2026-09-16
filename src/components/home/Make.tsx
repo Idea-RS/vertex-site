@@ -198,36 +198,41 @@ export default function Make() {
             </ol>
           </div>
 
-          {/* Right Column (7 cols): Enlarged Picture Container */}
-          <div className="flex flex-col items-center justify-center lg:col-span-7" data-sheet-stage>
-            <div
-              ref={frame}
-              className="relative w-full overflow-hidden rounded-xl border border-vx-400/60 bg-vx-800 p-3 sm:p-5 lg:p-6 shadow-2xl shadow-vx-900/20"
-              style={{ aspectRatio: "1400 / 990" }}
-            >
-              <Sheet
-                id="make"
-                row={TO}
-                prevRow={FROM}
-                checkedBy="S.M."
-                watermark
-                label={`Generated variant of drawing DRG-4120 at row ${VARIANT_ROWS[TO].size}: outer diameter ${VARIANT_ROWS[TO].a}, PCD ${VARIANT_ROWS[TO].b}, bore ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes. Checked by S.M.`}
-              />
-              {/* verdict overlay */}
-              <div className="absolute bottom-3 left-3 rounded-md border border-vx-600 bg-vx-900/95 px-3 py-2 sm:bottom-5 sm:left-5 sm:px-4 sm:py-3 shadow-lg backdrop-blur-xs">
-                <div className="relative">
-                  <div className="flex items-baseline gap-3 sm:gap-4" data-verdict="pass">
-                    <span className="mono text-body text-vx-100 sm:text-h3 font-semibold">PASS</span>
-                    <span className="text-micro text-vx-400 sm:text-small">7 checked · 2 couldn&apos;t be checked</span>
-                  </div>
-                  <div className="absolute inset-0 flex items-baseline gap-3 sm:gap-4" data-verdict="pending" style={{ opacity: 0 }}>
-                    <span className="mono text-body text-vx-400 sm:text-h3 font-semibold">Gate</span>
-                    <span className="text-micro text-vx-400 sm:text-small">9 checks queued</span>
+          {/* Right Column (7 cols): Enlarged Picture Container with Technical Dimension Framing */}
+          <div className="flex flex-col justify-center lg:col-span-7" data-sheet-stage>
+            <div className="flex w-full items-start gap-2.5 sm:gap-3">
+              <div
+                ref={frame}
+                className="relative flex-1 overflow-hidden rounded-xl border border-vx-400/60 bg-vx-800 p-3 sm:p-5 lg:p-6 shadow-2xl shadow-vx-900/20"
+                style={{ aspectRatio: "1400 / 990" }}
+              >
+                <Sheet
+                  id="make"
+                  row={TO}
+                  prevRow={FROM}
+                  checkedBy="S.M."
+                  watermark
+                  label={`Generated variant of drawing DRG-4120 at row ${VARIANT_ROWS[TO].size}: outer diameter ${VARIANT_ROWS[TO].a}, PCD ${VARIANT_ROWS[TO].b}, bore ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes. Checked by S.M.`}
+                />
+                {/* verdict overlay */}
+                <div className="absolute bottom-3 left-3 rounded-md border border-vx-600 bg-vx-900/95 px-3 py-2 sm:bottom-5 sm:left-5 sm:px-4 sm:py-3 shadow-lg backdrop-blur-xs">
+                  <div className="relative">
+                    <div className="flex items-baseline gap-3 sm:gap-4" data-verdict="pass">
+                      <span className="mono text-body text-vx-100 sm:text-h3 font-semibold">PASS</span>
+                      <span className="text-micro text-vx-400 sm:text-small">7 checked · 2 couldn&apos;t be checked</span>
+                    </div>
+                    <div className="absolute inset-0 flex items-baseline gap-3 sm:gap-4" data-verdict="pending" style={{ opacity: 0 }}>
+                      <span className="mono text-body text-vx-400 sm:text-h3 font-semibold">Gate</span>
+                      <span className="text-micro text-vx-400 sm:text-small">9 checks queued</span>
+                    </div>
                   </div>
                 </div>
               </div>
+              <Dim axis="y" measure={frame} className="shrink-0" />
             </div>
-            <Dim measure={frame} className="mt-3" />
+            <div className="flex w-full justify-start">
+              <Dim axis="x" measure={frame} className="mt-2.5 sm:mt-3" />
+            </div>
           </div>
         </div>
       </div>
