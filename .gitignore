@@ -17,3 +17,6 @@ shots/
 # logs and OS files
 *.log
 .DS_Store
+
+# local editor config
+.claude/
