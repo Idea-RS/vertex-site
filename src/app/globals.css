@@ -252,3 +252,40 @@ p {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Exploded-sheet planes: hover, tap and focus lift one plane and dim the rest */
+.plane-layer {
+  transition: opacity 220ms ease;
+}
+.plane-lift {
+  transition: transform 220ms ease;
+  transform-style: preserve-3d;
+}
+[data-stage][data-exploded="true"] .plane-layer[data-state="dimmed"] {
+  opacity: 0.35 !important;
+}
+[data-stage][data-exploded="true"] .plane-layer[data-state="lifted"] .plane-lift {
+  transform: translateZ(48px);
+}
+/* only painted marks and hit areas take the pointer; the empty sheet does not */
+.plane-layer {
+  pointer-events: none;
+}
+.plane-layer svg * {
+  pointer-events: visiblePainted;
+}
+.plane-layer svg .hit {
+  pointer-events: fill;
+}
+/* below lg the stage is a still: the six planes already separated */
+@media (max-width: 63.99rem) {
+  [data-stack] {
+    transform: translate(-6%, -10%) rotateX(40deg) rotateZ(-8deg) scale(0.6);
+  }
+  [data-stack] > .plane-layer:nth-child(2) { transform: translateZ(-180px); filter: blur(1px); opacity: 0.82; }
+  [data-stack] > .plane-layer:nth-child(3) { transform: translateZ(-108px); filter: blur(0.5px); }
+  [data-stack] > .plane-layer:nth-child(4) { transform: translateZ(-36px); }
+  [data-stack] > .plane-layer:nth-child(5) { transform: translateZ(36px); }
+  [data-stack] > .plane-layer:nth-child(6) { transform: translateZ(108px); }
+  [data-stack] > .plane-layer:nth-child(7) { transform: translateZ(180px); }
+}

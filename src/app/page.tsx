@@ -1,4 +1,4 @@
-import Hero from "@/components/home/Hero";
+import HeroExplainer from "@/components/home/HeroExplainer";
 import Problem from "@/components/home/Problem";
 import Find from "@/components/home/Find";
 import Understand from "@/components/home/Understand";
@@ -15,7 +15,7 @@ import { CTA } from "@/components/CTA";
 export default function HomePage() {
   return (
     <>
-      <Hero />
+      <HeroExplainer />
       <Problem />
       <Find />
       <Understand />

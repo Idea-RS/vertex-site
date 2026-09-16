@@ -104,11 +104,15 @@ Lenis for smoothing. GSAP ScrollTrigger, `scrub: 1`, on every scroll-driven effe
 
 | Section | The one moment |
 |---------|----------------|
-| Hero | draw-on (1.2s, geometry, dimensions +300ms), then the exploded sheet — five planes separate in z with 80ms lag, back planes blur 1px, labels appear, then collapse back flat |
-| Find | camera moves forward through six depth layers of sheet thumbnails; at 0.6 ten sheets light and the rest dim; the result panel fills: 10 hits in 9 ms |
+| Hero + explainer (rev 3, one pinned scene, ≥1024px) | 0–30%: the vector re-draft draws itself over the 1937 patent scan (geometry first, dimensions ~300 ms behind) while the scan desaturates to vx-400 and fades out; 30–55%: the sheet travels into the left column of the explainer as its copy slides in; 55–80%: six planes separate with 80 ms lag and back-plane blur, labels name each; it holds exploded and collapses only on scroll-back. Hover, tap or focus lifts one plane, dims the rest to 35% and shows its description. Below 1024px and under reduced motion: the still scan with its caption, then a two-column block with the sheet exploded as a still and the six planes as a plain list. |
+| Find | camera moves forward through six depth layers of real patent drawing sheets (`public/archive/*.webp`, aspect ratios reserved so CLS stays 0; far layers desaturated toward vx-400); at 0.6 the ten hits light at full contrast and the rest dim; the result panel fills: 10 hits in 9 ms |
 | Understand | containment edges draw on as the graph enters |
 | Make | row marker moves S2→S4, dimension text updates, verdict reads PASS, watermark lifts, initials appear in the title block |
 | Everything else | still |
+
+### The hero drawing (rev 3)
+
+The hero is a real public-domain sheet — US Patent 2,090,719, Karl Alt, 1937 — and the vector sheet is a CAD re-draft registered to it (same views, same positions, same scale; provenance and processing in `docs/hero-sketch.md`, registration overlay in `shots/registration-overlay.png`). The re-draft adds what a modern sheet has and the patent doesn't: fourteen dimensions including one angular and one GD&T frame, a ten-row parts list, notes, a tolerance block, a revision table and an A–H / 1–8 zone grid. The sheet is portrait (1800 × 2196), so the explainer lands it height-fit under the nav — about 47% of the container at 1440 × 900 rather than the 55% first sketched.
 
 ## 6. Wireframes
 
@@ -141,7 +145,7 @@ Lenis for smoothing. GSAP ScrollTrigger, `scrub: 1`, on every scroll-driven effe
 │  │ │ Ø31.77 flange        │        ▪ ▪ ▪ ▪                                   │  │
 │  │ │ ├──── 9 ms ────┤     │   ▫  ▪ ▪ ▪      ▫                                 │  │
 │  │ │ 10 hits                                                                 │  │
-│  │ │ EEI-3057  Bearing housing, flanged                                      │  │
+│  │ │ DRG-4120  Flanged housing                                               │  │
 │  │ └──────────────────────┘                                                  │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 ├────────────────────────────────────────────────────────────────────────────────┤
