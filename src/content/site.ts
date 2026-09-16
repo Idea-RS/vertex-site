@@ -11,7 +11,7 @@ export const site = {
   description:
     "Vertex reads a manufacturer's entire archive of engineering drawings exactly, makes every part findable in milliseconds, checks what can be checked deterministically and says what it couldn't, and regenerates variants from your own templates. Cloud or fully offline.",
   // TODO(content): replace with the real contact address before launch.
-  contactEmail: "hello@example.com",
+  contactEmail: "info@tryvertex.tech",
 };
 
 export const nav = [

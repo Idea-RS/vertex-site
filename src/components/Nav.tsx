@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { nav } from "@/content/site";
 import { Wordmark } from "./Wordmark";
@@ -10,15 +10,41 @@ import { Wordmark } from "./Wordmark";
 export default function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const close = () => setOpen(false);
 
   const isActive = (href: string) =>
     href === "/product/find/" ? pathname.startsWith("/product") : pathname.startsWith(href);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky z-40 bg-vx-100" style={{ top: "var(--inset)" }}>
-      <div className="container">
-        <nav aria-label="Primary" className="flex h-16 items-center justify-between">
+    <header
+      className={`sticky z-40 transition-all duration-300 ease-out ${
+        scrolled
+          ? "bg-transparent pointer-events-none pt-2 sm:pt-3"
+          : "bg-vx-100 pointer-events-auto pt-0"
+      }`}
+      style={{
+        top: scrolled ? "calc(var(--inset) + 8px)" : "var(--inset)",
+      }}
+    >
+      <div className="container pointer-events-auto">
+        <nav
+          aria-label="Primary"
+          className={`flex items-center justify-between font-heading transition-all duration-300 ease-out ${
+            scrolled
+              ? "h-14 px-6 sm:px-8 rounded-full bg-vx-100/90 backdrop-blur-md nav-popped"
+              : "h-16 px-0 rounded-none bg-transparent border-transparent"
+          }`}
+        >
           <Link href="/" aria-label="Vertex home" className="inline-flex items-center">
             <Wordmark />
           </Link>
@@ -40,7 +66,11 @@ export default function Nav() {
             <li>
               <Link
                 href="/diagnostic/"
-                className="inline-flex h-9 items-center rounded-sm border border-vx-400 px-4 text-small text-vx-900 transition-colors duration-150 hover:border-vx-900"
+                className={`inline-flex items-center rounded-sm border px-4 text-small text-vx-900 transition-colors duration-150 ${
+                  scrolled
+                    ? "h-8 border-vx-600/70 bg-vx-100/70 hover:border-vx-900"
+                    : "h-9 border-vx-400 hover:border-vx-900"
+                }`}
               >
                 Book a diagnostic
               </Link>
@@ -70,13 +100,21 @@ export default function Nav() {
         {open && (
           <motion.div
             id="mobile-nav"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="border-t border-vx-400 bg-vx-100 lg:hidden"
+            className={`pointer-events-auto bg-vx-100 lg:hidden ${
+              scrolled ? "container mt-2" : "border-t border-vx-400"
+            }`}
           >
-            <ul className="container flex flex-col py-2">
+            <ul
+              className={`flex flex-col py-2 font-heading ${
+                scrolled
+                  ? "rounded-2xl nav-popped bg-vx-100/95 backdrop-blur-md p-4 shadow-xl"
+                  : "container"
+              }`}
+            >
               {nav.map((item) => (
                 <li key={item.href} className="border-b border-vx-400/50 last:border-0">
                   <Link
@@ -101,7 +139,7 @@ export default function Nav() {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="rule" />
+      <div className={`rule transition-opacity duration-300 ${scrolled ? "opacity-0" : "opacity-100"}`} />
     </header>
   );
 }

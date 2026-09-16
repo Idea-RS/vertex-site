@@ -1,9 +1,8 @@
-/** VERTEX in capitals, tracked wide, weight 500. Plain type is the logo. */
+/** Vertex wordmark in Cormorant font, significantly bigger and all caps. */
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <span
-      className={`font-sans text-[14px] font-medium leading-none text-vx-900 ${className}`}
-      style={{ letterSpacing: "0.2em" }}
+      className={`font-title text-[28px] sm:text-[34px] font-semibold uppercase leading-none tracking-[0.08em] text-vx-900 ${className}`}
     >
       VERTEX
     </span>

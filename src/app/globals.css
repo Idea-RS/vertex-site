@@ -21,7 +21,14 @@
      secondary text on raised panels (vx-400 on vx-800 is 4.45:1). */
   --color-muted-raised: color-mix(in srgb, #e0e1dd 72%, #1b263b);
 
-  --font-sans: var(--font-grotesk), "Inter Tight", system-ui, sans-serif;
+  --font-cormorant: var(--font-cormorant), Cormorant, Georgia, serif;
+  --font-mitr: var(--font-mitr), Mitr, system-ui, sans-serif;
+  --font-karma: var(--font-karma), Karma, Georgia, serif;
+  --font-title: var(--font-cormorant), Cormorant, Georgia, serif;
+  --font-heading: var(--font-mitr), Mitr, system-ui, sans-serif;
+  --font-body: var(--font-karma), Karma, Georgia, serif;
+  --font-sans: var(--font-mitr), Mitr, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), Cormorant, Georgia, serif;
   --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 
   /* Radius encodes hierarchy: larger surface, larger radius. */
@@ -75,7 +82,7 @@
    Base
 ------------------------------------------------------------------- */
 html {
-  background: var(--color-vx-100);
+  background: var(--color-vx-900);
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
 }
@@ -95,16 +102,15 @@ html.lenis body {
 }
 
 body {
-  background: var(--color-vx-100);
+  background: var(--color-vx-900);
   color: var(--color-vx-900);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  font-feature-settings: "ss01", "cv05";
 }
 
 ::selection {
@@ -118,12 +124,37 @@ body {
   border-radius: 6px;
 }
 
-h1,
+h1 {
+  font-family: var(--font-title);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
 h2,
 h3,
 h4 {
+  font-family: var(--font-heading);
   font-weight: 500;
   text-wrap: balance;
+}
+
+.text-display {
+  font-family: var(--font-title);
+  font-weight: 500;
+}
+
+.text-h2,
+.text-h3 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
 p {
@@ -134,6 +165,12 @@ p {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+}
+
+/* Popped-out floating navbar on scroll */
+.nav-popped {
+  border: 1.5px dotted var(--color-dim-deep);
+  box-shadow: 0 10px 30px -5px rgba(13, 27, 42, 0.12), 0 2px 10px -2px rgba(143, 74, 20, 0.12);
 }
 
 /* Text links: hairline underline in vx-600, brightens on hover. No arrows. */
@@ -150,26 +187,16 @@ p {
 }
 
 /* The in-flow sheet wrapper: inset from the viewport, faint hairline frame,
-   canvas continuing behind. */
+   resting on the dark blueprint desk (vx-900 / #0D1B2A). */
 .sheet {
   margin: var(--inset);
+  background: var(--color-vx-100);
   border: 1px solid var(--frame-line);
   border-radius: var(--radius-lg);
   min-height: calc(100svh - 2 * var(--inset));
   position: relative;
   overflow: clip;
-}
-
-/* Keep the top inset clean as content scrolls under the sticky nav. */
-.sheet-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--inset);
-  background: var(--color-vx-100);
-  z-index: 39;
-  pointer-events: none;
+  box-shadow: 0 16px 48px -12px rgba(13, 27, 42, 0.45);
 }
 
 .container {

@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { grotesk, plexMono } from "./fonts";
+import { cormorant, mitr, karma, plexMono } from "./fonts";
 import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { site } from "@/content/site";
+import SheetTopMask from "@/components/SheetTopMask";
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +25,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${grotesk.variable} ${plexMono.variable}`}>
+    <html
+      lang="en"
+      className={`${cormorant.variable} ${mitr.variable} ${karma.variable} ${plexMono.variable}`}
+    >
       <body>
         <noscript>
           <style>{`[data-drawing="pending"] .draw{stroke-dasharray:none;stroke-dashoffset:0}[data-drawing="pending"] .fade{opacity:1}`}</style>
@@ -36,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <div className="sheet-mask" aria-hidden="true" />
+        <SheetTopMask />
         <div className="sheet">
           <Nav />
           <main id="main">{children}</main>

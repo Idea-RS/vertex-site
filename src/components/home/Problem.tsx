@@ -10,7 +10,7 @@ export default function Problem() {
     <section className="rule section">
       <div className="container">
         <blockquote>
-          <p className="max-w-[24ch] text-h2">“It’s faster to draw a new part than to find the old one.”</p>
+          <p className="max-w-[24ch] text-h2 font-title">“It’s faster to draw a new part than to find the old one.”</p>
           <footer className="mt-5 text-small text-vx-600">
             An engineering manager at a manufacturer we work with. Their archive: about 7,000 drawings, three decades of revisions.
           </footer>

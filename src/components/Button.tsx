@@ -24,7 +24,7 @@ export function Button({
   className?: string;
 }) {
   const v: Variant = variant === "accent" ? "primary" : variant;
-  const cls = `inline-flex h-11 items-center rounded-sm px-5 text-body font-medium transition-colors duration-150 ${styles[v]} ${className}`;
+  const cls = `inline-flex h-11 items-center rounded-sm px-5 text-body font-heading font-medium transition-colors duration-150 ${styles[v]} ${className}`;
   if (href.startsWith("mailto:") || href.startsWith("http")) {
     return (
       <a href={href} className={cls}>

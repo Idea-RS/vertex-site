@@ -1,11 +1,25 @@
+import { Cormorant, Mitr, Karma } from "next/font/google";
 import localFont from "next/font/local";
 
-// Self-hosted. No CDN, nothing phones home.
-export const grotesk = localFont({
-  src: [{ path: "../fonts/inter-tight-latin-wght-normal.woff2", weight: "100 900", style: "normal" }],
-  variable: "--font-grotesk",
+export const cormorant = Cormorant({
+  subsets: ["latin"],
+  variable: "--font-cormorant",
   display: "swap",
-  preload: true,
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+export const mitr = Mitr({
+  subsets: ["latin"],
+  variable: "--font-mitr",
+  display: "swap",
+  weight: ["200", "300", "400", "500", "600", "700"],
+});
+
+export const karma = Karma({
+  subsets: ["latin"],
+  variable: "--font-karma",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const plexMono = localFont({

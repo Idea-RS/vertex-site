@@ -2,16 +2,15 @@
 
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { DemoFrame } from "@/components/DemoFrame";
 import { Dim } from "@/components/Dim";
-import { SectionHeader } from "@/components/SectionHeader";
 import { Sheet, VARIANT_ROWS } from "@/components/drawing/Sheet";
 import { gsap, ScrollTrigger, setupGsap, prefersReducedMotion } from "@/lib/motion";
 
 /**
- * The variant loop, scrubbed by scroll: the table marker moves to a new row,
- * the dimension text updates, the verdict reads PASS, the watermark lifts,
- * initials appear in the title block. The static render is the final frame.
+ * The variant loop, scrubbed by scroll:
+ * - Left side: Header + Lede shown first, then steps 1 -> 2 -> 3 -> 4 arrive smoothly one by one as you scroll.
+ * - Right side: Enlarged CAD drawing sheet responding synchronously: table marker moves,
+ *   dimension text updates, verdict reads PASS, watermark lifts, initials appear in title block.
  */
 
 const FROM = 1; // S2
@@ -19,10 +18,26 @@ const TO = 3; // S4
 const ROW_H = 32;
 
 const steps = [
-  { title: "Pick a row", body: "The variant table on your own drawing is the spec. Choose the row you need." },
-  { title: "Generate", body: "Vertex regenerates the sheet from your template. Every dimension follows the row." },
-  { title: "Gate", body: "Deterministic checks run. The verdict says what passed and what it couldn’t check." },
-  { title: "Sign", body: "A named person signs. Until then the sheet says so on its face." },
+  {
+    num: "1",
+    title: "Pick a row",
+    body: "The variant table on your own drawing is the spec. Choose the row you need.",
+  },
+  {
+    num: "2",
+    title: "Generate",
+    body: "Vertex regenerates the sheet from your template. Every dimension follows the row.",
+  },
+  {
+    num: "3",
+    title: "Gate",
+    body: "Deterministic checks run. The verdict says what passed and what it couldn’t check.",
+  },
+  {
+    num: "4",
+    title: "Sign",
+    body: "A named person signs. Until then the sheet says so on its face.",
+  },
 ];
 
 export default function Make() {
@@ -31,8 +46,6 @@ export default function Make() {
 
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return;
-      setupGsap();
       const root = section.current!;
       const marker = root.querySelector<SVGGElement>("[data-row-marker]")!;
       const cur = root.querySelector<SVGGElement>("[data-dim-current-group]")!;
@@ -41,9 +54,23 @@ export default function Make() {
       const checked = root.querySelector<SVGTextElement>("[data-cell='checkedBy']")!;
       const verdictPending = root.querySelector<HTMLElement>("[data-verdict='pending']")!;
       const verdictPass = root.querySelector<HTMLElement>("[data-verdict='pass']")!;
-      const stepEls = Array.from(root.querySelectorAll<HTMLElement>("[data-step]"));
+      const stepItems = Array.from(root.querySelectorAll<HTMLElement>("[data-step-item]"));
 
-      // Start state.
+      if (prefersReducedMotion()) {
+        stepItems.forEach((el) => gsap.set(el, { opacity: 1, y: 0, scale: 1 }));
+        gsap.set(marker, { y: ROW_H * TO });
+        gsap.set(cur, { opacity: 1 });
+        gsap.set(prev, { opacity: 0 });
+        gsap.set(watermark, { opacity: 0 });
+        gsap.set(checked, { opacity: 1 });
+        gsap.set(verdictPass, { opacity: 1 });
+        gsap.set(verdictPending, { opacity: 0 });
+        return;
+      }
+
+      setupGsap();
+
+      // Initial resting state
       gsap.set(marker, { y: ROW_H * FROM });
       gsap.set(cur, { opacity: 0 });
       gsap.set(prev, { opacity: 1 });
@@ -51,68 +78,133 @@ export default function Make() {
       gsap.set(checked, { opacity: 0 });
       gsap.set(verdictPass, { opacity: 0 });
       gsap.set(verdictPending, { opacity: 1 });
-      gsap.set(stepEls, { color: "#415A77" });
-      gsap.set(stepEls[0], { color: "#0D1B2A" });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: root,
-          start: "top top",
-          end: "+=220%",
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-        },
+      // Steps initially hidden, ready to arrive smoothly on scroll
+      stepItems.forEach((el) => {
+        gsap.set(el, { opacity: 0, y: 22, scale: 0.97 });
       });
-      const activate = (i: number, at: number) => {
-        stepEls.forEach((el, k) => tl.to(el, { color: k === i ? "#0D1B2A" : "#415A77", duration: 0.04 }, at));
-      };
-      // 1. pick a row
-      tl.to(marker, { y: ROW_H * TO, duration: 0.16, ease: "power2.inOut" }, 0.04);
-      // 2. generate
-      activate(1, 0.22);
-      tl.to(prev, { opacity: 0, duration: 0.08 }, 0.26);
-      tl.to(cur, { opacity: 1, duration: 0.1 }, 0.34);
-      // 3. gate
-      activate(2, 0.48);
-      tl.to(verdictPending, { opacity: 0, duration: 0.06 }, 0.56);
-      tl.to(verdictPass, { opacity: 1, duration: 0.08 }, 0.6);
-      // 4. sign
-      activate(3, 0.72);
-      tl.to(watermark, { opacity: 0, y: -40, duration: 0.14, ease: "power2.in" }, 0.76);
-      tl.to(checked, { opacity: 1, duration: 0.08 }, 0.88);
+
+      const mm = gsap.matchMedia();
+
+      // Desktop: Pinned scrollytelling timeline
+      mm.add("(min-width: 1024px)", () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: root,
+            start: "top top",
+            end: "+=260%",
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+          },
+        });
+
+        // 1. Step 1 arrives & table row marker moves to S4
+        tl.to(stepItems[0], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.08);
+        tl.to(marker, { y: ROW_H * TO, duration: 0.18, ease: "power2.inOut" }, 0.10);
+
+        // 2. Step 2 arrives & sheet dimensions regenerate
+        tl.to(stepItems[1], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.32);
+        tl.to(prev, { opacity: 0, duration: 0.08 }, 0.35);
+        tl.to(cur, { opacity: 1, duration: 0.12 }, 0.41);
+
+        // 3. Step 3 arrives & gate checks verify to PASS
+        tl.to(stepItems[2], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.56);
+        tl.to(verdictPending, { opacity: 0, duration: 0.08 }, 0.60);
+        tl.to(verdictPass, { opacity: 1, duration: 0.10 }, 0.66);
+
+        // 4. Step 4 arrives & watermark lifts and signature signs
+        tl.to(stepItems[3], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.78);
+        tl.to(watermark, { opacity: 0, y: -40, duration: 0.14, ease: "power2.in" }, 0.82);
+        tl.to(checked, { opacity: 1, duration: 0.10 }, 0.90);
+      });
+
+      // Mobile/Tablet: Flow layout with staggered scroll reveals
+      mm.add("(max-width: 1023px)", () => {
+        stepItems.forEach((el) => {
+          gsap.to(el, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.45,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+            },
+          });
+        });
+
+        const mtl = gsap.timeline({
+          scrollTrigger: {
+            trigger: root.querySelector("[data-sheet-stage]"),
+            start: "top 70%",
+            end: "bottom 30%",
+            scrub: 1,
+          },
+        });
+        mtl.to(marker, { y: ROW_H * TO, duration: 0.25 });
+        mtl.to(prev, { opacity: 0, duration: 0.15 }, 0.25);
+        mtl.to(cur, { opacity: 1, duration: 0.15 }, 0.35);
+        mtl.to(verdictPending, { opacity: 0, duration: 0.1 }, 0.5);
+        mtl.to(verdictPass, { opacity: 1, duration: 0.15 }, 0.55);
+        mtl.to(watermark, { opacity: 0, y: -30, duration: 0.2 }, 0.7);
+        mtl.to(checked, { opacity: 1, duration: 0.15 }, 0.85);
+      });
 
       return () => {
-        ScrollTrigger.getAll().forEach((t) => t.vars.trigger === root && t.kill());
+        mm.revert();
       };
     },
     { scope: section },
   );
 
   return (
-    <section ref={section} className="rule flex min-h-[100svh] flex-col justify-start pb-8 pt-24 lg:pt-36" data-make>
+    <section
+      ref={section}
+      className="rule relative flex min-h-[100svh] items-center overflow-hidden pb-12 pt-20 lg:pb-16 lg:pt-28"
+      data-make
+    >
       <div className="container">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <SectionHeader
-            title="Make the variant. Gate it. Sign it."
-            lede="Pick a row from your own variant table. Vertex regenerates the sheet from your template, runs the checks, and holds it as not approved until a named person signs."
-          />
-          <ol className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 lg:w-[46%]">
-            {steps.map((s, i) => (
-              <li key={s.title} className="border-t border-vx-400 pt-3">
-                <div className="flex items-baseline gap-2" data-step>
-                  <span className="mono text-micro">{i + 1}</span>
-                  <span className="text-small font-medium">{s.title}</span>
-                </div>
-                <p className="mt-1 hidden text-micro text-vx-600 xl:block">{s.body}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+          {/* Left Column (5 cols): Header + Step-by-Step scrollytelling */}
+          <div className="flex flex-col justify-center lg:col-span-5">
+            <div data-intro>
+              <h2 className="text-h2">Make the variant. Gate it. Sign it.</h2>
+              <p className="mt-4 text-body text-vx-600">
+                Pick a row from your own variant table. Vertex regenerates the sheet from your template, runs the checks, and holds it as not approved until a named person signs.
+              </p>
+            </div>
 
-        <DemoFrame label="Make" className="mt-8" frameRef={frame} fitHeight="calc(100svh - 24.5rem)">
-          <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-5">
-            <div className="relative h-full" style={{ aspectRatio: "1400 / 990", maxWidth: "100%" }}>
+            <ol className="mt-8 flex flex-col gap-3.5 sm:gap-4" data-steps-list>
+              {steps.map((s, i) => (
+                <li
+                  key={s.title}
+                  data-step-item={i}
+                  className="relative flex items-start gap-4 rounded-lg border border-vx-400/40 bg-vx-100/70 p-3 sm:p-3.5 shadow-xs transition-colors"
+                >
+                  <span
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-vx-400 bg-vx-100 mono text-micro font-semibold text-vx-900 shadow-xs"
+                    data-step-num
+                  >
+                    {s.num}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-small font-heading font-medium text-vx-900">{s.title}</h3>
+                    <p className="mt-0.5 text-small text-vx-600 leading-relaxed">{s.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* Right Column (7 cols): Enlarged Picture Container */}
+          <div className="flex flex-col items-center justify-center lg:col-span-7" data-sheet-stage>
+            <div
+              ref={frame}
+              className="relative w-full overflow-hidden rounded-xl border border-vx-400/60 bg-vx-800 p-3 sm:p-5 lg:p-6 shadow-2xl shadow-vx-900/20"
+              style={{ aspectRatio: "1400 / 990" }}
+            >
               <Sheet
                 id="make"
                 row={TO}
@@ -121,23 +213,23 @@ export default function Make() {
                 watermark
                 label={`Generated variant of drawing DRG-4120 at row ${VARIANT_ROWS[TO].size}: outer diameter ${VARIANT_ROWS[TO].a}, PCD ${VARIANT_ROWS[TO].b}, bore ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes. Checked by S.M.`}
               />
-            </div>
-          </div>
-          {/* verdict */}
-          <div className="absolute bottom-3 left-3 rounded-md border border-vx-600 bg-vx-900 px-3 py-2 sm:bottom-6 sm:left-6 sm:px-4 sm:py-3">
-            <div className="relative">
-              <div className="flex items-baseline gap-3 sm:gap-4" data-verdict="pass">
-                <span className="mono text-body text-vx-100 sm:text-h3">PASS</span>
-                <span className="text-micro text-vx-400 sm:text-small">7 checked · 2 couldn&apos;t be checked</span>
+              {/* verdict overlay */}
+              <div className="absolute bottom-3 left-3 rounded-md border border-vx-600 bg-vx-900/95 px-3 py-2 sm:bottom-5 sm:left-5 sm:px-4 sm:py-3 shadow-lg backdrop-blur-xs">
+                <div className="relative">
+                  <div className="flex items-baseline gap-3 sm:gap-4" data-verdict="pass">
+                    <span className="mono text-body text-vx-100 sm:text-h3 font-semibold">PASS</span>
+                    <span className="text-micro text-vx-400 sm:text-small">7 checked · 2 couldn&apos;t be checked</span>
+                  </div>
+                  <div className="absolute inset-0 flex items-baseline gap-3 sm:gap-4" data-verdict="pending" style={{ opacity: 0 }}>
+                    <span className="mono text-body text-vx-400 sm:text-h3 font-semibold">Gate</span>
+                    <span className="text-micro text-vx-400 sm:text-small">9 checks queued</span>
+                  </div>
+                </div>
               </div>
-              <div className="absolute inset-0 flex items-baseline gap-3 sm:gap-4" data-verdict="pending" style={{ opacity: 0 }}>
-                <span className="mono text-body text-vx-400 sm:text-h3">Gate</span>
-                <span className="text-micro text-vx-400 sm:text-small">9 checks queued</span>
-              </div>
             </div>
+            <Dim measure={frame} className="mt-3" />
           </div>
-        </DemoFrame>
-        <Dim measure={frame} className="mt-3" />
+        </div>
       </div>
     </section>
   );

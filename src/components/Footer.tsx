@@ -32,7 +32,7 @@ export default function Footer() {
           </div>
           {columns.map((col) => (
             <div key={col.title} className="lg:col-span-2">
-              <p className="text-small text-vx-900">{col.title}</p>
+              <p className="text-small font-heading font-medium text-vx-900">{col.title}</p>
               <ul className="mt-3 space-y-2">
                 {col.links.map((l) => (
                   <li key={l.href}>
@@ -45,7 +45,7 @@ export default function Footer() {
             </div>
           ))}
           <div className="lg:col-span-3">
-            <p className="text-small text-vx-900">Contact</p>
+            <p className="text-small font-heading font-medium text-vx-900">Contact</p>
             <a href={`mailto:${site.contactEmail}`} className="mono mt-3 block text-small text-vx-600 hover:text-vx-900">
               {site.contactEmail}
             </a>
