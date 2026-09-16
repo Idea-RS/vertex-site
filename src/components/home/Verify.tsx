@@ -19,14 +19,14 @@ export default function Verify() {
             title="Verify what can be verified. Say the rest."
             lede="The checks are rules, not guesses: they pass, they fail, or they couldn't run. Every verdict lists all three, so a PASS means exactly what it says."
           />
-          <ul className="mt-10 divide-y divide-vx-600 border-y border-vx-600">
+          <ul className="mt-10 divide-y divide-vx-400 border-y border-vx-400">
             {rules.map((r) => (
-              <li key={r} className="py-3 text-body text-vx-100">
+              <li key={r} className="py-3 text-body text-vx-900">
                 {r}
               </li>
             ))}
           </ul>
-          <p className="mt-6 max-w-[52ch] text-small text-vx-400">
+          <p className="mt-6 max-w-[52ch] text-small text-vx-600">
             When a check couldn&apos;t run, the tray says why: no native data, a scan too coarse to read, a field that
             isn&apos;t on the sheet. It never fills the gap with a guess.
           </p>

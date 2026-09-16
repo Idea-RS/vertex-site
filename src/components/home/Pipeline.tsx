@@ -21,7 +21,7 @@ export default function Pipeline() {
         <div className="mt-12">
           <LaneDiagram />
         </div>
-        <p className="mt-8 text-small text-vx-400">
+        <p className="mt-8 text-small text-vx-600">
           <Link href="/how-it-works/" className="link">
             How the pipeline works, stage by stage
           </Link>

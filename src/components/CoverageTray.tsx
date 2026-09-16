@@ -10,7 +10,7 @@ const checks: Check[] = [
   { name: "Title-block fields", status: "checked" },
   { name: "Dimension chain, section A–A", status: "checked", note: "4 chains, all close" },
   { name: "Hole count vs. variant table", status: "checked", note: "8 on sheet, 8 in row S4" },
-  { name: "Revision vs. bill of material", status: "checked", note: "B = B" },
+  { name: "Revision vs. bill of material", status: "checked", note: "R2 = R2" },
   { name: "Units and general tolerances", status: "checked" },
   { name: "Referenced drawings exist", status: "checked", note: "2 of 2" },
   { name: "Template match", status: "checked" },
@@ -18,11 +18,11 @@ const checks: Check[] = [
   { name: "Surface finish symbols", status: "not checked", note: "scan at 150 dpi, below the floor" },
 ];
 
-export function CoverageTray({ drawingNo = "EEI-3057" }: { drawingNo?: string }) {
+export function CoverageTray({ drawingNo = "DRG-4120" }: { drawingNo?: string }) {
   const done = checks.filter((c) => c.status === "checked").length;
   const skipped = checks.length - done;
   return (
-    <div className="rounded-sm border border-vx-600 bg-vx-800" role="region" aria-label={`Coverage for ${drawingNo}`}>
+    <div className="rounded-md border border-vx-600 bg-vx-800" role="region" aria-label={`Coverage for ${drawingNo}`}>
       <div className="flex items-baseline justify-between border-b border-vx-600 px-5 py-4">
         <span className="text-small text-vx-100">Coverage</span>
         <span className="mono text-small text-vx-100">{drawingNo}</span>

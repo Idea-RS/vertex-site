@@ -3,15 +3,17 @@
 /* ------------------------------------------------------------------
    Vertex design tokens
    Five blues, one accent. Nothing else is structural.
+   Light canvas; blue is the material. Drawing viewports stay dark.
 ------------------------------------------------------------------- */
 @theme {
   --color-*: initial;
-  --color-vx-900: #0d1b2a; /* page canvas, deepest surface */
-  --color-vx-800: #1b263b; /* raised surfaces, cards, the drawing viewport */
-  --color-vx-600: #415a77; /* borders, rules, secondary strokes, redaction bars */
-  --color-vx-400: #778da9; /* secondary text, metadata, dimension text */
-  --color-vx-100: #e0e1dd; /* primary text, linework, wordmark */
-  --color-dim: #f0a868; /* dimension orange: the motif, and the one primary CTA */
+  --color-vx-900: #0d1b2a; /* primary text on the light canvas; deepest surface */
+  --color-vx-800: #1b263b; /* the material: drawing viewports, cards, the primary CTA */
+  --color-vx-600: #415a77; /* secondary text on light (5.4:1); hairlines inside dark viewports */
+  --color-vx-400: #778da9; /* rules and borders on light; dimension text inside dark viewports. Never text on light (2.6:1). */
+  --color-vx-100: #e0e1dd; /* page canvas; linework and text inside dark viewports */
+  --color-dim: #f0a868; /* dimension orange, inside dark viewports only (7.6:1 on vx-800) */
+  --color-dim-deep: #8f4a14; /* dimension orange re-derived for the light canvas (5.1:1 on vx-100) */
   --color-transparent: transparent;
   --color-current: currentColor;
 
@@ -22,9 +24,13 @@
   --font-sans: var(--font-grotesk), "Inter Tight", system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 
+  /* Radius encodes hierarchy: larger surface, larger radius. */
   --radius-*: initial;
   --radius-none: 0;
-  --radius-sm: 2px;
+  --radius-xs: 6px; /* chips */
+  --radius-sm: 8px; /* buttons, inputs */
+  --radius-md: 12px; /* cards, panels */
+  --radius-lg: 16px; /* containers, DemoFrame, the page wrapper */
   --radius-full: 9999px;
 
   --shadow-*: initial;
@@ -53,16 +59,15 @@
 }
 
 :root {
-  --inset: 20px;
+  --inset: 10px;
   --content-max: 1280px;
-  --hairline: color-mix(in srgb, #415a77 100%, transparent);
-  --frame-line: color-mix(in srgb, #415a77 45%, transparent);
-  color-scheme: dark;
+  --frame-line: color-mix(in srgb, #778da9 45%, transparent);
+  color-scheme: light;
 }
 
 @media (min-width: 64rem) {
   :root {
-    --inset: 48px;
+    --inset: 24px;
   }
 }
 
@@ -70,7 +75,7 @@
    Base
 ------------------------------------------------------------------- */
 html {
-  background: var(--color-vx-900);
+  background: var(--color-vx-100);
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
 }
@@ -90,8 +95,8 @@ html.lenis body {
 }
 
 body {
-  background: var(--color-vx-900);
-  color: var(--color-vx-100);
+  background: var(--color-vx-100);
+  color: var(--color-vx-900);
   font-family: var(--font-sans);
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
@@ -103,14 +108,14 @@ body {
 }
 
 ::selection {
-  background: var(--color-vx-600);
+  background: var(--color-vx-800);
   color: var(--color-vx-100);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-vx-100);
+  outline: 2px solid var(--color-vx-900);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 6px;
 }
 
 h1,
@@ -133,15 +138,15 @@ p {
 
 /* Text links: hairline underline in vx-600, brightens on hover. No arrows. */
 .link {
-  color: var(--color-vx-100);
+  color: var(--color-vx-900);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  text-decoration-color: var(--color-vx-600);
+  text-decoration-color: var(--color-vx-400);
   transition: text-decoration-color 150ms ease;
 }
 .link:hover {
-  text-decoration-color: var(--color-vx-100);
+  text-decoration-color: var(--color-vx-900);
 }
 
 /* The in-flow sheet wrapper: inset from the viewport, faint hairline frame,
@@ -149,8 +154,10 @@ p {
 .sheet {
   margin: var(--inset);
   border: 1px solid var(--frame-line);
+  border-radius: var(--radius-lg);
   min-height: calc(100svh - 2 * var(--inset));
   position: relative;
+  overflow: clip;
 }
 
 /* Keep the top inset clean as content scrolls under the sticky nav. */
@@ -160,7 +167,7 @@ p {
   left: 0;
   right: 0;
   height: var(--inset);
-  background: var(--color-vx-900);
+  background: var(--color-vx-100);
   z-index: 39;
   pointer-events: none;
 }
@@ -173,7 +180,7 @@ p {
 }
 
 .rule {
-  border-top: 1px solid var(--color-vx-600);
+  border-top: 1px solid var(--color-vx-400);
 }
 
 /* Section rhythm */

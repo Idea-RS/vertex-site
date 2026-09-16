@@ -28,7 +28,7 @@ const stages = [
   },
   {
     title: "Graph",
-    body: `Every reference from one drawing to another becomes an edge. On the design partner's archive that was ${archive.containmentEdgesLabel} edges, and it's where duplicates, stale references and isolated drawings show up.`,
+    body: `Every reference from one drawing to another becomes an edge. On one manufacturer's archive that was over 50,000 assembly relationships, and it's where duplicates, stale references and isolated drawings show up.`,
   },
   {
     title: "Check",
@@ -56,14 +56,14 @@ export default function HowItWorksPage() {
 
       <section className="rule">
         <div className="container py-12 lg:py-20">
-          <ol className="divide-y divide-vx-600 border-y border-vx-600">
+          <ol className="divide-y divide-vx-400 border-y border-vx-400">
             {stages.map((s, i) => (
               <li key={s.title} className="grid gap-3 py-6 lg:grid-cols-12 lg:gap-8">
                 <div className="flex items-baseline gap-4 lg:col-span-4">
-                  <span className="mono text-small text-vx-400">{String(i + 1).padStart(2, "0")}</span>
-                  <h2 className="text-h3 text-vx-100">{s.title}</h2>
+                  <span className="mono text-small text-vx-600">{String(i + 1).padStart(2, "0")}</span>
+                  <h2 className="text-h3 text-vx-900">{s.title}</h2>
                 </div>
-                <p className="max-w-[60ch] text-body text-vx-100 lg:col-span-8">{s.body}</p>
+                <p className="max-w-[60ch] text-body text-vx-900 lg:col-span-8">{s.body}</p>
               </li>
             ))}
           </ol>
@@ -71,7 +71,7 @@ export default function HowItWorksPage() {
       </section>
 
       <Block title="Why the lanes stay separate">
-        <p className="max-w-[60ch] text-body text-vx-100">
+        <p className="max-w-[60ch] text-body text-vx-900">
           A number read from a DXF is the number. A number read from a 150 dpi scan is a good guess with a crop attached.
           Treating them the same is how archives fill up with confident errors. Vertex keeps the label on every value all
           the way to the screen, the search result, and the verdict.

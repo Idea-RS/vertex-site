@@ -10,21 +10,21 @@ export default function Founders() {
           title="Two founders and a design partner."
           lede="Vertex is built against one real archive with the people who use it every day, not against a demo set."
         />
-        <div className="mt-12 grid gap-8 border-t border-vx-600 pt-8 md:grid-cols-3">
+        <div className="mt-12 grid gap-8 border-t border-vx-400 pt-8 md:grid-cols-3">
           {founders.map((f, i) => (
             <div key={i}>
-              <p className="text-h3 text-vx-100">{f.name}</p>
-              <p className="mt-1 text-small text-vx-400">{f.role}</p>
-              <p className="mt-4 max-w-[36ch] text-small text-vx-400">{f.bio}</p>
+              <p className="text-h3 text-vx-900">{f.name}</p>
+              <p className="mt-1 text-small text-vx-600">{f.role}</p>
+              <p className="mt-4 max-w-[36ch] text-small text-vx-600">{f.bio}</p>
             </div>
           ))}
           <div>
-            <p className="text-h3 text-vx-100">Design partner</p>
-            <p className="mt-1 text-small text-vx-400">Anonymised, like their title blocks</p>
-            <p className="mt-4 max-w-[36ch] text-small text-vx-400">{designPartner.description}</p>
+            <p className="text-h3 text-vx-900">Design partner</p>
+            <p className="mt-1 text-small text-vx-600">Anonymised, like their title blocks</p>
+            <p className="mt-4 max-w-[36ch] text-small text-vx-600">{designPartner.description}</p>
           </div>
         </div>
-        <p className="mt-8 text-small text-vx-400">
+        <p className="mt-8 text-small text-vx-600">
           <Link href="/about/" className="link">
             More about the company
           </Link>

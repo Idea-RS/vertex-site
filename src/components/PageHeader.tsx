@@ -4,7 +4,7 @@ export function PageHeader({ title, lede, children }: { title: ReactNode; lede?:
   return (
     <header className="container pb-12 pt-16 lg:pb-16 lg:pt-24">
       <h1 className="max-w-[20ch] text-display">{title}</h1>
-      {lede && <p className="mt-6 max-w-[58ch] text-body text-vx-400">{lede}</p>}
+      {lede && <p className="mt-6 max-w-[58ch] text-body text-vx-600">{lede}</p>}
       {children}
     </header>
   );
@@ -26,9 +26,9 @@ export function Block({ title, children, className = "" }: { title: ReactNode; c
 
 export function RuledList({ items }: { items: ReactNode[] }) {
   return (
-    <ul className="divide-y divide-vx-600 border-y border-vx-600">
+    <ul className="divide-y divide-vx-400 border-y border-vx-400">
       {items.map((it, i) => (
-        <li key={i} className="max-w-[64ch] py-4 text-body text-vx-100">
+        <li key={i} className="max-w-[64ch] py-4 text-body text-vx-900">
           {it}
         </li>
       ))}
@@ -38,11 +38,11 @@ export function RuledList({ items }: { items: ReactNode[] }) {
 
 export function Facts({ items }: { items: { value: string; label: string }[] }) {
   return (
-    <div className="grid gap-8 border-t border-vx-600 pt-8 sm:grid-cols-3">
+    <div className="grid gap-8 border-t border-vx-400 pt-8 sm:grid-cols-3">
       {items.map((f) => (
-        <div key={f.label} className="border-l border-vx-600 pl-5">
-          <div className="mono text-[clamp(2rem,3.4vw,2.75rem)] leading-none text-vx-100">{f.value}</div>
-          <p className="mt-3 max-w-[22ch] text-small text-vx-400">{f.label}</p>
+        <div key={f.label} className="border-l border-vx-400 pl-5">
+          <div className="mono text-[clamp(2rem,3.4vw,2.75rem)] leading-none text-vx-900">{f.value}</div>
+          <p className="mt-3 max-w-[22ch] text-small text-vx-600">{f.label}</p>
         </div>
       ))}
     </div>

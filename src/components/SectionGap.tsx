@@ -12,7 +12,7 @@ export function SectionGap() {
   return (
     <div className="container">
       <div ref={gap} className="relative h-24 lg:h-32" aria-hidden="true">
-        <Dim axis="y" measure={gap} className="absolute left-0 top-0" />
+        <Dim axis="y" measure={gap} className="absolute left-1/2 top-0 -translate-x-1/2" />
       </div>
     </div>
   );

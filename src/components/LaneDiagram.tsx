@@ -26,23 +26,23 @@ const lanes = [
 
 export function LaneDiagram() {
   return (
-    <div className="divide-y divide-vx-600 border-y border-vx-600">
+    <div className="divide-y divide-vx-400 border-y border-vx-400">
       {lanes.map((lane) => (
         <div key={lane.name} className="grid gap-6 py-8 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-2">
-            <span className="text-h3 text-vx-100">{lane.name}</span>
+            <span className="text-h3 text-vx-900">{lane.name}</span>
           </div>
           <Stage title={lane.source} note={lane.sourceNote} className="lg:col-span-3" />
           <Stage title={lane.reader} note={lane.readerNote} className="lg:col-span-3" />
           <div className="lg:col-span-4">
             <ul className="flex flex-wrap gap-x-4 gap-y-1">
               {lane.outputs.map((o) => (
-                <li key={o} className="text-body text-vx-100">
+                <li key={o} className="text-body text-vx-900">
                   {o}
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-small text-vx-400">{lane.status}</p>
+            <p className="mt-3 text-small text-vx-600">{lane.status}</p>
           </div>
         </div>
       ))}
@@ -52,9 +52,9 @@ export function LaneDiagram() {
 
 function Stage({ title, note, className = "" }: { title: string; note: string; className?: string }) {
   return (
-    <div className={`relative border-l border-vx-600 pl-4 ${className}`}>
-      <p className="text-body text-vx-100">{title}</p>
-      <p className="mt-1 max-w-[30ch] text-small text-vx-400">{note}</p>
+    <div className={`relative border-l border-vx-400 pl-4 ${className}`}>
+      <p className="text-body text-vx-900">{title}</p>
+      <p className="mt-1 max-w-[30ch] text-small text-vx-600">{note}</p>
     </div>
   );
 }

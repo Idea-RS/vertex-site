@@ -16,7 +16,7 @@ export default function Nav() {
     href === "/product/find/" ? pathname.startsWith("/product") : pathname.startsWith(href);
 
   return (
-    <header className="sticky z-40 bg-vx-900" style={{ top: "var(--inset)" }}>
+    <header className="sticky z-40 bg-vx-100" style={{ top: "var(--inset)" }}>
       <div className="container">
         <nav aria-label="Primary" className="flex h-16 items-center justify-between">
           <Link href="/" aria-label="Vertex home" className="inline-flex items-center">
@@ -29,8 +29,8 @@ export default function Nav() {
                 <Link
                   href={item.href}
                   aria-current={isActive(item.href) ? "page" : undefined}
-                  className={`text-small transition-colors duration-150 hover:text-vx-100 ${
-                    isActive(item.href) ? "text-vx-100" : "text-vx-400"
+                  className={`text-small transition-colors duration-150 hover:text-vx-900 ${
+                    isActive(item.href) ? "text-vx-900" : "text-vx-600"
                   }`}
                 >
                   {item.label}
@@ -40,7 +40,7 @@ export default function Nav() {
             <li>
               <Link
                 href="/diagnostic/"
-                className="inline-flex h-9 items-center rounded-sm border border-vx-600 px-4 text-small text-vx-100 transition-colors duration-150 hover:border-vx-100"
+                className="inline-flex h-9 items-center rounded-sm border border-vx-400 px-4 text-small text-vx-900 transition-colors duration-150 hover:border-vx-900"
               >
                 Book a diagnostic
               </Link>
@@ -49,7 +49,7 @@ export default function Nav() {
 
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-vx-100 lg:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-vx-900 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -74,15 +74,15 @@ export default function Nav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="border-t border-vx-600 bg-vx-900 lg:hidden"
+            className="border-t border-vx-400 bg-vx-100 lg:hidden"
           >
             <ul className="container flex flex-col py-2">
               {nav.map((item) => (
-                <li key={item.href} className="border-b border-vx-600/50 last:border-0">
+                <li key={item.href} className="border-b border-vx-400/50 last:border-0">
                   <Link
                     href={item.href}
                     onClick={close}
-                    className={`block py-4 text-h3 ${isActive(item.href) ? "text-vx-100" : "text-vx-400"}`}
+                    className={`block py-4 text-h3 ${isActive(item.href) ? "text-vx-900" : "text-vx-600"}`}
                   >
                     {item.label}
                   </Link>
@@ -92,7 +92,7 @@ export default function Nav() {
                 <Link
                   href="/diagnostic/"
                   onClick={close}
-                  className="inline-flex h-11 items-center rounded-sm border border-vx-600 px-5 text-body text-vx-100"
+                  className="inline-flex h-11 items-center rounded-sm border border-vx-400 px-5 text-body text-vx-900"
                 >
                   Book a diagnostic
                 </Link>

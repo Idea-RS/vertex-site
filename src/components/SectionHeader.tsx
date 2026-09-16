@@ -21,7 +21,7 @@ export function SectionHeader({
   return (
     <div className={`max-w-[62ch] ${className}`}>
       <Tag className={size === "display" ? "text-display" : "text-h2"}>{title}</Tag>
-      {lede && <p className="mt-5 max-w-[58ch] text-body text-vx-400">{lede}</p>}
+      {lede && <p className="mt-5 max-w-[58ch] text-body text-vx-600">{lede}</p>}
       {children}
     </div>
   );

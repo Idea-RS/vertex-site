@@ -1,8 +1,19 @@
-node_modules
-.next
-out
+# dependencies
+node_modules/
+
+# build output
+.next/
+out/
+.turbo/
 *.tsbuildinfo
 next-env.d.ts
-.DS_Store
+
+# local verification screenshots
+shots/
+
+# secrets and local env
 .env*
-shots
+
+# logs and OS files
+*.log
+.DS_Store

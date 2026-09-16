@@ -4,30 +4,60 @@ The sentence the site exists to say: *your drawings already know the answer; Ver
 
 The site is an instrument. Everything on it is either a drawing, a number that was measured, or a sentence in plain verbs. There is one decoration — the dimension line — and it only ever measures something true.
 
-## 1. Tokens
+## 1. Tokens (revision 2 — light canvas, blue as the material)
 
 ```
 Colour (structural — nothing else)
-  vx-900  #0D1B2A   page canvas, deepest surface
-  vx-800  #1B263B   raised surfaces, drawing viewport, panels
-  vx-600  #415A77   borders, rules, hairlines, redaction bars
-  vx-400  #778DA9   secondary text, metadata, dimension text   (5.1:1 on vx-900)
-  vx-100  #E0E1DD   primary text, linework, wordmark
+  vx-100  #E0E1DD   page canvas
+  vx-900  #0D1B2A   primary text on the canvas
+  vx-600  #415A77   secondary text on the canvas (5.41:1); hairlines inside dark viewports
+  vx-400  #778DA9   rules and borders on the canvas. Never text on light (2.59:1).
+  vx-800  #1B263B   the material: every drawing viewport, dark cards, the primary CTA
+                    Inside a viewport: vx-100 linework and text, vx-400 dimension text,
+                    vx-600 hairlines — a CAD modelspace inside a light application.
 
-Accent (one)
-  dim     #F0A868   dimension-line motif; the final CTA button only.
-                    Never a background, never a gradient, ≤ 1 element per viewport.
+Accent (one hue, two values)
+  dim       #F0A868   inside dark viewports only (7.6:1 on vx-800)
+  dim-deep  #8F4A14   the same hue re-derived for the light canvas (5.1:1 on vx-100).
+                      The brief's #B5641F measures 3.3:1 and fails for 12px mono, so a
+                      darker sibling was chosen.
+  Never a background, never a gradient, ≤ 1 element per viewport.
 
 Derived tint (not a new hue)
-  muted-raised      vx-100 mixed 72% into vx-800 — small secondary text on vx-800
-                    panels, because vx-400 on vx-800 is 4.45:1 and fails AA by a hair.
+  muted-raised   vx-100 mixed 72% into vx-800 — small secondary text on dark cards (6.7:1)
+
+Radius (encodes hierarchy: larger surface, larger radius)
+  lg 16px  page wrapper, containers, DemoFrame, the hero viewport
+  md 12px  cards and panels (coverage tray, result panel, verdict, graph card)
+  sm  8px  buttons and inputs
+  xs  6px  chips and small bars
+  Hairline frames follow the curve; viewports clip to their radius with overflow hidden.
 
 Spacing        4px base. Section rhythm: 96 / 128 / 160 (mobile 64 / 80 / 96).
-Radius         2px everywhere. Nothing rounder. No shadows anywhere.
-Hairline       1px vx-600. Frame hairline at 45% opacity.
-Inset          --inset: 20px mobile, 48px ≥ 1024px.  Content max-width 1280px.
+Hairline       1px vx-400 on light; 1px vx-600 inside dark viewports.
+Inset          --inset: 10px mobile, 24px ≥ 1024px. Frame hairline vx-400 at 45%.
+Content        max-width 1280px.
 Stroke         geometry 1.5px, everything else 1px, vector-effect non-scaling.
 ```
+
+### Contrast after the flip (WCAG 2.x)
+
+| Foreground | Background | Ratio | Use |
+|---|---|---|---|
+| vx-900 text | vx-100 canvas | 13.24:1 | primary text |
+| vx-600 text | vx-100 canvas | 5.41:1 | secondary text, ledes, captions |
+| vx-400 | vx-100 canvas | 2.59:1 | rules and borders only — never text |
+| dim-deep #8F4A14 | vx-100 canvas | 5.06:1 | dimension lines and numbers on the light page |
+| #F0A868 (rejected on light) | vx-100 canvas | 1.52:1 | fails; used inside dark viewports only |
+| #B5641F (brief suggestion) | vx-100 canvas | 3.32:1 | fails AA for 12px mono; darker sibling chosen |
+| vx-100 text | vx-800 viewport | 11.52:1 | linework, panel text |
+| vx-100 text | vx-900 panel | 13.24:1 | result panel, verdict |
+| vx-400 text | vx-900 panel | 5.11:1 | metadata inside the Find/Make panels |
+| vx-400 text | vx-800 viewport | 4.45:1 | fails for small text; use muted-raised |
+| muted-raised #a9adb0 | vx-800 viewport | 6.70:1 | small secondary text on dark cards |
+| #F0A868 dim | vx-800 viewport | 7.57:1 | dimension line inside dark viewports |
+| vx-100 text | vx-800 button | 11.52:1 | primary CTA |
+| vx-900 text | vx-100 nav | 13.24:1 | nav links (active) |
 
 ## 2. Type
 
@@ -38,7 +68,7 @@ Mono      IBM Plex Mono 400/500 (self-hosted). Numbers, drawing refs, dimension 
 display   clamp(40px, 5.6vw, 76px)  / 1.0   / -0.025em   500
 h2        clamp(28px, 3.4vw, 46px)  / 1.08  / -0.02em    500
 h3        22px                      / 1.25  / -0.01em    500
-body      17px                      / 1.55                400   vx-100
+body      17px                      / 1.55                400   vx-900 on the canvas, vx-100 in viewports
 small     14px                      / 1.5                 400
 mono      13–14px, tabular-nums; stat figures 40–56px mono 400
 wordmark  VERTEX, 14px, 500, tracking 0.2em (the only tracked/uppercase text on the site)
@@ -48,14 +78,14 @@ Sentence case everywhere. No eyebrows. No arrows on links. Line length ≤ 72ch.
 
 ## 3. Layout
 
-- One in-flow `sheet` wrapper, inset by `--inset` from the viewport, hairline vx-600 at 45%. The canvas continues behind it.
+- One in-flow `sheet` wrapper, inset by `--inset` (24px desktop, 10px mobile) from the viewport, 16px radius, hairline vx-400 at 45%. The canvas continues behind it.
 - Nav is sticky at `top: var(--inset)` inside the sheet: wordmark left, five links, one outlined button.
-- Sections are separated by hairline rules, not by background bands. No cards; lists are ruled rows.
+- Sections are separated by vx-400 hairline rules on the light canvas. Dark vx-800 cards (12px) hold anything that is a drawing, a graph or a verdict; everything else is ruled rows.
 - Product demos live in `<DemoFrame>`: vx-800 surface, hairline frame, 16:10, corner registration marks, a labelled placeholder until a recording exists. Interactive scenes (Find, Make) render inside it.
 
 ## 4. The dimension line (`<Dim>`)
 
-1px dotted `#F0A868` (`stroke-dasharray 1 2`, `shape-rendering: crispEdges`, half-pixel aligned), open arrowheads 7px long at 30°, short vx-600 extension ticks, label in mono in a gap at the midpoint. Two modes: fixed `label`, or `measure` — a ResizeObserver reads the real box of a target and the label is the live pixel value.
+1px dotted line (`stroke-dasharray 1 2`, `shape-rendering: crispEdges`, half-pixel aligned) in `#8F4A14` on the light canvas or `#F0A868` inside a dark viewport, open arrowheads 7px long at 30°, short extension ticks, label in mono in a gap at the midpoint. Two modes: fixed `label`, or `measure` — a ResizeObserver reads the real box of a target and the label is the live pixel value.
 
 Uses on the homepage (six):
 
@@ -85,7 +115,7 @@ Lenis for smoothing. GSAP ScrollTrigger, `scrub: 1`, on every scroll-driven effe
 ### Homepage (desktop)
 
 ```
-┌─ sheet (inset 48px, hairline) ────────────────────────────────────────────────┐
+┌─ sheet (inset 24px, 16px radius, hairline) ────────────────────────────────────────────────┐
 │ VERTEX          Product  How it works  Security  Diagnostic  About  [Book a diagnostic]
 │                                                                                │
 │  Your drawings already know the answer.          ┌──────────────────────────┐ │

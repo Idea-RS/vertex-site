@@ -2,6 +2,8 @@
 
 Fully static Next.js (App Router) site. No server, no third-party scripts, no external fonts, no analytics.
 
+Light canvas (vx-100), blue as the material: every drawing viewport and card is vx-800 with vx-100 linework. Radii encode hierarchy (16 / 12 / 8 / 6 px). Contrast table lives in `docs/design-plan.md`.
+
 ```
 npm install
 npm run dev        # http://localhost:3000

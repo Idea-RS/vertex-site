@@ -32,22 +32,22 @@ const rows = [
 
 export function DeploySplit() {
   return (
-    <div className="border-y border-vx-600">
-      <div className="hidden grid-cols-12 gap-6 border-b border-vx-600 py-4 lg:grid">
+    <div className="border-y border-vx-400">
+      <div className="hidden grid-cols-12 gap-6 border-b border-vx-400 py-4 lg:grid">
         <div className="col-span-4" />
-        <div className="col-span-4 text-h3 text-vx-100">Cloud</div>
-        <div className="col-span-4 text-h3 text-vx-100">On-prem</div>
+        <div className="col-span-4 text-h3 text-vx-900">Cloud</div>
+        <div className="col-span-4 text-h3 text-vx-900">On-prem</div>
       </div>
-      <dl className="divide-y divide-vx-600">
+      <dl className="divide-y divide-vx-400">
         {rows.map((r) => (
           <div key={r.label} className="grid gap-3 py-5 lg:grid-cols-12 lg:gap-6">
-            <dt className="text-small text-vx-400 lg:col-span-4">{r.label}</dt>
-            <dd className="text-body text-vx-100 lg:col-span-4">
-              <span className="mr-3 text-small text-vx-400 lg:hidden">Cloud</span>
+            <dt className="text-small text-vx-600 lg:col-span-4">{r.label}</dt>
+            <dd className="text-body text-vx-900 lg:col-span-4">
+              <span className="mr-3 text-small text-vx-600 lg:hidden">Cloud</span>
               {r.cloud}
             </dd>
-            <dd className="text-body text-vx-100 lg:col-span-4">
-              <span className="mr-3 text-small text-vx-400 lg:hidden">On-prem</span>
+            <dd className="text-body text-vx-900 lg:col-span-4">
+              <span className="mr-3 text-small text-vx-600 lg:hidden">On-prem</span>
               {r.onprem}
             </dd>
           </div>

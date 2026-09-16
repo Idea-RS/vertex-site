@@ -5,13 +5,14 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 /**
  * The dimension line. Vertex's one decoration.
  *
- * A 1px dotted orange line with open arrowheads at both ends, short vx-600
- * extension ticks, and a number in a gap at the midpoint. It measures a real
- * thing: pass `measure` (a ref to any element) and the label is that element's
- * live pixel size; pass `label` to state a value you know is true.
+ * A 1px dotted line with open arrowheads at both ends, short extension ticks,
+ * and a number in a gap at the midpoint. It measures a real thing: pass
+ * `measure` (a ref to any element) and the label is that element's live pixel
+ * size; pass `label` to state a value you know is true.
  *
- * Horizontal by default. `axis="y"` measures height; the label reads bottom-to-top
- * as it does on a drawing.
+ * Two tones. "light" (default) is drawn on the vx-100 canvas in the deep
+ * dimension orange (#8F4A14, 5.1:1 on vx-100). "dark" is drawn inside a dark
+ * viewport in the bright orange (#F0A868, 7.6:1 on vx-800).
  */
 export function Dim({
   axis = "x",
@@ -19,12 +20,14 @@ export function Dim({
   measure,
   className = "",
   ticks = true,
+  tone = "light",
 }: {
   axis?: "x" | "y";
   label?: string;
   measure?: RefObject<HTMLElement | null>;
   className?: string;
   ticks?: boolean;
+  tone?: "light" | "dark";
 }) {
   const wrap = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(0);
@@ -59,8 +62,9 @@ export function Dim({
         ? { height: T, width: "100%" }
         : { width: T, height: "100%" };
 
-  const orange = "#F0A868";
-  const rule = "#415A77";
+  const orange = tone === "dark" ? "#F0A868" : "#8F4A14";
+  const rule = tone === "dark" ? "#415A77" : "#778DA9";
+  const textStyle = { fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" as const };
 
   return (
     <div ref={wrap} className={`relative block ${className}`} style={style} aria-hidden="true">
@@ -85,14 +89,7 @@ export function Dim({
             <polyline points={`${size - 8},8.5 ${size - 1.5},12.5 ${size - 8},16.5`} strokeLinejoin="miter" />
           </g>
           {text && (
-            <text
-              x={mid}
-              y={fits ? 16.5 : 7}
-              textAnchor="middle"
-              fill={orange}
-              fontSize="12"
-              style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}
-            >
+            <text x={mid} y={fits ? 16.5 : 7} textAnchor="middle" fill={orange} fontSize="12" style={textStyle}>
               {text}
             </text>
           )}
@@ -119,13 +116,7 @@ export function Dim({
             <polyline points={`8.5,${size - 8} 12.5,${size - 1.5} 16.5,${size - 8}`} strokeLinejoin="miter" />
           </g>
           {text && (
-            <text
-              transform={`translate(${fits ? 16.5 : 4} ${mid}) rotate(-90)`}
-              textAnchor="middle"
-              fill={orange}
-              fontSize="12"
-              style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}
-            >
+            <text transform={`translate(${fits ? 16.5 : 4} ${mid}) rotate(-90)`} textAnchor="middle" fill={orange} fontSize="12" style={textStyle}>
               {text}
             </text>
           )}

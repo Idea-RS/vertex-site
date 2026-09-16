@@ -49,22 +49,22 @@ export default function SecurityPage() {
       </Block>
 
       <Block title="What Vertex can see">
-        <dl className="divide-y divide-vx-600 border-y border-vx-600">
+        <dl className="divide-y divide-vx-400 border-y border-vx-400">
           <div className="grid gap-2 py-4 sm:grid-cols-[8rem_1fr]">
-            <dt className="text-small text-vx-400">Cloud</dt>
-            <dd className="max-w-[60ch] text-body text-vx-100">
+            <dt className="text-small text-vx-600">Cloud</dt>
+            <dd className="max-w-[60ch] text-body text-vx-900">
               The drawings in your tenant, to run the product for you. Nothing is used for anything else.
             </dd>
           </div>
           <div className="grid gap-2 py-4 sm:grid-cols-[8rem_1fr]">
-            <dt className="text-small text-vx-400">On-prem</dt>
-            <dd className="max-w-[60ch] text-body text-vx-100">Nothing. There is no way in, by design.</dd>
+            <dt className="text-small text-vx-600">On-prem</dt>
+            <dd className="max-w-[60ch] text-body text-vx-900">Nothing. There is no way in, by design.</dd>
           </div>
         </dl>
       </Block>
 
       <Block title="This website">
-        <p className="max-w-[60ch] text-body text-vx-100">
+        <p className="max-w-[60ch] text-body text-vx-900">
           The marketing site holds itself to the same rule. No third-party scripts, no analytics, no external fonts, no
           cookies. It is a folder of static files. Open your browser&apos;s network panel and check.
         </p>

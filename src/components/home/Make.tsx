@@ -51,8 +51,8 @@ export default function Make() {
       gsap.set(checked, { opacity: 0 });
       gsap.set(verdictPass, { opacity: 0 });
       gsap.set(verdictPending, { opacity: 1 });
-      gsap.set(stepEls, { color: "#778DA9" });
-      gsap.set(stepEls[0], { color: "#E0E1DD" });
+      gsap.set(stepEls, { color: "#415A77" });
+      gsap.set(stepEls[0], { color: "#0D1B2A" });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -65,7 +65,7 @@ export default function Make() {
         },
       });
       const activate = (i: number, at: number) => {
-        stepEls.forEach((el, k) => tl.to(el, { color: k === i ? "#E0E1DD" : "#778DA9", duration: 0.04 }, at));
+        stepEls.forEach((el, k) => tl.to(el, { color: k === i ? "#0D1B2A" : "#415A77", duration: 0.04 }, at));
       };
       // 1. pick a row
       tl.to(marker, { y: ROW_H * TO, duration: 0.16, ease: "power2.inOut" }, 0.04);
@@ -99,12 +99,12 @@ export default function Make() {
           />
           <ol className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 lg:w-[46%]">
             {steps.map((s, i) => (
-              <li key={s.title} className="border-t border-vx-600 pt-3">
+              <li key={s.title} className="border-t border-vx-400 pt-3">
                 <div className="flex items-baseline gap-2" data-step>
                   <span className="mono text-micro">{i + 1}</span>
                   <span className="text-small font-medium">{s.title}</span>
                 </div>
-                <p className="mt-1 hidden text-micro text-vx-400 xl:block">{s.body}</p>
+                <p className="mt-1 hidden text-micro text-vx-600 xl:block">{s.body}</p>
               </li>
             ))}
           </ol>
@@ -117,14 +117,14 @@ export default function Make() {
                 id="make"
                 row={TO}
                 prevRow={FROM}
-                checkedBy="A.M.P."
+                checkedBy="S.M."
                 watermark
-                label={`Generated variant of drawing EEI-3057 at row ${VARIANT_ROWS[TO].size}: outer diameter ${VARIANT_ROWS[TO].a}, PCD ${VARIANT_ROWS[TO].b}, bore ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes. Checked by A.M.P.`}
+                label={`Generated variant of drawing DRG-4120 at row ${VARIANT_ROWS[TO].size}: outer diameter ${VARIANT_ROWS[TO].a}, PCD ${VARIANT_ROWS[TO].b}, bore ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes. Checked by S.M.`}
               />
             </div>
           </div>
           {/* verdict */}
-          <div className="absolute bottom-3 left-3 rounded-sm border border-vx-600 bg-vx-900 px-3 py-2 sm:bottom-6 sm:left-6 sm:px-4 sm:py-3">
+          <div className="absolute bottom-3 left-3 rounded-md border border-vx-600 bg-vx-900 px-3 py-2 sm:bottom-6 sm:left-6 sm:px-4 sm:py-3">
             <div className="relative">
               <div className="flex items-baseline gap-3 sm:gap-4" data-verdict="pass">
                 <span className="mono text-body text-vx-100 sm:text-h3">PASS</span>

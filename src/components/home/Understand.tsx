@@ -20,14 +20,14 @@ const sans = { fontFamily: "var(--font-sans)" } as const;
 
 type Node = { id: string; x: number; y: number; label: string; kind?: "focus" | "superseded" | "isolated" };
 const nodes: Node[] = [
-  { id: "asm", x: 300, y: 40, label: "EEI-3000" },
-  { id: "a", x: 120, y: 160, label: "EEI-3057", kind: "focus" },
-  { id: "b", x: 300, y: 160, label: "EEI-3061" },
-  { id: "c", x: 480, y: 160, label: "EEI-3102" },
-  { id: "a1", x: 40, y: 290, label: "EEI-2210" },
-  { id: "a2", x: 200, y: 290, label: "EEI-2214" },
-  { id: "c1", x: 480, y: 290, label: "EEI-2988 A", kind: "superseded" },
-  { id: "c1b", x: 620, y: 290, label: "EEI-2988 B" },
+  { id: "asm", x: 300, y: 40, label: "DRG-3900" },
+  { id: "a", x: 120, y: 160, label: "DRG-4120", kind: "focus" },
+  { id: "b", x: 300, y: 160, label: "DRG-4127" },
+  { id: "c", x: 480, y: 160, label: "DRG-4150" },
+  { id: "a1", x: 40, y: 290, label: "DRG-2210" },
+  { id: "a2", x: 200, y: 290, label: "DRG-2214" },
+  { id: "c1", x: 480, y: 290, label: "DRG-2988-R1", kind: "superseded" },
+  { id: "c1b", x: 620, y: 290, label: "DRG-2988-R2" },
 ];
 const edges: [string, string, "solid" | "stale"][] = [
   ["asm", "a", "solid"],
@@ -77,36 +77,36 @@ export default function Understand() {
             title="Understand what depends on what."
             lede={
               <>
-                Every drawing that contains another becomes an edge in a graph. On the design partner&apos;s archive
-                there were {archive.containmentEdgesLabel} of them. The graph is where the expensive surprises live.
+                Every drawing that contains another becomes an edge in a graph. On one manufacturer&apos;s archive
+                there were over 50,000 of them. The graph is where the expensive surprises live.
               </>
             }
           />
-          <dl className="mt-10 divide-y divide-vx-600 border-y border-vx-600">
+          <dl className="mt-10 divide-y divide-vx-400 border-y border-vx-400">
             <div className="grid grid-cols-[7rem_1fr] items-baseline gap-4 py-4">
-              <dt className="mono text-h3 text-vx-100">{archive.containmentEdgesLabel}</dt>
-              <dd className="text-small text-vx-400">containment edges in one archive</dd>
+              <dt className="mono text-h3 text-vx-900">{archive.containmentEdgesLabel}</dt>
+              <dd className="text-small text-vx-600">assembly relationships in one archive</dd>
             </div>
             <div className="grid grid-cols-[7rem_1fr] items-baseline gap-4 py-4">
-              <dt className="mono text-h3 text-vx-100">{archive.isolatedLabel}</dt>
-              <dd className="text-small text-vx-400">of drawings connected to nothing</dd>
+              <dt className="mono text-h3 text-vx-900">{archive.isolatedLabel}</dt>
+              <dd className="text-small text-vx-600">of drawings connected to nothing</dd>
             </div>
             <div className="grid grid-cols-[7rem_1fr] items-baseline gap-4 py-4">
-              <dt className="mono text-h3 text-vx-100">{archive.bomSupersededLabel}</dt>
-              <dd className="text-small text-vx-400">of BOM references point at a superseded drawing</dd>
+              <dt className="mono text-h3 text-vx-900">{archive.bomSupersededLabel}</dt>
+              <dd className="text-small text-vx-600">of BOM references point at a superseded drawing</dd>
             </div>
           </dl>
 
           <div className="mt-10">
-            <p className="text-small text-vx-400">Bill-of-material references</p>
+            <p className="text-small text-vx-600">Bill-of-material references</p>
             <div className="relative mt-8">
               <div className="absolute left-0 top-[-28px]" style={{ width: `${archive.bomSuperseded * 100}%` }}>
                 <Dim label={archive.bomSupersededLabel} />
               </div>
-              <div className="h-3 w-full border border-vx-600">
-                <div ref={seg} className="h-full bg-vx-400" style={{ width: `${archive.bomSuperseded * 100}%` }} />
+              <div className="h-3 w-full rounded-xs border border-vx-400">
+                <div ref={seg} className="h-full rounded-xs bg-vx-600" style={{ width: `${archive.bomSuperseded * 100}%` }} />
               </div>
-              <div className="mt-2 flex justify-between text-micro text-vx-400">
+              <div className="mt-2 flex justify-between text-micro text-vx-600">
                 <span>point at a superseded revision</span>
                 <span>current</span>
               </div>
@@ -115,11 +115,12 @@ export default function Understand() {
         </div>
 
         <div className="lg:col-span-7">
+          <div className="rounded-md bg-vx-800 p-4 sm:p-6">
           <svg
             viewBox="0 0 760 460"
             className="block h-auto w-full"
             role="img"
-            aria-label="A containment graph. Assembly EEI-3000 contains EEI-3057, EEI-3061 and EEI-3102. EEI-3057 contains EEI-2210 and EEI-2214. EEI-3102 still references EEI-2988 revision A, which has been superseded by revision B. A cluster of drawings at the right connect to nothing."
+            aria-label="A containment graph. Assembly DRG-3900 contains DRG-4120, DRG-4127 and DRG-4150. DRG-4120 contains DRG-2210 and DRG-2214. DRG-4150 still references DRG-2988 revision 1, which has been superseded by revision 2. A cluster of drawings at the right connect to nothing."
             fill="none"
           >
             {edges.map(([f, t, kind]) => {
@@ -154,7 +155,7 @@ export default function Understand() {
                     y={n.y - 13}
                     width={84}
                     height={26}
-                    fill="#0D1B2A"
+                    fill="#1B263B"
                     stroke={focus ? ink : stale ? dimInk : hair}
                     strokeWidth={focus ? 1.5 : 1}
                     vectorEffect="non-scaling-stroke"
@@ -179,6 +180,7 @@ export default function Understand() {
               connected to nothing
             </text>
           </svg>
+          </div>
         </div>
       </div>
     </section>

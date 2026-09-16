@@ -1,6 +1,7 @@
 /**
  * Everything on the site that is a claim lives here.
- * Every number below was measured on one real 6,926-drawing archive.
+ * Every number below was measured on one real manufacturer's archive of about 7,000 drawings.
+ * Counts that would only make sense with that customer named are rounded; product facts stay exact.
  * Do not add a statistic that wasn't.
  */
 
@@ -29,16 +30,17 @@ export const productNav = [
 ] as const;
 
 export const archive = {
-  drawings: 6926,
-  drawingsLabel: "6,926",
+  drawings: 7000,
+  drawingsLabel: "~7,000",
   searchP1: "91.9%",
-  duplicateCandidates: 961,
+  duplicateCandidates: 950,
+  duplicateCandidatesLabel: "950+",
   bomSuperseded: 0.28,
   bomSupersededLabel: "28%",
   isolated: 0.36,
   isolatedLabel: "36%",
-  containmentEdges: 53879,
-  containmentEdgesLabel: "53,879",
+  containmentEdges: 50000,
+  containmentEdgesLabel: "50,000+",
   nativeCadCost: "$0.00",
   familyMs: 9,
   familyHits: 10,
@@ -46,7 +48,7 @@ export const archive = {
 
 export const problemStats = [
   {
-    value: "961",
+    value: "950+",
     label: "duplicate candidates in one archive",
   },
   {
@@ -135,5 +137,5 @@ export const founders = [
 
 export const designPartner = {
   description:
-    "A precision-components manufacturer with a 6,926-drawing archive: native CAD and PDF, three decades of revisions.",
+    "A precision-components manufacturer with an archive of about 7,000 drawings: native CAD and PDF, three decades of revisions.",
 };

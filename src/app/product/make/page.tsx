@@ -43,14 +43,14 @@ export default function MakePage() {
 
       <section className="rule">
         <div className="container py-12 lg:py-20">
-          <ol className="grid gap-x-8 gap-y-8 border-t border-vx-600 sm:grid-cols-2 lg:grid-cols-4">
+          <ol className="grid gap-x-8 gap-y-8 border-t border-vx-400 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((s, i) => (
               <li key={s.title} className="pt-6">
                 <div className="flex items-baseline gap-3">
-                  <span className="mono text-small text-vx-400">{i + 1}</span>
-                  <h2 className="text-h3 text-vx-100">{s.title}</h2>
+                  <span className="mono text-small text-vx-600">{i + 1}</span>
+                  <h2 className="text-h3 text-vx-900">{s.title}</h2>
                 </div>
-                <p className="mt-3 max-w-[32ch] text-small text-vx-400">{s.body}</p>
+                <p className="mt-3 max-w-[32ch] text-small text-vx-600">{s.body}</p>
               </li>
             ))}
           </ol>
@@ -58,8 +58,8 @@ export default function MakePage() {
       </section>
 
       <Block title="What the gate checks">
-        <CoverageTray drawingNo="EEI-3057 · S4" />
-        <p className="mt-6 max-w-[60ch] text-small text-vx-400">
+        <CoverageTray drawingNo="DRG-4120 · S4" />
+        <p className="mt-6 max-w-[60ch] text-small text-vx-600">
           Every row of the tray is a rule that either ran or didn&apos;t. A check that couldn&apos;t run is never counted
           as a pass.
         </p>

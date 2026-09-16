@@ -8,7 +8,7 @@ export function ProductTabs() {
   const pathname = usePathname();
   return (
     <nav aria-label="Product" className="container">
-      <ul className="flex gap-8 border-b border-vx-600">
+      <ul className="flex gap-8 border-b border-vx-400">
         {productNav.map((p) => {
           const active = pathname.startsWith(p.href);
           return (
@@ -17,7 +17,7 @@ export function ProductTabs() {
                 href={p.href}
                 aria-current={active ? "page" : undefined}
                 className={`block border-b py-4 text-small transition-colors duration-150 ${
-                  active ? "border-vx-100 text-vx-100" : "border-transparent text-vx-400 hover:text-vx-100"
+                  active ? "border-vx-100 text-vx-900" : "border-transparent text-vx-600 hover:text-vx-900"
                 }`}
               >
                 {p.label}

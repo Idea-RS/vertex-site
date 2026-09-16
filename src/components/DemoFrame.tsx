@@ -26,7 +26,7 @@ export function DemoFrame({
   return (
     <div
       ref={frameRef}
-      className={`relative w-full overflow-hidden rounded-sm border border-vx-600 bg-vx-800 ${fitHeight ? "mx-auto" : ""} ${className}`}
+      className={`relative w-full overflow-hidden rounded-lg border border-vx-400/60 bg-vx-800 ${fitHeight ? "mx-auto" : ""} ${className}`}
       style={{
         aspectRatio: ratio,
         width: fitHeight ? `min(100%, calc(${fitHeight} * 1.6))` : undefined,
@@ -55,11 +55,6 @@ export function DemoFrame({
 function Placeholder({ label }: { label: string }) {
   return (
     <div className="absolute inset-0" aria-label={`${label}: recording pending`} role="img">
-      {/* Registration marks, like the centring marks on a drawing sheet */}
-      <Mark className="left-3 top-3" />
-      <Mark className="right-3 top-3 rotate-90" />
-      <Mark className="bottom-3 right-3 rotate-180" />
-      <Mark className="bottom-3 left-3 -rotate-90" />
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center">
         <span className="mono text-small text-vx-100">{label}</span>
         <span className="text-small text-muted-raised">Recording pending. This frame is reserved for it.</span>
@@ -68,10 +63,3 @@ function Placeholder({ label }: { label: string }) {
   );
 }
 
-function Mark({ className }: { className: string }) {
-  return (
-    <svg className={`absolute h-3 w-3 ${className}`} viewBox="0 0 12 12" aria-hidden="true">
-      <path d="M0.5 12V0.5H12" fill="none" stroke="#415A77" strokeWidth="1" />
-    </svg>
-  );
-}

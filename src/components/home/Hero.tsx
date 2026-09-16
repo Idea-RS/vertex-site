@@ -74,7 +74,7 @@ export default function Hero() {
       });
 
       // 0 → 1: tilt and separate, each plane 80ms behind the last
-      tl.to(stack, { rotateX: 42, rotateZ: -8, scale: 0.8, x: "-7%", duration: 1, ease: "power2.out" }, 0);
+      tl.to(stack, { rotateX: 42, rotateZ: -8, scale: 0.7, x: "-6%", y: "-6%", duration: 1, ease: "power2.out" }, 0);
       layers.forEach((layer, i) => {
         tl.to(
           layer,
@@ -98,7 +98,7 @@ export default function Hero() {
       layers.forEach((layer, i) => {
         tl.to(layer, { z: 0, filter: "blur(0px)", opacity: 1, duration: 1, ease: "power2.inOut" }, BACK + (4 - i) * lag);
       });
-      tl.to(stack, { rotateX: 0, rotateZ: 0, scale: 1, x: "0%", duration: 1, ease: "power2.inOut" }, BACK + 0.2);
+      tl.to(stack, { rotateX: 0, rotateZ: 0, scale: 1, x: "0%", y: "0%", duration: 1, ease: "power2.inOut" }, BACK + 0.2);
 
       // Put each label beside its plane's projected position at full separation.
       const placeLabels = () => {
@@ -147,7 +147,7 @@ export default function Hero() {
             Your drawings already know the answer.
           </h1>
           <Dim measure={h1} className="mt-3" />
-          <p className="mt-6 max-w-[46ch] text-body text-vx-400">
+          <p className="mt-6 max-w-[46ch] text-body text-vx-600">
             Vertex reads every drawing in your archive exactly, finds any part in milliseconds,
             checks what can be checked, and says what it couldn&apos;t. Cloud, or fully offline
             behind your firewall.
@@ -160,7 +160,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="relative lg:col-span-7" data-hero-stage style={{ perspective: "1600px" }}>
+        <div className="relative overflow-hidden rounded-lg bg-vx-800 p-4 sm:p-6 lg:col-span-7" data-hero-stage style={{ perspective: "1600px" }}>
           <p className="sr-only">
             An engineering drawing of a flanged bearing housing: front view, section A–A, a variant
             table, and an anonymised title block. As you scroll, the sheet separates into its
@@ -181,12 +181,12 @@ export default function Hero() {
             ))}
           </div>
           <ul
-            className="pointer-events-none absolute inset-y-0 right-0 hidden opacity-0 lg:block"
+            className="pointer-events-none absolute inset-y-0 right-4 hidden opacity-0 lg:block"
             data-hero-labels
             aria-hidden="true"
           >
             {ALL_PLANES.map((p) => (
-              <li key={p} className="absolute right-0 flex items-center gap-3 whitespace-nowrap text-small text-vx-400" data-label={p}>
+              <li key={p} className="absolute right-0 flex items-center gap-3 whitespace-nowrap text-small text-muted-raised" data-label={p}>
                 <span className="block h-px w-10 bg-vx-600" />
                 {PLANE_LABELS[p]}
               </li>

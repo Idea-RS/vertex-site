@@ -26,7 +26,7 @@ const HITS = archive.familyHits;
 type Thumb = { x: number; y: number; hit: boolean; r: number; s: number };
 
 function buildLayers(): Thumb[][] {
-  const rand = mulberry32(6926);
+  const rand = mulberry32(4120);
   return LAYER_Z.map((_, li) => {
     const count = li === 0 ? 16 : 30 + li * 6;
     const thumbs: Thumb[] = [];
@@ -123,8 +123,8 @@ export default function Find() {
           title="Find any part in milliseconds."
           lede={
             <>
-              By drawing number, by words, by dimensions, or by dropping a file. Vertex searched the design partner&apos;s
-              6,926-drawing archive with a precision at one of {archive.searchP1}. It finds a family in {archive.familyMs} ms.
+              By drawing number, by words, by dimensions, or by dropping a file. Vertex searched one manufacturer&apos;s
+              archive of about 7,000 drawings with a precision at one of {archive.searchP1}. It finds a family in {archive.familyMs} ms.
             </>
           }
         />
@@ -156,13 +156,13 @@ export default function Find() {
           </div>
 
           {/* the query and its answer */}
-          <div className="absolute bottom-4 left-4 w-[min(360px,calc(100%-2rem))] rounded-sm border border-vx-600 bg-vx-900 p-4 sm:bottom-6 sm:left-6">
+          <div className="absolute bottom-4 left-4 w-[min(360px,calc(100%-2rem))] rounded-md border border-vx-600 bg-vx-900 p-4 sm:bottom-6 sm:left-6">
             <div className="flex items-baseline justify-between gap-4" data-query>
               <span className="mono text-body text-vx-100">Ø31.77 flange housing</span>
               <span className="text-micro text-vx-400">query</span>
             </div>
             <div className="mt-3">
-              <Dim label={`${archive.familyMs} ms`} />
+              <Dim label={`${archive.familyMs} ms`} tone="dark" />
             </div>
             <div className="mt-3" data-results>
               <div className="flex items-baseline justify-between">
@@ -171,9 +171,9 @@ export default function Find() {
               </div>
               <ul className="mt-2 divide-y divide-vx-600/60 border-t border-vx-600/60">
                 {[
-                  ["EEI-3057", "Bearing housing, flanged"],
-                  ["EEI-3061", "Bearing housing, flanged, long hub"],
-                  ["EEI-3104", "Bearing housing, flanged, sealed"],
+                  ["DRG-4120", "Flanged housing"],
+                  ["DRG-4127", "Flanged housing, long hub"],
+                  ["DRG-4133", "Flanged housing, sealed"],
                 ].map(([no, name]) => (
                   <li key={no} className="flex items-baseline gap-3 py-2 text-small" data-row>
                     <span className="mono shrink-0 text-vx-400">{no}</span>

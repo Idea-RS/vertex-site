@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 /**
- * A flanged bearing housing, drawn as an engineering sheet.
+ * A flanged housing, drawn as an engineering sheet.
  * Five planes, each its own <g data-plane>, so the hero can separate them
  * and the Make scene can address parts of the drawing.
  *
@@ -44,6 +44,10 @@ const ink = "var(--color-vx-100)";
 const dimInk = "var(--color-vx-400)";
 const hair = "var(--color-vx-600)";
 
+/** Every computed coordinate goes through this before it reaches the markup,
+ *  so server and client stringify identically (no 349.00000000000006 vs 349). */
+const rd = (n: number) => Math.round(n * 100) / 100;
+
 const monoStyle: CSSProperties = { fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" };
 const sansStyle: CSSProperties = { fontFamily: "var(--font-sans)" };
 
@@ -68,8 +72,8 @@ export function Sheet({
   watermark = false,
   className = "",
   id = "sheet",
-  label = "Engineering drawing of a flanged bearing housing, front view and section A–A, with variant table and anonymised title block",
-  drawingNo = "EEI-3057",
+  label = "Engineering drawing of a flanged housing, front view and section A–A, with variant table and anonymised title block",
+  drawingNo = "DRG-4120",
   decorative = false,
 }: Props) {
   const has = (p: Plane) => planes.includes(p);
@@ -182,7 +186,7 @@ function Border() {
 function Geometry({ hatchId }: { hatchId: string }) {
   const holes = [-90, -30, 30, 90, 150, 210].map((deg) => {
     const a = (deg * Math.PI) / 180;
-    return { x: C.x + R_PCD * Math.cos(a), y: C.y + R_PCD * Math.sin(a) };
+    return { x: rd(C.x + R_PCD * Math.cos(a)), y: rd(C.y + R_PCD * Math.sin(a)) };
   });
   const dashdot = "22 5 4 5";
   return (
@@ -258,7 +262,7 @@ function Arrow({ x, y, deg, size = 10 }: { x: number; y: number; deg: number; si
   const w = size * 0.27;
   const px = -Math.sin(a) * w;
   const py = Math.cos(a) * w;
-  return <polygon points={`${x},${y} ${bx + px},${by + py} ${bx - px},${by - py}`} />;
+  return <polygon points={`${rd(x)},${rd(y)} ${rd(bx + px)},${rd(by + py)} ${rd(bx - px)},${rd(by - py)}`} />;
 }
 
 function DimText({
@@ -297,14 +301,14 @@ function DimText({
 
 function Dimensions({ v, prev }: { v: VariantRow; prev?: VariantRow }) {
   const thin = { stroke: dimInk, strokeWidth: 1, vectorEffect: "non-scaling-stroke" as const };
-  const leaderFrom = (deg: number, r: number) => {
+  const leaderFrom = (deg: number, radius: number) => {
     const a = (deg * Math.PI) / 180;
-    return { x: C.x + r * Math.cos(a), y: C.y + r * Math.sin(a) };
+    return { x: rd(C.x + radius * Math.cos(a)), y: rd(C.y + radius * Math.sin(a)) };
   };
   const pcd = leaderFrom(-120, R_PCD);
   const holeA = (-30 * Math.PI) / 180;
   const holeC = { x: C.x + R_PCD * Math.cos(holeA), y: C.y + R_PCD * Math.sin(holeA) };
-  const hole = { x: holeC.x + R_HOLE * Math.cos(-Math.PI / 4), y: holeC.y + R_HOLE * Math.sin(-Math.PI / 4) };
+  const hole = { x: rd(holeC.x + R_HOLE * Math.cos(-Math.PI / 4)), y: rd(holeC.y + R_HOLE * Math.sin(-Math.PI / 4)) };
   const arcR = 228;
   const a0 = leaderFrom(-90, arcR);
   const a1 = leaderFrom(-30, arcR);
@@ -521,17 +525,17 @@ function TitleBlock({ checkedBy, drawingNo }: { checkedBy: string; drawingNo: st
         <rect x={x0 + 12} y={y0 + 14} width={152} height={13} />
         <rect x={x0 + 12} y={y0 + 33} width={196} height={8} />
       </g>
-      <Cell x={x0 + q * 2} y={y0} w={q * 2} h={r1} label="Title" value="Bearing housing, flanged" mono={false} />
+      <Cell x={x0 + q * 2} y={y0} w={q * 2} h={r1} label="Title" value="Flanged housing" mono={false} />
 
       {/* row 2 */}
       <Cell x={x0} y={y0 + r1} w={q} h={r2} label="Drawing no." value={drawingNo} name="drawingNo" />
-      <Cell x={x0 + q} y={y0 + r1} w={q} h={r2} label="Rev" value="B" />
+      <Cell x={x0 + q} y={y0 + r1} w={q} h={r2} label="Rev" value="R2" />
       <Cell x={x0 + q * 2} y={y0 + r1} w={q} h={r2} label="Scale" value="1:2" />
       <Cell x={x0 + q * 3} y={y0 + r1} w={q} h={r2} label="Sheet" value="1/1" />
 
       {/* row 3 */}
-      <Cell x={x0} y={y0 + r1 + r2} w={q} h={r3} label="Drawn" value="A.M.P." />
-      <Cell x={x0 + q} y={y0 + r1 + r2} w={q} h={r3} label="Date" value="16.09.26" />
+      <Cell x={x0} y={y0 + r1 + r2} w={q} h={r3} label="Drawn" value="R.K." />
+      <Cell x={x0 + q} y={y0 + r1 + r2} w={q} h={r3} label="Date" value="2026-09-16" />
       <Cell x={x0 + q * 2} y={y0 + r1 + r2} w={q} h={r3} label="Checked" value={checkedBy} name="checkedBy" />
       <Cell x={x0 + q * 3} y={y0 + r1 + r2} w={q} h={r3} label="Material" value="EN-GJL-250" />
 

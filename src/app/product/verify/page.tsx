@@ -36,15 +36,15 @@ export default function VerifyPage() {
       </Block>
 
       <Block title="Three outcomes, not two">
-        <dl className="divide-y divide-vx-600 border-y border-vx-600">
+        <dl className="divide-y divide-vx-400 border-y border-vx-400">
           {[
             ["Checked", "The rule ran against exact or inferred data and reports a result."],
             ["Failed", "The rule ran and the sheet doesn't satisfy it. The verdict names the rule and the values."],
             ["Not checked", "The rule couldn't run. No native data, a scan below the resolution floor, a field that isn't on this sheet. The reason is stated, and it counts against nothing."],
           ].map(([term, def]) => (
             <div key={term} className="grid gap-2 py-4 sm:grid-cols-[9rem_1fr]">
-              <dt className="mono text-small text-vx-100">{term}</dt>
-              <dd className="max-w-[58ch] text-body text-vx-100">{def}</dd>
+              <dt className="mono text-small text-vx-900">{term}</dt>
+              <dd className="max-w-[58ch] text-body text-vx-900">{def}</dd>
             </div>
           ))}
         </dl>

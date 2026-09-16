@@ -13,7 +13,7 @@ export default function Deploy() {
         <div className="mt-12">
           <DeploySplit />
         </div>
-        <p className="mt-8 text-small text-vx-400">
+        <p className="mt-8 text-small text-vx-600">
           <Link href="/security/" className="link">
             What leaves your network, and what never does
           </Link>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const ways = [
-  { title: "By drawing number", body: "EEI-3057, or a fragment of it. Old numbering schemes and new ones, side by side." },
+  { title: "By drawing number", body: "DRG-4120, or a fragment of it. Old numbering schemes and new ones, side by side." },
   { title: "By words", body: "“Flanged housing”, in the language of your own title blocks and notes." },
   {
     title: "By dimensions",
@@ -44,11 +44,11 @@ export default function FindPage() {
       </section>
 
       <Block title="Four ways in">
-        <div className="grid gap-x-8 border-t border-vx-600 sm:grid-cols-2">
+        <div className="grid gap-x-8 border-t border-vx-400 sm:grid-cols-2">
           {ways.map((w) => (
-            <div key={w.title} className="border-b border-vx-600 py-5">
-              <h3 className="text-h3 text-vx-100">{w.title}</h3>
-              <p className="mt-2 max-w-[34ch] text-small text-vx-400">{w.body}</p>
+            <div key={w.title} className="border-b border-vx-400 py-5">
+              <h3 className="text-h3 text-vx-900">{w.title}</h3>
+              <p className="mt-2 max-w-[34ch] text-small text-vx-600">{w.body}</p>
             </div>
           ))}
         </div>
