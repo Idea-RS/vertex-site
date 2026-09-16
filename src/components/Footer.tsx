@@ -52,7 +52,6 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 flex flex-col gap-2 border-t border-vx-400/50 pt-6 text-micro text-vx-600 sm:flex-row sm:justify-between">
-          <p>Nothing on this site phones home. No third-party scripts, no analytics, no external fonts.</p>
           <p className="mono">© {new Date().getFullYear()} Vertex</p>
         </div>
       </div>
