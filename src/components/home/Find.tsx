@@ -10,8 +10,9 @@ import { gsap, setupGsap, prefersReducedMotion } from "@/lib/motion";
 
 /**
  * Find, as a search you watch happen. Left, pinned: a column of real patent
- * drawing sheets. Once the section is on screen and the reader scrolls, the
- * column races upward on its own, at a constant rate with the vertical blur at
+ * drawing sheets, still while the reader takes in the section heading. Once
+ * that heading has scrolled up past the top of the viewport, the column races
+ * upward on its own, at a constant rate with the vertical blur at
  * full strength: a separate rAF loop, independent of scroll speed, so a slow
  * scroll never reads as lag. When step two reaches the centre band the column
  * decelerates onto the frame that holds the matches (about 600ms, ease-out,
@@ -109,12 +110,16 @@ export default function Find() {
       v: 0, // rows per second
       ramp: 0, // seconds into the start-up ramp
       want: false, // step two (or later) is the reader's position
+      park: false, // the heading came back into view while racing: come to rest, lift nothing
       inView: false,
       blur: -1,
       raf: 0,
       last: 0,
       d: { from: 0, dist: 0, dur: 0, k: 2, t: 0 },
     };
+    const heading = el.querySelector("h2");
+    // the reader is inside the section: the heading has gone up past the top of the viewport
+    const pastHeading = () => !heading || heading.getBoundingClientRect().bottom <= 0;
     const pitch = () => (outer.offsetHeight + GAP) / (LOOP_ROWS * 2);
     const draw = () => {
       const rows = (((REST_START / COLS + st.pos) % LOOP_ROWS) + LOOP_ROWS) % LOOP_ROWS;
@@ -138,6 +143,14 @@ export default function Find() {
       st.mode = "decel";
       return true;
     };
+    const rest = () => {
+      st.mode = "idle";
+      st.park = false;
+      st.pos = 0;
+      st.v = 0;
+      draw();
+      outer.style.willChange = "auto";
+    };
     const settle = () => {
       st.mode = "landed";
       st.pos = 0;
@@ -155,7 +168,7 @@ export default function Find() {
         st.ramp = Math.min(RAMP, st.ramp + dt);
         st.v = SPEED * Math.pow(st.ramp / RAMP, 2);
         st.pos += st.v * dt;
-        if (st.want && tryLand()) st.last = now;
+        if ((st.want || st.park) && tryLand()) st.last = now;
       } else if (st.mode === "decel") {
         const d = st.d;
         d.t += dt;
@@ -164,7 +177,7 @@ export default function Find() {
         const h1 = d.k + 2 * (3 - 2 * d.k) * u + 3 * (d.k - 2) * u * u;
         st.pos = d.from + d.dist * h;
         st.v = Math.max(0, (d.dist * h1) / d.dur);
-        if (u >= 1) return settle();
+        if (u >= 1) return st.want ? settle() : rest();
       }
       draw();
       if (st.mode === "racing" || st.mode === "decel") st.raf = requestAnimationFrame(frame);
@@ -176,6 +189,7 @@ export default function Find() {
       st.raf = requestAnimationFrame(frame);
     };
     const race = () => {
+      st.park = false;
       if (st.mode === "racing") return;
       // from rest, ramp up; from a deceleration, carry the speed it had
       st.ramp = st.mode === "decel" ? RAMP * Math.sqrt(Math.min(1, st.v / SPEED)) : 0;
@@ -191,8 +205,10 @@ export default function Find() {
           if (!st.inView && st.mode !== "landed") return settle(); // nobody is watching; arrive
           run();
         } else if (st.mode === "landed" || st.mode === "decel") {
-          if (st.inView) race();
+          if (st.inView && pastHeading()) race();
+          else if (st.inView && st.mode === "decel") st.park = true; // already slowing: let it come to rest
           else {
+            // landed with the heading back in view, or off screen: the column simply waits, still
             st.mode = "idle";
             setSettled(false);
           }
@@ -200,7 +216,15 @@ export default function Find() {
       },
     };
     const onScroll = () => {
-      if (st.inView && st.mode === "idle" && !st.want) race();
+      if (!st.inView || st.want) return;
+      if (st.mode === "idle") {
+        if (pastHeading()) race();
+      } else if (st.mode === "racing" && !st.park && !pastHeading()) {
+        st.park = true; // scrolled back up to the heading: the column slows onto its frame and waits
+        run();
+      } else if (st.park && pastHeading()) {
+        race(); // changed their mind before it stopped
+      }
     };
     const io = new IntersectionObserver(([e]) => {
       st.inView = e.isIntersecting;

@@ -142,10 +142,12 @@ export default function VerifyTimed() {
                         <span className={`transition-colors duration-[350ms] ${on ? "text-vx-900" : "text-vx-600"}`}>{r.title}</span>
                       </button>
                     </h3>
-                    {/* the progress line: only the active rule has one, and it goes when the rule completes */}
+                    {/* the progress line: only the active rule has one, and it goes when the rule completes.
+                        It sits inside its own row, 2px above the next rule's hairline and layered over it;
+                        placed on that hairline's pixel row, the next row's border painted over it. */}
                     {on && !still && (
-                      <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px" aria-hidden="true">
-                        <div ref={line} className="h-px origin-left bg-dim-deep" style={{ transform: "scaleX(0)" }} />
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[2px]" aria-hidden="true" data-progress>
+                        <div ref={line} className="h-full w-full origin-left bg-dim-deep" style={{ transform: "scaleX(0)" }} />
                       </div>
                     )}
                   </li>
