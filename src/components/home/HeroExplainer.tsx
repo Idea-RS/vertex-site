@@ -288,9 +288,13 @@ export default function HeroExplainer() {
           </div>
           {/* right: five steps */}
           <div className="lg:col-span-5">
-            <p className="max-w-[40ch] pb-10 pt-16 text-body text-vx-600 lg:pb-[30svh] lg:pt-[40svh]" data-intro>
-              Every sheet is five drawings in one. Vertex reads each on its own terms and reports what it found by zone.
-            </p>
+            <div className="max-w-[44ch] pb-10 pt-16 lg:pb-[30svh] lg:pt-[36svh]" data-intro>
+              <p className="mono text-small text-vx-600">US 2,529,098 · Pipe coupling · 1950 · public domain</p>
+              <p className="mt-4 text-body text-vx-900">
+                On screen: George A. Noll&apos;s coupling as a CAD sheet — the sealing ring in end view beside the section through the sleeve, dimensioned, tabulated and titled.
+              </p>
+              <p className="mt-3 text-body text-vx-600">Five layers make up this sheet. Each one is something Vertex reads.</p>
+            </div>
             <ol className="lg:pb-[35svh]">
               {PATENT_PLANES.map((p, i) => {
                 const d = planeDescriptions[p];

@@ -419,9 +419,8 @@ function TablesNotes() {
       <text x={x0} y={y0 - 10} fill={dimInk} fontSize="12" style={sans} className="fade">Variant table</text>
       {(() => { let cx = x0; return cols.map((c, i) => { const el = <Cell key={`h${i}`} x={cx} y={y0} w={c.w} h={rowH} text={c.h} align={c.a} muted />; cx += c.w; return el; }); })()}
       {VARIANTS.map((row, ri) => { let cx = x0; return cols.map((c, ci) => { const el = <Cell key={`${ri}-${ci}`} x={cx} y={y0 + rowH * (ri + 1)} w={c.w} h={rowH} text={row[ci]} align={c.a} />; cx += c.w; return el; }); })}
-      <rect x={x0} y={y0} width={totalW} height={rowH * (VARIANTS.length + 1)} stroke={ink} strokeWidth="1.25" vectorEffect="non-scaling-stroke" className="draw" pathLength={1} />
-      {/* what the explainer's bracket measures: the table and the notes together */}
-      <rect x={x0} y={y0 - 16} width={900} height={rowH * (VARIANTS.length + 1) + 16} fill="none" stroke="none" data-anchor data-bracket="below" />
+      {/* the bracket measures the variant table alone: it is what Vertex parses into variables */}
+      <rect x={x0} y={y0} width={totalW} height={rowH * (VARIANTS.length + 1)} stroke={ink} strokeWidth="1.25" vectorEffect="non-scaling-stroke" className="draw" pathLength={1} data-anchor data-bracket="below" />
       <g style={sans} className="fade">
         <text x={460} y={y0 - 10} fill={dimInk} fontSize="12">Notes</text>
         {["1. Break all sharp edges 0.5 max.", "2. Ring 13 seated dry; sleeve drawn up to 40 N·m.", "3. Ra 3.2 unless stated; bore Ø97.2 H9 Ra 1.6."].map((t, i) => (
