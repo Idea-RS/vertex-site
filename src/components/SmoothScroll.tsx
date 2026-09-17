@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import { gsap, ScrollTrigger, setupGsap, prefersReducedMotion } from "@/lib/motion";
+import { gsap, ScrollTrigger, setupGsap, prefersReducedMotion, setLenis } from "@/lib/motion";
 
 /**
  * Lenis drives the scroll; GSAP's ticker drives Lenis; ScrollTrigger listens to Lenis.
@@ -21,6 +21,7 @@ export default function SmoothScroll() {
     });
 
     lenis.on("scroll", ScrollTrigger.update);
+    setLenis(lenis);
     if (process.env.NODE_ENV !== "production") {
       (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
     }
@@ -30,6 +31,7 @@ export default function SmoothScroll() {
 
     // Anchor links go through Lenis so they stay smooth.
     const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented) return; // a component already handled its own anchor
       const a = (e.target as HTMLElement | null)?.closest?.("a[href^='#']") as HTMLAnchorElement | null;
       if (!a) return;
       const id = a.getAttribute("href");
@@ -47,6 +49,7 @@ export default function SmoothScroll() {
     return () => {
       document.removeEventListener("click", onClick);
       gsap.ticker.remove(tick);
+      setLenis(null);
       lenis.destroy();
     };
   }, []);

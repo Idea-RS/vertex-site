@@ -6,16 +6,18 @@ import { Bracket, StepScene, useActiveStep, useStaticLayout, type Step } from "@
 import { Dim } from "@/components/Dim";
 import { archive } from "@/content/site";
 import archiveImages from "@/content/archive-images.json";
-import { gsap, ScrollTrigger, setupGsap, prefersReducedMotion } from "@/lib/motion";
+import { gsap, setupGsap, prefersReducedMotion } from "@/lib/motion";
 
 /**
  * Find, as a search you watch happen. Left, pinned: a column of real patent
- * drawing sheets racing upward as the user scrolls: a small set tiled twice so
- * it reads as endless, with a vertical blur scaled to scroll velocity. As step
- * two lands, the column decelerates to rest (500ms ease-out) on the frame that
- * holds the matches, the blur clears, the three matches lift with a bracket and
- * everything else steps back. Steps three and four are unchanged. Phones and
- * reduced motion get the still 6 × 6 wall.
+ * drawing sheets. Once the section is on screen and the reader scrolls, the
+ * column races upward on its own, at a constant rate with the vertical blur at
+ * full strength: a separate rAF loop, independent of scroll speed, so a slow
+ * scroll never reads as lag. When step two reaches the centre band the column
+ * decelerates onto the frame that holds the matches (about 600ms, ease-out,
+ * the blur falling with the speed), and only then do the three matches lift.
+ * Steps three and four stay scroll-driven. The loop pauses off screen; phones
+ * and reduced motion keep the still 6 × 6 wall.
  */
 
 type ArchiveImage = { src: string; w: number; h: number; patent: string; title: string; year: number };
@@ -38,7 +40,10 @@ const LOOP = (() => {
   const passers = rest.slice(COLS * REST_ROWS - hits.length, COLS * REST_ROWS - hits.length + REST_START);
   return [...passers, ...resting.slice(0, COLS * REST_ROWS)];
 })();
-const TRAVEL_LOOPS = 5; // loops of the set that pass before the search lands
+const SPEED = 14; // rows per second while racing
+const RAMP = 0.25; // seconds to reach full speed
+const BLUR_MAX = 4; // px, vertical, at full speed
+const DECEL = { ideal: 0.6, min: 0.5, max: 0.68 }; // seconds; the landing picks the frame that fits
 const UNREADABLE = 2;
 const UNREADABLE_CELLS = [5, 30]; // indices within the resting frame
 
@@ -53,13 +58,20 @@ export default function Find() {
   const root = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const strip = useRef<HTMLDivElement>(null);
+  const stripInner = useRef<HTMLDivElement>(null);
   const blurEl = useRef<SVGFEGaussianBlurElement>(null);
+  const control = useRef<{ land: (want: boolean) => void } | null>(null);
   const isStatic = useStaticLayout();
   const active = useActiveStep(root, !isStatic);
   const idx = steps.findIndex((s) => s.key === active);
+  // Between steps (and past the last one) nothing is in the band; hold the last step rather than reverting.
+  const [lastIdx, setLastIdx] = useState(-1);
+  if (idx !== -1 && idx !== lastIdx) setLastIdx(idx);
+  const shown = idx === -1 ? lastIdx : idx;
   const [settled, setSettled] = useState(false);
-  const landed = idx >= 1;
+  const lifted = isStatic || (settled && shown >= 1);
 
+  // The query types itself over step one, driven by scroll as before, and finishes before step two.
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
@@ -67,53 +79,9 @@ export default function Find() {
       const mm = gsap.matchMedia();
       mm.add("(min-width: 1024px)", () => {
         const el = root.current!;
-        const stripEl = strip.current!;
         const queryStep = el.querySelector<HTMLElement>('[data-step="query"]')!;
         const matchStep = el.querySelector<HTMLElement>('[data-step="match"]')!;
         const typed = el.querySelector<HTMLElement>("[data-typed]")!;
-        const b = box.current!;
-        // the set is rendered twice; a row pitch is one tile plus the gap
-        const pitch = () => (stripEl.scrollHeight + GAP) / (LOOP_ROWS * 2);
-        const state = { travel: 0, extra: 0 };
-        const blur = { v: 0 }; // its own object, so the landing tween never overwrites it
-        const apply = () => {
-          const p = pitch();
-          const loopH = p * LOOP_ROWS;
-          const y = -(((REST_START / COLS) * p + state.travel + state.extra) % loopH);
-          stripEl.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
-        };
-        const blurTo = gsap.quickTo(blur, "v", {
-          duration: 0.35,
-          ease: "power2.out",
-          onUpdate: () => {
-            const v = blur.v;
-            blurEl.current?.setAttribute("stdDeviation", `0 ${v.toFixed(2)}`);
-            stripEl.style.filter = v > 0.15 ? "url(#find-vblur)" : "none";
-          },
-        });
-        let idle = 0;
-        apply();
-
-        // The column, driven by scroll from the section's pin to the second step.
-        const st = ScrollTrigger.create({
-          trigger: el,
-          start: "top 90px",
-          endTrigger: matchStep,
-          end: "center center",
-          scrub: 1,
-          onUpdate: (self) => {
-            state.travel = self.progress * TRAVEL_LOOPS * pitch() * LOOP_ROWS;
-            apply();
-            blurTo(Math.min(4, Math.abs(self.getVelocity()) / 350));
-            clearTimeout(idle);
-            idle = window.setTimeout(() => blurTo(0), 160);
-          },
-          onToggle: (self) => {
-            stripEl.style.willChange = self.isActive ? "transform, filter" : "auto";
-          },
-        });
-
-        // The query types itself over step one and finishes as the column lands.
         const typing = { n: 0 };
         gsap.to(typing, {
           n: QUERY.length,
@@ -123,45 +91,161 @@ export default function Find() {
             typed.textContent = QUERY.slice(0, Math.round(typing.n));
           },
         });
-
-        // Landing: the column decelerates onto the next resting frame. Release: it picks up again.
-        const land = () => {
-          st.disable(false);
-          const loopH = pitch() * LOOP_ROWS;
-          const target = Math.ceil((state.travel + 1) / loopH) * loopH;
-          gsap.to(state, { extra: target - state.travel, duration: 0.5, ease: "power2.out", overwrite: true, onUpdate: apply, onComplete: () => setSettled(true) });
-          blurTo(0);
-        };
-        const release = () => {
-          setSettled(false);
-          gsap.to(state, { extra: 0, duration: 0.5, ease: "power2.out", overwrite: true, onUpdate: apply, onComplete: () => st.enable() });
-        };
-        b.addEventListener("vx:land", land);
-        b.addEventListener("vx:release", release);
-        return () => {
-          clearTimeout(idle);
-          b.removeEventListener("vx:land", land);
-          b.removeEventListener("vx:release", release);
-        };
       });
       return () => mm.revert();
     },
     { scope: root },
   );
 
-  // Phase → the wall; landing and release → the column.
-  const wasLanded = useRef(false);
+  // The column: its own rAF loop. Positions are in rows so a resize never tears the frame.
   useEffect(() => {
-    const b = box.current;
-    if (!b) return;
-    b.dataset.phase = isStatic ? "honest" : idx < 1 ? "wall" : idx < 3 ? "result" : "honest";
     if (isStatic) return;
-    if (landed && !wasLanded.current) b.dispatchEvent(new Event("vx:land"));
-    if (!landed && wasLanded.current) b.dispatchEvent(new Event("vx:release"));
-    wasLanded.current = landed;
-  }, [idx, isStatic, landed]);
+    const el = root.current, outer = strip.current, inner = stripInner.current;
+    if (!el || !outer || !inner) return;
+    type Mode = "idle" | "racing" | "decel" | "landed";
+    const st = {
+      mode: "idle" as Mode,
+      pos: 0, // rows travelled; a multiple of LOOP_ROWS is the resting frame
+      v: 0, // rows per second
+      ramp: 0, // seconds into the start-up ramp
+      want: false, // step two (or later) is the reader's position
+      inView: false,
+      blur: -1,
+      raf: 0,
+      last: 0,
+      d: { from: 0, dist: 0, dur: 0, k: 2, t: 0 },
+    };
+    const pitch = () => (outer.offsetHeight + GAP) / (LOOP_ROWS * 2);
+    const draw = () => {
+      const rows = (((REST_START / COLS + st.pos) % LOOP_ROWS) + LOOP_ROWS) % LOOP_ROWS;
+      outer.style.transform = `translate3d(0, ${(-rows * pitch()).toFixed(2)}px, 0)`;
+      const b = Math.round(BLUR_MAX * Math.min(1, st.v / SPEED) * 20) / 20;
+      if (b !== st.blur) {
+        st.blur = b;
+        blurEl.current?.setAttribute("stdDeviation", `0 ${b}`);
+        inner.style.filter = b > 0.15 ? "url(#find-vblur)" : "none";
+      }
+    };
+    // Can the column land from here? Cubic Hermite from the current speed to rest, exactly on a resting frame.
+    const tryLand = () => {
+      if (st.v <= 0) return false;
+      const d = (LOOP_ROWS - (st.pos % LOOP_ROWS)) % LOOP_ROWS || LOOP_ROWS;
+      const lo = Math.max(DECEL.min, (1.5 * d) / st.v); // k ≥ 1.5: slowing from the first frame
+      const hi = Math.min(DECEL.max, (3 * d) / st.v); // k ≤ 3: never overshoots
+      if (lo > hi) return false;
+      const dur = Math.min(hi, Math.max(lo, DECEL.ideal));
+      st.d = { from: st.pos, dist: d, dur, k: (st.v * dur) / d, t: 0 };
+      st.mode = "decel";
+      return true;
+    };
+    const settle = () => {
+      st.mode = "landed";
+      st.pos = 0;
+      st.v = 0;
+      draw();
+      outer.style.willChange = "auto";
+      setSettled(true);
+    };
+    const frame = (now: number) => {
+      st.raf = 0;
+      if (!st.inView) return;
+      const dt = st.last ? Math.min(0.05, (now - st.last) / 1000) : 0;
+      st.last = now;
+      if (st.mode === "racing") {
+        st.ramp = Math.min(RAMP, st.ramp + dt);
+        st.v = SPEED * Math.pow(st.ramp / RAMP, 2);
+        st.pos += st.v * dt;
+        if (st.want && tryLand()) st.last = now;
+      } else if (st.mode === "decel") {
+        const d = st.d;
+        d.t += dt;
+        const u = Math.min(1, d.t / d.dur);
+        const h = d.k * u + (3 - 2 * d.k) * u * u + (d.k - 2) * u * u * u;
+        const h1 = d.k + 2 * (3 - 2 * d.k) * u + 3 * (d.k - 2) * u * u;
+        st.pos = d.from + d.dist * h;
+        st.v = Math.max(0, (d.dist * h1) / d.dur);
+        if (u >= 1) return settle();
+      }
+      draw();
+      if (st.mode === "racing" || st.mode === "decel") st.raf = requestAnimationFrame(frame);
+    };
+    const run = () => {
+      if (st.raf || !st.inView) return;
+      st.last = 0;
+      outer.style.willChange = "transform";
+      st.raf = requestAnimationFrame(frame);
+    };
+    const race = () => {
+      if (st.mode === "racing") return;
+      // from rest, ramp up; from a deceleration, carry the speed it had
+      st.ramp = st.mode === "decel" ? RAMP * Math.sqrt(Math.min(1, st.v / SPEED)) : 0;
+      st.mode = "racing";
+      setSettled(false);
+      run();
+    };
+    control.current = {
+      land: (want) => {
+        st.want = want;
+        if (want) {
+          if (st.mode === "idle") return settle(); // never raced: it is already on the resting frame
+          if (!st.inView && st.mode !== "landed") return settle(); // nobody is watching; arrive
+          run();
+        } else if (st.mode === "landed" || st.mode === "decel") {
+          if (st.inView) race();
+          else {
+            st.mode = "idle";
+            setSettled(false);
+          }
+        }
+      },
+    };
+    const onScroll = () => {
+      if (st.inView && st.mode === "idle" && !st.want) race();
+    };
+    const io = new IntersectionObserver(([e]) => {
+      st.inView = e.isIntersecting;
+      if (!st.inView) {
+        cancelAnimationFrame(st.raf);
+        st.raf = 0;
+        if (st.want && st.mode !== "landed") settle();
+        return;
+      }
+      if (st.want && st.mode !== "landed" && st.mode !== "idle") return settle(); // came back from below
+      if (st.mode === "racing" || st.mode === "decel") run();
+    });
+    io.observe(el);
+    // Load the column's sheets while the reader is still a screen or so away: an image decoding into the
+    // blurred layer mid-race forces that layer to repaint, which is the one thing that costs frames.
+    const near = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        inner.querySelectorAll("img").forEach((img) => {
+          img.loading = "eager";
+          img.decode().catch(() => {});
+        });
+        near.disconnect();
+      },
+      { rootMargin: "150% 0px" },
+    );
+    near.observe(el);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    draw();
+    return () => {
+      io.disconnect();
+      near.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(st.raf);
+      control.current = null;
+    };
+  }, [isStatic]);
 
-  const showHonest = isStatic || idx >= 3;
+  // Tell the loop where the reader is.
+  useEffect(() => {
+    control.current?.land(shown >= 1);
+  }, [shown, isStatic]);
+
+  const phase = isStatic ? "honest" : !lifted ? "wall" : shown < 3 ? "result" : "honest";
+  const showHonest = isStatic || shown >= 3;
 
   /** One tile. `rest` is the tile's index within the resting frame, or -1 for a passer-by. `primary` marks the copy the bracket measures. */
   const tile = (img: ArchiveImage, rest: number, primary: boolean, key: string) => {
@@ -184,7 +268,7 @@ export default function Find() {
   };
 
   const visual = (
-    <div ref={box} className="relative overflow-hidden rounded-lg bg-vx-800 p-3" data-phase="honest">
+    <div ref={box} className="relative overflow-hidden rounded-lg bg-vx-800 p-3" data-phase={phase}>
       {isStatic ? (
         <div className="grid grid-cols-6 gap-2" role="img" aria-label="36 drawing sheets from the archive">
           {LOOP.slice(REST_START).map((img, i) => tile(img, i, true, `s${i}`))}
@@ -196,12 +280,14 @@ export default function Find() {
               <feGaussianBlur ref={blurEl} stdDeviation="0 0" edgeMode="duplicate" />
             </filter>
           </svg>
-          <div ref={strip} className="grid grid-cols-6 gap-2" data-strip>
-            {[0, 1].map((copy) => LOOP.map((img, i) => tile(img, i >= REST_START ? i - REST_START : -1, copy === 0, `${copy}-${i}`)))}
+          <div ref={strip} data-strip>
+            <div ref={stripInner} className="grid grid-cols-6 gap-2">
+              {[0, 1].map((copy) => LOOP.map((img, i) => tile(img, i >= REST_START ? i - REST_START : -1, copy === 0, `${copy}-${i}`)))}
+            </div>
           </div>
         </div>
       )}
-      {(isStatic || settled) && landed && <Bracket box={box} selector={showHonest ? '[data-unreadable="0"]' : '[data-match="0"]'} active={active ?? "static"} side="left" inset={0} />}
+      {lifted && <Bracket box={box} selector={showHonest ? '[data-unreadable="0"]' : '[data-match="0"]'} active={active ?? "static"} side="left" inset={0} />}
     </div>
   );
 

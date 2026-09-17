@@ -1,18 +1,22 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sheet, VARIANT_ROWS } from "@/components/drawing/Sheet";
-import { Bracket, StepScene, useActiveStep, useStaticLayout, type Step } from "@/components/steps/StepScene";
-import { gsap, setupGsap, prefersReducedMotion } from "@/lib/motion";
+import { StepScene, useActiveStep, useStaticLayout, type Step } from "@/components/steps/StepScene";
+import { Dim } from "@/components/Dim";
+import { gsap, setupGsap } from "@/lib/motion";
 
 /**
- * Make, with a camera. Each of the four beats happens at the scale where it can
- * be seen: for a step the sheet scales and translates so the relevant region
- * fills the frame, then the change plays there. One transform on the sheet
- * wrapper (scale + translate, origin fixed top-left, 700ms ease-in-out), driven
- * by the same centre-band steps as the rest of the page. The sheet never
- * rotates or blurs and stays in the DOM throughout, so text is crisp at 4×.
- * Each step's framing comes from the element's own bbox, not from coordinates.
+ * Make, with a camera. Each step runs in a fixed order: the mark from the last
+ * step fades out at once (150ms), the camera frames the step's region (one
+ * scale + translate on the sheet wrapper, 700ms ease-in-out, origin fixed
+ * top-left), the frame holds for 150ms, then the change plays (350ms), and
+ * only then does the step's mark appear. A change never happens mid-zoom.
+ *
+ * Marks follow the site's rule: a line for a distance, a box for a region.
+ * The dimensions step measures something, so it gets the dimension line.
+ * Picking a row, the gate and the signature each concern a region, so they
+ * get a dotted box around it. One mark on screen at a time.
  *
  * Below 1024px and under reduced motion there is no camera: each step carries
  * a static crop of its region, computed the same way, with the beat applied.
@@ -21,13 +25,53 @@ import { gsap, setupGsap, prefersReducedMotion } from "@/lib/motion";
 const FROM = 1; // S2
 const TO = 3; // S4
 const ROW_H = 32;
+const CAMERA = 0.7;
+const HOLD = 0.15;
+const CHANGE = 0.35;
 
-type Beat = Step & { anchor: string; zoom: number; region: string[]; side?: "right" | "left" | "above" | "below" | "inside-right" };
+type Mark = { kind: "line"; anchor: string } | { kind: "box"; region: string[] };
+type Beat = Step & { region: string[]; zoom: number; mark: Mark; crop: string };
 const steps: Beat[] = [
-  { key: "pick", title: "Pick a row", what: "The variant table on your own drawing is the spec. Choose the row you need; nothing is typed in twice.", vertex: `Row ${VARIANT_ROWS[TO].size}: A ${VARIANT_ROWS[TO].a}, B ${VARIANT_ROWS[TO].b}, d ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes.`, anchor: "[data-row-marker]", region: ['[data-plane="tables"] [data-anchor]'], zoom: 3, side: "left" },
-  { key: "dims", title: "The dimensions follow", what: "Vertex regenerates the sheet from your template, not ours. Every dimension that reads from the table takes the row's value.", vertex: `Ø${VARIANT_ROWS[FROM].d} H7 becomes Ø${VARIANT_ROWS[TO].d} H7; the PCD and the hole count follow.`, anchor: '[data-dim="bore"]', region: ['[data-plane="dimensions"] [data-anchor]', '[data-dim="bore"]', '[data-dim="holes"]'], zoom: 1.8, side: "right" },
-  { key: "gate", title: "The gate runs", what: "The same deterministic checks run on the new sheet, and the verdict is about the whole drawing, so the whole drawing is what you see.", vertex: "PASS · 7 checked · 2 couldn't be checked. Nothing can be downloaded before this line.", anchor: "[data-verdict-box]", region: [], zoom: 1, side: "below" },
-  { key: "sign", title: "A named person signs", what: "Until then the sheet says GENERATED — NOT APPROVED on its face, drawn into the drawing. It lifts only when someone signs.", vertex: "Checked: S.M. The signature is recorded against the checks they saw.", anchor: '[data-cell="checkedBy"]', region: ['[data-plane="titleblock"] [data-anchor]'], zoom: 4, side: "below" },
+  {
+    key: "pick",
+    title: "Pick a row",
+    what: "The variant table on your own drawing is the spec. Choose the row you need; nothing is typed in twice.",
+    vertex: `Row ${VARIANT_ROWS[TO].size}: A ${VARIANT_ROWS[TO].a}, B ${VARIANT_ROWS[TO].b}, d ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes.`,
+    region: ['[data-plane="tables"] [data-anchor]'],
+    zoom: 3,
+    mark: { kind: "box", region: [`[data-row-box="${TO}"]`] },
+    crop: "variant table",
+  },
+  {
+    key: "dims",
+    title: "The dimensions follow",
+    what: "Vertex regenerates the sheet from your template, not ours. Every dimension that reads from the table takes the row's value.",
+    vertex: `Ø${VARIANT_ROWS[FROM].d} H7 becomes Ø${VARIANT_ROWS[TO].d} H7; the PCD and the hole count follow.`,
+    region: ['[data-plane="dimensions"] [data-anchor]', '[data-dim="bore"]', '[data-dim="holes"]'],
+    zoom: 1.8,
+    mark: { kind: "line", anchor: '[data-dim="bore"]' },
+    crop: "dimension chains",
+  },
+  {
+    key: "gate",
+    title: "The gate runs",
+    what: "The same deterministic checks run on the new sheet. The verdict is about the whole drawing, so the whole drawing is what you see.",
+    vertex: "PASS · 7 checked · 2 couldn't be checked. Nothing can be downloaded before this line.",
+    region: [],
+    zoom: 1,
+    mark: { kind: "box", region: ['[data-plane="geometry"]', '[data-plane="dimensions"]'] },
+    crop: "whole sheet",
+  },
+  {
+    key: "sign",
+    title: "A named person signs",
+    what: "Until then the sheet says GENERATED — NOT APPROVED on its face, drawn into the drawing. It lifts only when someone signs.",
+    vertex: "Checked: S.M. The signature is recorded against the checks they saw.",
+    region: ["[data-signature]"],
+    zoom: 4,
+    mark: { kind: "box", region: ["[data-signature]"] },
+    crop: "signature cells",
+  },
 ];
 
 /** Apply beat `idx` to a sheet box: the marker, the dimension text, the watermark, the initials, the chosen row. */
@@ -56,56 +100,127 @@ function applyBeat(root: HTMLElement, idx: number) {
   root.dataset.passed = passed ? "true" : "";
 }
 
+const find = (root: ParentNode, selectors: string[]) => selectors.flatMap((s) => Array.from(root.querySelectorAll<SVGGraphicsElement>(s)));
+
 /**
- * The camera transform that centres the union of `regions` (SVG elements) at
- * `zoom` inside a frame of size fw × fh, for a sheet wrapper of size W × H at
- * scale 1. Origin is the wrapper's top-left; the result is clamped so the
- * frame never shows past the sheet's edge.
+ * The camera transform that centres the union of `regions` inside `frame`, at
+ * `zoom` or less: never so close that the region spills out of the frame.
+ * Measured with getBBox in sheet units, so the current transform doesn't
+ * matter. Clamped so the frame never shows past the sheet's edge.
  */
 function cameraFor(wrapper: HTMLElement, frame: HTMLElement, regions: SVGGraphicsElement[], zoom: number) {
   const W = wrapper.offsetWidth, H = wrapper.offsetHeight;
   const fw = frame.offsetWidth, fh = frame.offsetHeight;
   if (!regions.length || zoom === 1) return { scale: 1, x: 0, y: 0 };
-  const svg = regions[0].ownerSVGElement!;
-  const vb = svg.viewBox.baseVal;
+  const vb = regions[0].ownerSVGElement!.viewBox.baseVal;
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
   regions.forEach((r) => {
     const bb = r.getBBox();
     x0 = Math.min(x0, bb.x); y0 = Math.min(y0, bb.y); x1 = Math.max(x1, bb.x + bb.width); y1 = Math.max(y1, bb.y + bb.height);
   });
-  const k = W / vb.width; // px per user unit
+  const k = W / vb.width; // px per sheet unit at scale 1
+  const s = Math.min(zoom, (0.84 * fw) / ((x1 - x0) * k), (0.84 * fh) / ((y1 - y0) * k));
   const cx = ((x0 + x1) / 2 - vb.x) * k;
   const cy = ((y0 + y1) / 2 - vb.y) * k;
-  const x = Math.min(0, Math.max(fw - zoom * W, fw / 2 - zoom * cx));
-  const y = Math.min(0, Math.max(fh - zoom * H, fh / 2 - zoom * cy));
-  return { scale: zoom, x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+  const x = Math.min(0, Math.max(fw - s * W, fw / 2 - s * cx));
+  const y = Math.min(0, Math.max(fh - s * H, fh / 2 - s * cy));
+  return { scale: Math.round(s * 100) / 100, x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
 }
 
-const find = (root: ParentNode, selectors: string[]) => selectors.map((s) => root.querySelector<SVGGraphicsElement>(s)).filter(Boolean) as SVGGraphicsElement[];
+type MarkGeom = { kind: "line" | "box"; left: number; top: number; width: number; height: number; key: number };
+
+/** Where a step's mark goes, in px relative to `box`, clamped inside `frame`. */
+function measureMark(box: HTMLElement, frame: HTMLElement, mark: Mark, key: number): MarkGeom | null {
+  const b = box.getBoundingClientRect();
+  const f = frame.getBoundingClientRect();
+  const rel = (r: DOMRect) => ({ l: r.left - b.left, t: r.top - b.top, r: r.right - b.left, btm: r.bottom - b.top });
+  const fr = rel(f);
+  if (mark.kind === "line") {
+    const a = box.querySelector(mark.anchor);
+    if (!a) return null;
+    const r = rel(a.getBoundingClientRect());
+    return { kind: "line", left: Math.min(r.r + 8, fr.r - 24), top: r.t, width: 24, height: r.btm - r.t, key };
+  }
+  const els = find(box, mark.region);
+  if (!els.length) return null;
+  const rs = els.map((e) => rel(e.getBoundingClientRect()));
+  const pad = 6;
+  // snap each edge to a whole device pixel on the page (the box itself may sit at a fractional offset)
+  const snapX = (x: number) => Math.round(x + b.left) - b.left;
+  const snapY = (y: number) => Math.round(y + b.top) - b.top;
+  const l = snapX(Math.max(fr.l + 1, Math.min(...rs.map((r) => r.l)) - pad));
+  const t = snapY(Math.max(fr.t + 1, Math.min(...rs.map((r) => r.t)) - pad));
+  const r = snapX(Math.min(fr.r - 1, Math.max(...rs.map((r) => r.r)) + pad));
+  const btm = snapY(Math.min(fr.btm - 1, Math.max(...rs.map((r) => r.btm)) + pad));
+  return { kind: "box", left: l, top: t, width: Math.round(r - l), height: Math.round(btm - t), key };
+}
 
 export default function Make() {
   const root = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
   const cam = useRef<HTMLDivElement>(null);
+  const markLayer = useRef<HTMLDivElement>(null);
   const isStatic = useStaticLayout();
   const active = useActiveStep(root, !isStatic);
   const idx = steps.findIndex((s) => s.key === active);
-  const beat = idx >= 0 ? steps[idx] : null;
+  // Past the last step nothing is in the band: hold that step. Above the first: nothing is picked yet.
+  const [lastIdx, setLastIdx] = useState(-1);
+  if (idx !== -1 && idx !== lastIdx) setLastIdx(idx);
+  const shown = idx !== -1 ? idx : lastIdx > 0 ? lastIdx : -1;
+  const activeKey = useRef<string | null>(null);
+  const started = useRef(false);
+  const [mark, setMark] = useState<MarkGeom | null>(null);
 
+  // The mark leaves the moment its step leaves the centre band: 150ms, no delay.
   useEffect(() => {
-    if (box.current && !isStatic) applyBeat(box.current, idx);
-  }, [idx, isStatic]);
+    activeKey.current = active;
+    if (markLayer.current) markLayer.current.style.opacity = "0";
+  }, [active]);
 
-  // The camera: one tween on the wrapper per step change.
+  // Frame, hold, change, mark: one timeline per step, killed if the reader moves on.
   useEffect(() => {
-    const wrapper = cam.current, fr = frame.current;
-    if (!wrapper || !fr || isStatic || prefersReducedMotion()) return;
+    const b = box.current, fr = frame.current, wrapper = cam.current;
+    if (!b || !fr || !wrapper || isStatic) return;
     setupGsap();
+    const beat = shown >= 0 ? steps[shown] : null;
     const t = cameraFor(wrapper, fr, beat ? find(wrapper, beat.region) : [], beat?.zoom ?? 1);
-    wrapper.style.willChange = "transform";
-    gsap.to(wrapper, { scale: t.scale, x: t.x, y: t.y, duration: 0.7, ease: "power2.inOut", transformOrigin: "0 0", overwrite: true, onComplete: () => (wrapper.style.willChange = "auto") });
-  }, [beat, isStatic]);
+    if (!started.current) {
+      // first frame on mount: no motion, just the state for where the reader is
+      started.current = true;
+      gsap.set(wrapper, { scale: t.scale, x: t.x, y: t.y, transformOrigin: "0 0" });
+      applyBeat(b, shown);
+      return;
+    }
+    const tl = gsap.timeline();
+    tl.to(wrapper, {
+      scale: t.scale,
+      x: t.x,
+      y: t.y,
+      duration: CAMERA,
+      ease: "power2.inOut",
+      transformOrigin: "0 0",
+      onStart: () => void (wrapper.style.willChange = "transform"),
+      onComplete: () => void (wrapper.style.willChange = "auto"),
+    });
+    tl.call(() => applyBeat(b, shown), [], `+=${HOLD}`);
+    if (beat) {
+      tl.call(
+        () => {
+          if (activeKey.current !== beat.key) return; // the step already left the band
+          setMark(measureMark(b, fr, beat.mark, Date.now()));
+          requestAnimationFrame(() => {
+            if (markLayer.current && activeKey.current === beat.key) markLayer.current.style.opacity = "1";
+          });
+        },
+        [],
+        `+=${CHANGE}`,
+      );
+    }
+    return () => {
+      tl.kill();
+    };
+  }, [shown, isStatic]);
 
   const verdict = (
     <div className="absolute left-5 top-5 rounded-md border border-vx-600 bg-vx-900 px-3 py-2" data-verdict-box>
@@ -124,7 +239,9 @@ export default function Make() {
         </div>
       </div>
       {verdict}
-      {beat && <Bracket box={box} selector={beat.anchor} active={active} side={beat.side} inset={0} delay={720} />}
+      <div ref={markLayer} className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-150 ease-out" aria-hidden="true">
+        <MarkShape geom={mark} />
+      </div>
     </div>
   );
 
@@ -171,6 +288,28 @@ export default function Make() {
   );
 }
 
+/** The mark: an orange dimension line for a distance, a dotted orange rectangle for a region. */
+function MarkShape({ geom }: { geom: MarkGeom | null }) {
+  const target = useRef<HTMLDivElement>(null);
+  if (!geom) return null;
+  if (geom.kind === "box") {
+    // the same dotted stroke as the dimension line; measureMark snapped the edges to whole page pixels
+    const w = geom.width, h = geom.height;
+    return (
+      <svg key={geom.key} className="absolute overflow-visible" style={{ left: geom.left, top: geom.top }} width={w} height={h} data-mark="box">
+        {/* four edges, each starting on a whole pixel along its length so every dot lands on one pixel */}
+        <path d={`M0 0.5H${w}M0 ${h - 0.5}H${w}M0.5 0V${h}M${w - 0.5} 0V${h}`} fill="none" stroke="#F0A868" strokeWidth="1" strokeDasharray="1 2" />
+      </svg>
+    );
+  }
+  return (
+    <div key={geom.key} className="absolute" style={{ left: geom.left, top: geom.top, width: geom.width, height: geom.height }} data-mark="line">
+      <div ref={target} className="absolute inset-y-0 left-0 w-px" />
+      <Dim axis="y" measure={target} tone="dark" className="absolute left-0 top-0" />
+    </div>
+  );
+}
+
 /** A static crop of the sheet at one beat: the same camera, computed once, no motion. */
 function StaticCrop({ beatIndex, beat, verdict }: { beatIndex: number; beat: Beat; verdict: React.ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
@@ -198,7 +337,7 @@ function StaticCrop({ beatIndex, beat, verdict }: { beatIndex: number; beat: Bea
         </div>
       </div>
       {verdict}
-      <figcaption className="mono mt-3 text-micro text-muted-raised">DRG-4120 · {whole ? "the whole sheet" : `${beat.zoom}× into the ${beatIndex === 0 ? "variant table" : beatIndex === 1 ? "dimension chains" : "title block"}`}</figcaption>
+      <figcaption className="mono mt-3 text-micro text-muted-raised">DRG-4120 · {whole ? "the whole sheet" : `into the ${beat.crop}`}</figcaption>
     </figure>
   );
 }

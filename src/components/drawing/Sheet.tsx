@@ -443,6 +443,12 @@ function Tables({ activeRow }: { activeRow: number }) {
           </g>
         ))}
       </g>
+      {/* one invisible box per row, so a scene can frame or enclose a whole row */}
+      <g aria-hidden="true">
+        {VARIANT_ROWS.map((r, ri) => (
+          <rect key={r.size} x={x0} y={y0 + rowH * (ri + 1)} width={totalW} height={rowH} fill="none" stroke="none" data-row-box={ri} />
+        ))}
+      </g>
       {/* active-row marker: the Make scene moves this by row height (32) */}
       <g data-row-marker transform={`translate(0 ${rowH * activeRow})`} className="fade">
         <polygon points={`${x0 + 7},${y0 + rowH + rowH / 2 - 5} ${x0 + 15},${y0 + rowH + rowH / 2} ${x0 + 7},${y0 + rowH + rowH / 2 + 5}`} fill={ink} />
@@ -478,6 +484,7 @@ function Cell({
   value,
   mono = true,
   name,
+  signature = false,
   children,
 }: {
   x: number;
@@ -488,10 +495,11 @@ function Cell({
   value?: string;
   mono?: boolean;
   name?: string;
+  signature?: boolean;
   children?: React.ReactNode;
 }) {
   return (
-    <g>
+    <g data-signature={signature ? "" : undefined}>
       <rect x={x} y={y} width={w} height={h} stroke={hair} strokeWidth="1" vectorEffect="non-scaling-stroke" className="draw" pathLength={1} />
       <text x={x + 8} y={y + 13} fill={dimInk} fontSize="9" style={sansStyle} className="fade">
         {label}
@@ -534,9 +542,9 @@ function TitleBlock({ checkedBy, drawingNo }: { checkedBy: string; drawingNo: st
       <Cell x={x0 + q * 3} y={y0 + r1} w={q} h={r2} label="Sheet" value="1/1" />
 
       {/* row 3 */}
-      <Cell x={x0} y={y0 + r1 + r2} w={q} h={r3} label="Drawn" value="R.K." />
-      <Cell x={x0 + q} y={y0 + r1 + r2} w={q} h={r3} label="Date" value="2026-09-16" />
-      <Cell x={x0 + q * 2} y={y0 + r1 + r2} w={q} h={r3} label="Checked" value={checkedBy} name="checkedBy" />
+      <Cell x={x0} y={y0 + r1 + r2} w={q} h={r3} label="Drawn" value="R.K." signature />
+      <Cell x={x0 + q} y={y0 + r1 + r2} w={q} h={r3} label="Date" value="2026-09-16" signature />
+      <Cell x={x0 + q * 2} y={y0 + r1 + r2} w={q} h={r3} label="Checked" value={checkedBy} name="checkedBy" signature />
       <Cell x={x0 + q * 3} y={y0 + r1 + r2} w={q} h={r3} label="Material" value="EN-GJL-250" />
 
       {/* row 4: projection symbol and general tolerances */}

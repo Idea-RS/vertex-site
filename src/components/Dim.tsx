@@ -1,7 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
-import { prefersReducedMotion } from "@/lib/motion";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react";
+
+/* Reduced motion as a subscribed value: false on the server and first paint, the real answer after. */
+const REDUCED = "(prefers-reduced-motion: reduce)";
+const subscribeReduced = (cb: () => void) => {
+  const mq = window.matchMedia(REDUCED);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+};
+const useReducedMotion = () =>
+  useSyncExternalStore(subscribeReduced, () => window.matchMedia(REDUCED).matches, () => false);
 
 /**
  * The dimension line. Vertex's one decoration.
@@ -39,6 +48,8 @@ export function Dim({
   const [animProgress, setAnimProgress] = useState(animate ? 0 : 1);
   const animRef = useRef<number | null>(null);
   const hasAnimatedRef = useRef(false);
+  const reduced = useReducedMotion();
+  const still = !animate || reduced; // draw the final dimension, no growth
 
   useEffect(() => {
     const target = measure?.current ?? wrap.current;
@@ -53,9 +64,8 @@ export function Dim({
     return () => ro.disconnect();
   }, [measure, axis]);
 
-  const triggerAnimation = () => {
-    if (!animate || prefersReducedMotion()) {
-      setAnimProgress(1);
+  const triggerAnimation = useCallback(() => {
+    if (still) {
       hasAnimatedRef.current = true;
       return;
     }
@@ -80,14 +90,11 @@ export function Dim({
     };
 
     animRef.current = requestAnimationFrame(step);
-  };
+  }, [still]);
 
   useEffect(() => {
-    if (!animate || prefersReducedMotion()) {
-      const id = requestAnimationFrame(() => setAnimProgress(1));
-      return () => cancelAnimationFrame(id);
-    }
-
+    // A still dimension needs no observer: `ease` below is 1 without touching state.
+    if (still) return;
     const el = wrap.current;
     if (!el || size === 0) return;
 
@@ -113,10 +120,10 @@ export function Dim({
       observer.disconnect();
       if (animRef.current) cancelAnimationFrame(animRef.current);
     };
-  }, [animate, size]);
+  }, [still, size, triggerAnimation]);
 
   const T = 24; // thickness of the dim band
-  const ease = animate ? animProgress : 1;
+  const ease = still ? 1 : animProgress;
 
   // Compute final label vs animated display label
   const targetNum = size;

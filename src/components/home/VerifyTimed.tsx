@@ -5,14 +5,18 @@ import { RuleDiagram, type RuleId } from "@/components/drawing/RuleDiagrams";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
- * Verify, as a timed progression: the page's third rhythm (scrolled, hovered,
- * and now timed). All five rule headings are in view at once; a thin orange
- * line under the active one fills over ~4s, then that heading steps back to
- * vx-600 and the next takes over. The other side shows a small figure of what
- * the rule checks, replaced with a crossfade. It plays while the section is on
- * screen, pauses when it leaves, and a click on any heading restarts there.
- * After the fifth, the coverage bar resolves. Reduced motion: no timers, every
- * heading shown with its figure.
+ * Verify, as a timed loop that fits one screen. Five rule headings stacked on
+ * the left; a thin orange line under the active one fills over 4s and is gone
+ * the moment its rule completes, so only the active rule ever carries a line.
+ * The next heading takes over, and after the fifth it rolls back to the first,
+ * for as long as the section is in view. The right pane shows a small figure
+ * of what the active rule checks, with its description and verdict, replaced
+ * by crossfade. Off screen it pauses and resumes where it was; a click on a
+ * heading jumps there and restarts its line. The coverage bar is the summary,
+ * always resolved under the list, not a sixth step.
+ *
+ * Sized for a 900px-tall viewport: nothing in the section needs a scroll.
+ * Reduced motion: no timer and no line; a click or focus picks the rule.
  */
 
 const DURATION = 4000;
@@ -30,17 +34,15 @@ const rules: Rule[] = [
 
 export default function VerifyTimed() {
   const root = useRef<HTMLElement>(null);
-  const lines = useRef<(HTMLDivElement | null)[]>([]);
+  const line = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  const [done, setDone] = useState(false); // all five have run; the coverage bar is resolved
-  const [isStatic, setStatic] = useState(false);
-  const running = useRef(false);
-  const elapsed = useRef(0);
+  const [still, setStill] = useState(false);
   const activeRef = useRef(0);
+  const elapsed = useRef(0);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setStatic(mq.matches);
+    const sync = () => setStill(mq.matches);
     const id = requestAnimationFrame(sync);
     mq.addEventListener("change", sync);
     return () => {
@@ -51,48 +53,39 @@ export default function VerifyTimed() {
 
   useEffect(() => {
     activeRef.current = active;
-    elapsed.current = 0;
-    lines.current.forEach((l, i) => {
-      if (!l) return;
-      l.style.width = i < active ? "100%" : "0%";
-    });
   }, [active]);
 
-  // The timer: rAF while the section is on screen and not finished.
+  // The timer: a rAF loop that runs only while the section is in view.
   useEffect(() => {
-    if (isStatic || prefersReducedMotion()) return;
+    if (still || prefersReducedMotion()) return;
     const el = root.current;
     if (!el) return;
     let raf = 0;
     let last = 0;
+    let running = false;
     const tick = (t: number) => {
-      if (!running.current) return;
-      if (last) elapsed.current += t - last;
+      raf = 0;
+      if (!running) return;
+      if (last) elapsed.current += Math.min(100, t - last); // a long frame never skips a rule
       last = t;
       const p = Math.min(1, elapsed.current / DURATION);
-      const line = lines.current[activeRef.current];
-      if (line) line.style.width = `${(p * 100).toFixed(2)}%`;
+      if (line.current) line.current.style.transform = `scaleX(${p.toFixed(4)})`;
       if (p >= 1) {
-        if (activeRef.current < rules.length - 1) {
-          setActive(activeRef.current + 1);
-          last = 0;
-        } else {
-          setDone(true);
-          running.current = false;
-          return;
-        }
+        const next = (activeRef.current + 1) % rules.length;
+        activeRef.current = next;
+        elapsed.current = 0;
+        setActive(next);
       }
       raf = requestAnimationFrame(tick);
     };
     const io = new IntersectionObserver(
       ([e]) => {
-        const shouldRun = e.isIntersecting && !done;
-        if (shouldRun && !running.current) {
-          running.current = true;
+        if (e.isIntersecting && !running) {
+          running = true;
           last = 0;
           raf = requestAnimationFrame(tick);
-        } else if (!shouldRun) {
-          running.current = false;
+        } else if (!e.isIntersecting && running) {
+          running = false;
           cancelAnimationFrame(raf);
         }
       },
@@ -101,98 +94,117 @@ export default function VerifyTimed() {
     io.observe(el);
     return () => {
       io.disconnect();
-      running.current = false;
+      running = false;
       cancelAnimationFrame(raf);
     };
-  }, [isStatic, done]);
+  }, [still]);
 
-  const jump = (i: number) => {
-    setDone(false);
-    setActive(i);
+  const pick = (i: number) => {
     elapsed.current = 0;
-    if (!running.current && !isStatic) {
-      running.current = true;
-      // the observer effect restarts the loop on the next done→false render
-    }
+    activeRef.current = i;
+    if (line.current) line.current.style.transform = "scaleX(0)";
+    setActive(i);
   };
 
   const ranPct = ((100 * CHECKS_RAN) / FIELDS).toFixed(4);
+  const fade = still ? "" : "transition-opacity duration-[350ms] ease-out";
 
   return (
-    <section ref={root} id="verify" className="rule section" aria-label="Verify">
-      <div className="container">
-        <h2 className="max-w-[18ch] text-h2">Verify what can be verified. Say the rest.</h2>
-        <p className="mt-4 max-w-[52ch] text-body text-vx-600">
-          The checks are rules, not guesses: they pass, they fail, or they couldn&apos;t run. Every verdict lists all three, so a PASS means exactly what it says.
-        </p>
+    <section ref={root} id="verify" className="rule" aria-label="Verify">
+      <div className="container py-16 lg:flex lg:min-h-[100svh] lg:items-center lg:pb-10 lg:pt-[104px]">
+        <div className="w-full lg:grid lg:grid-cols-12 lg:items-center lg:gap-8">
+          {/* left: the claim, the five rules, the coverage summary */}
+          <div className="lg:col-span-5">
+            <h2 className="max-w-[18ch] text-h2">Verify what can be verified. Say the rest.</h2>
+            <p className="mt-3 max-w-[46ch] text-body text-vx-600">
+              The checks are rules, not guesses: they pass, they fail, or they couldn&apos;t run. Every verdict lists all three.
+            </p>
 
-        <div className={isStatic ? "mt-12 max-w-[40rem]" : "mt-12 lg:grid lg:grid-cols-12 lg:gap-8"}>
-          {/* the figure: one at a time, crossfaded; on the static layout each sits under its heading */}
-          {!isStatic && (
-            <div className="mb-8 lg:order-2 lg:col-span-7 lg:mb-0">
-              <div className="lg:sticky" style={{ top: 120 }}>
-                <div className="relative overflow-hidden rounded-lg bg-vx-800 p-4" style={{ aspectRatio: "5 / 3" }}>
-                  {rules.map((r, i) => (
-                    <div key={r.id} className="absolute inset-4 transition-opacity duration-[350ms] ease-out" style={{ opacity: i === active ? 1 : 0 }} aria-hidden={i !== active}>
-                      <RuleDiagram id={r.id} />
-                    </div>
-                  ))}
-                </div>
-                <p className="mono mt-3 text-micro text-vx-600">DRG-4120 · R2 · what rule {String(active + 1).padStart(2, "0")} looks at</p>
-              </div>
+            {/* below lg the figure sits here, above the list, so the active rule and its figure share a screen */}
+            <div className="mt-8 lg:hidden">
+              <Figure active={active} fade={fade} />
             </div>
-          )}
 
-          <ol className={isStatic ? "" : "lg:order-1 lg:col-span-5"} aria-label="Rules">
-            {rules.map((r, i) => {
-              const on = !isStatic && i === active;
-              const past = !isStatic && (i < active || done);
-              return (
-                <li key={r.id} className="relative border-t border-vx-400">
-                  <button type="button" onClick={() => jump(i)} className="block w-full py-5 text-left" aria-current={on ? "step" : undefined} disabled={isStatic}>
-                    <div className="flex items-baseline gap-4">
-                      <span className="mono text-micro text-vx-600">{String(i + 1).padStart(2, "0")}</span>
-                      <h3 className={`text-h3 transition-colors duration-[350ms] ${on || isStatic ? "text-vx-900" : "text-vx-600"}`}>{r.title}</h3>
-                    </div>
-                    <p className={`mt-2 max-w-[44ch] pl-9 text-body transition-colors duration-[350ms] ${on || isStatic ? "text-vx-900" : "text-vx-600"}`}>{r.what}</p>
-                    <p className={`mono mt-2 pl-9 text-small ${past || on || isStatic ? "" : "invisible"} ${r.advisory ? "text-vx-600" : "text-vx-900"}`}>{r.verdict}</p>
-                  </button>
-                  {/* the progress line: vx-400 base, orange fill */}
-                  {!isStatic && (
-                    <div className="absolute inset-x-0 bottom-0 h-px" aria-hidden="true">
-                      <div ref={(el) => { lines.current[i] = el; }} className="h-px bg-dim-deep" style={{ width: "0%" }} />
-                    </div>
-                  )}
-                  {isStatic && (
-                    <div className="mb-6 overflow-hidden rounded-lg bg-vx-800 p-4" style={{ aspectRatio: "5 / 3" }}>
-                      <RuleDiagram id={r.id} />
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-            <li className="border-y border-vx-400 py-5">
-              <div className="flex items-baseline gap-4">
-                <span className="mono text-micro text-vx-600">06</span>
-                <h3 className="text-h3 text-vx-900">What wasn&apos;t checked</h3>
+            <ol className="mt-8 border-b border-vx-400" aria-label="Rules">
+              {rules.map((r, i) => {
+                const on = i === active;
+                return (
+                  <li key={r.id} className="relative border-t border-vx-400">
+                    <h3 className="text-h3">
+                      <button
+                        type="button"
+                        onClick={() => pick(i)}
+                        onFocus={still ? () => pick(i) : undefined}
+                        className="flex w-full items-baseline gap-4 py-3 text-left"
+                        aria-current={on ? "step" : undefined}
+                      >
+                        <span className="mono w-5 shrink-0 text-micro text-vx-600">{String(i + 1).padStart(2, "0")}</span>
+                        <span className={`transition-colors duration-[350ms] ${on ? "text-vx-900" : "text-vx-600"}`}>{r.title}</span>
+                      </button>
+                    </h3>
+                    {/* the progress line: only the active rule has one, and it goes when the rule completes */}
+                    {on && !still && (
+                      <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px" aria-hidden="true">
+                        <div ref={line} className="h-px origin-left bg-dim-deep" style={{ transform: "scaleX(0)" }} />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+
+            {/* the summary: resolved, not timed */}
+            <div className="mt-6">
+              <div className="flex items-baseline justify-between gap-4">
+                <p className="text-body text-vx-900">What wasn&apos;t checked</p>
+                <p className="mono text-micro text-vx-600">
+                  {CHECKS_RAN} of {FIELDS.toLocaleString("en-US")} fields
+                </p>
               </div>
-              <p className="mt-2 max-w-[44ch] pl-9 text-body text-vx-900">
-                {CHECKS_RAN} checks ran. {FIELDS.toLocaleString("en-US")} fields exist. Here&apos;s what wasn&apos;t checked.
-              </p>
-              <div className="mt-4 pl-9" role="img" aria-label={`${CHECKS_RAN} checks ran against ${FIELDS.toLocaleString("en-US")} fields`}>
-                <div className="flex h-4 w-full overflow-hidden rounded-xs border border-vx-400">
-                  <div className="h-full bg-vx-800 transition-[width] duration-[350ms] ease-out" style={{ width: done || isStatic ? `max(2px, ${ranPct}%)` : "0%" }} />
+              <div className="mt-2" role="img" aria-label={`${CHECKS_RAN} checks ran against ${FIELDS.toLocaleString("en-US")} fields`}>
+                <div className="flex h-3 w-full overflow-hidden rounded-xs border border-vx-400">
+                  <div className="h-full bg-vx-800" style={{ width: `max(2px, ${ranPct}%)` }} />
                   <div className="h-full flex-1 bg-vx-400" />
                 </div>
-                <div className="mt-2 flex justify-between text-micro text-vx-600">
-                  <span className="mono">{CHECKS_RAN} checked</span>
-                  <span className="mono">{FIELDS.toLocaleString("en-US")} fields</span>
-                </div>
               </div>
-            </li>
-          </ol>
+              <p className="mt-2 max-w-[46ch] text-small text-vx-600">
+                {CHECKS_RAN} checks ran. {FIELDS.toLocaleString("en-US")} fields exist. The sliver is drawn to scale.
+              </p>
+            </div>
+          </div>
+
+          {/* right: what the active rule looks at */}
+          <div className="hidden lg:col-span-7 lg:block">
+            <Figure active={active} fade={fade} />
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function Figure({ active, fade }: { active: number; fade: string }) {
+  return (
+    <div>
+      <div className="relative overflow-hidden rounded-lg bg-vx-800" style={{ aspectRatio: "5 / 3" }}>
+        {rules.map((rule, i) => (
+          <div key={rule.id} className={`absolute inset-4 ${fade}`} style={{ opacity: i === active ? 1 : 0 }} aria-hidden={i !== active}>
+            <RuleDiagram id={rule.id} />
+          </div>
+        ))}
+      </div>
+      {/* every description occupies the same grid cell, so the block is as tall as the longest and never shifts */}
+      <div className="mt-4 grid">
+        {rules.map((rule, i) => (
+          <div key={rule.id} className={`[grid-area:1/1] ${fade}`} style={{ opacity: i === active ? 1 : 0 }} aria-hidden={i !== active}>
+            <p className="mono text-micro text-vx-600">
+              DRG-4120 · R2 · rule {String(i + 1).padStart(2, "0")}
+            </p>
+            <p className="mt-1 max-w-[56ch] text-body text-vx-900">{rule.what}</p>
+            <p className={`mono mt-1 text-small ${rule.advisory ? "text-vx-600" : "text-vx-900"}`}>{rule.verdict}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

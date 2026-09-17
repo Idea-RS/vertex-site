@@ -7,7 +7,7 @@ import { PATENT_PLANES, PATENT_PLANE_LABELS, PATENT_W, PATENT_H, PatentSheet, ty
 import { planeDescriptions } from "@/content/planes";
 import { Dim } from "@/components/Dim";
 import { Button } from "@/components/Button";
-import { gsap, ScrollTrigger, setupGsap, prefersReducedMotion } from "@/lib/motion";
+import { gsap, setupGsap, prefersReducedMotion } from "@/lib/motion";
 
 /**
  * Hero and explainer.
