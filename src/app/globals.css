@@ -11,7 +11,7 @@
   --color-vx-800: #1b263b; /* the material: drawing viewports, cards, the primary CTA */
   --color-vx-600: #415a77; /* secondary text on light (5.4:1); hairlines inside dark viewports */
   --color-vx-400: #778da9; /* rules and borders on light; dimension text inside dark viewports. Never text on light (2.6:1). */
-  --color-vx-100: #e0e1dd; /* page canvas; linework and text inside dark viewports */
+  --color-vx-100: #f7f6f6ff; /* page canvas; linework and text inside dark viewports */
   --color-dim: #f0a868; /* dimension orange, inside dark viewports only (7.6:1 on vx-800) */
   --color-dim-deep: #8f4a14; /* dimension orange re-derived for the light canvas (5.1:1 on vx-100) */
   --color-transparent: transparent;
