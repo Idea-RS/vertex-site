@@ -1,241 +1,93 @@
 "use client";
 
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import { Dim } from "@/components/Dim";
+import { useEffect, useRef } from "react";
 import { Sheet, VARIANT_ROWS } from "@/components/drawing/Sheet";
-import { gsap, ScrollTrigger, setupGsap, prefersReducedMotion } from "@/lib/motion";
+import { Bracket, StepScene, useActiveStep, useStaticLayout, type Step } from "@/components/steps/StepScene";
 
 /**
- * The variant loop, scrubbed by scroll:
- * - Left side: Header + Lede shown first, then steps 1 -> 2 -> 3 -> 4 arrive smoothly one by one as you scroll.
- * - Right side: Enlarged CAD drawing sheet responding synchronously: table marker moves,
- *   dimension text updates, verdict reads PASS, watermark lifts, initials appear in title block.
+ * Make: the scene that worked, re-expressed in the page's one vocabulary. Left,
+ * pinned: the variant sheet. Right, four steps; each step lands one beat on the
+ * sheet — the row marker moves, the dimensions update, the verdict reads PASS,
+ * the watermark lifts and the initials appear — with 350ms transitions and a
+ * bracket on the element that changed. Nothing scrubs.
  */
 
 const FROM = 1; // S2
 const TO = 3; // S4
 const ROW_H = 32;
 
-const steps = [
-  {
-    num: "1",
-    title: "Pick a row",
-    body: "The variant table on your own drawing is the spec. Choose the row you need.",
-  },
-  {
-    num: "2",
-    title: "Generate",
-    body: "Vertex regenerates the sheet from your template. Every dimension follows the row.",
-  },
-  {
-    num: "3",
-    title: "Gate",
-    body: "Deterministic checks run. The verdict says what passed and what it couldn’t check.",
-  },
-  {
-    num: "4",
-    title: "Sign",
-    body: "A named person signs. Until then the sheet says so on its face.",
-  },
+type Beat = Step & { anchor: string; side?: "right" | "left" | "above" | "below" | "inside-right" };
+const steps: Beat[] = [
+  { key: "pick", title: "Pick a row", what: "The variant table on your own drawing is the spec. Choose the row you need; nothing is typed in twice.", vertex: `Row ${VARIANT_ROWS[TO].size}: A ${VARIANT_ROWS[TO].a}, B ${VARIANT_ROWS[TO].b}, d ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes.`, anchor: "[data-row-marker]", side: "left" },
+  { key: "dims", title: "The dimensions follow", what: "Vertex regenerates the sheet from your template, not ours. Every dimension that reads from the table takes the row's value.", vertex: `Ø${VARIANT_ROWS[FROM].d} H7 becomes Ø${VARIANT_ROWS[TO].d} H7; the PCD and the hole count follow.`, anchor: '[data-dim="bore"]', side: "right" },
+  { key: "gate", title: "The gate runs", what: "The same deterministic checks run on the new sheet. The verdict says what passed and what it couldn't check.", vertex: "PASS · 7 checked · 2 couldn't be checked. Nothing can be downloaded before this line.", anchor: "[data-verdict-box]", side: "below" },
+  { key: "sign", title: "A named person signs", what: "Until then the sheet says GENERATED — NOT APPROVED on its face, drawn into the drawing. It lifts only when someone signs.", vertex: "Checked: S.M. The signature is recorded against the checks they saw.", anchor: '[data-cell="checkedBy"]', side: "below" },
 ];
 
 export default function Make() {
-  const section = useRef<HTMLElement>(null);
-  const frame = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const isStatic = useStaticLayout();
+  const active = useActiveStep(root, !isStatic);
+  const idx = isStatic ? steps.length - 1 : steps.findIndex((s) => s.key === active);
+  const beat = idx >= 0 ? steps[idx] : null;
 
-  useGSAP(
-    () => {
-      const root = section.current!;
-      const marker = root.querySelector<SVGGElement>("[data-row-marker]")!;
-      const cur = root.querySelector<SVGGElement>("[data-dim-current-group]")!;
-      const prev = root.querySelector<SVGGElement>("[data-dim-prev-group]")!;
-      const watermark = root.querySelector<SVGGElement>("[data-watermark]")!;
-      const checked = root.querySelector<SVGTextElement>("[data-cell='checkedBy']")!;
-      const verdictPending = root.querySelector<HTMLElement>("[data-verdict='pending']")!;
-      const verdictPass = root.querySelector<HTMLElement>("[data-verdict='pass']")!;
-      const stepItems = Array.from(root.querySelectorAll<HTMLElement>("[data-step-item]"));
+  // Apply the beats to the sheet. Each is a 350ms transition on the element that changes.
+  useEffect(() => {
+    const b = box.current;
+    if (!b) return;
+    const marker = b.querySelector<SVGGElement>("[data-row-marker]");
+    const cur = b.querySelector<SVGGElement>("[data-dim-current-group]");
+    const prev = b.querySelector<SVGGElement>("[data-dim-prev-group]");
+    const watermark = b.querySelector<SVGGElement>("[data-watermark]");
+    const checked = b.querySelector<SVGTextElement>("[data-cell='checkedBy']");
+    const picked = idx >= 0;
+    const regenerated = idx >= 1;
+    const passed = idx >= 2;
+    const signed = idx >= 3;
+    if (marker) marker.style.transform = `translateY(${ROW_H * (picked ? TO : FROM)}px)`;
+    if (cur) cur.style.opacity = regenerated ? "1" : "0";
+    if (prev) prev.style.opacity = regenerated ? "0" : "1";
+    if (watermark) {
+      watermark.style.opacity = signed ? "0" : "1";
+      watermark.style.transform = signed ? "translateY(-4px)" : "translateY(0)";
+    }
+    if (checked) checked.style.opacity = signed ? "1" : "0";
+    b.dataset.passed = passed ? "true" : "";
+  }, [idx]);
 
-      if (prefersReducedMotion()) {
-        stepItems.forEach((el) => gsap.set(el, { opacity: 1, y: 0, scale: 1 }));
-        gsap.set(marker, { y: ROW_H * TO });
-        gsap.set(cur, { opacity: 1 });
-        gsap.set(prev, { opacity: 0 });
-        gsap.set(watermark, { opacity: 0 });
-        gsap.set(checked, { opacity: 1 });
-        gsap.set(verdictPass, { opacity: 1 });
-        gsap.set(verdictPending, { opacity: 0 });
-        return;
-      }
+  const visual = (
+    <div ref={box} className="relative overflow-hidden rounded-lg bg-vx-800 p-3 make-box" data-make-box>
+      <div className="relative" style={{ aspectRatio: "1400 / 990" }}>
+        <Sheet id="make" row={TO} prevRow={FROM} checkedBy="S.M." watermark label={`Generated variant of drawing DRG-4120 at row ${VARIANT_ROWS[TO].size}: outer diameter ${VARIANT_ROWS[TO].a}, PCD ${VARIANT_ROWS[TO].b}, bore ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes. Checked by S.M.`} />
+      </div>
+      {/* verdict */}
+      <div className="absolute left-5 top-5 rounded-md border border-vx-600 bg-vx-900 px-3 py-2" data-verdict-box>
+        <div className="flex items-baseline gap-3">
+          <span className="mono text-body text-vx-100 transition-opacity duration-[350ms]" data-pass>
+            PASS
+          </span>
+          <span className="text-micro text-vx-400" data-pass-note>
+            7 checked · 2 couldn&apos;t be checked
+          </span>
+        </div>
+      </div>
+      {!isStatic && beat && <Bracket box={box} selector={beat.anchor} active={active} side={beat.side} inset={0} />}
+    </div>
+  );
 
-      setupGsap();
-
-      // Initial resting state
-      gsap.set(marker, { y: ROW_H * FROM });
-      gsap.set(cur, { opacity: 0 });
-      gsap.set(prev, { opacity: 1 });
-      gsap.set(watermark, { opacity: 1, y: 0 });
-      gsap.set(checked, { opacity: 0 });
-      gsap.set(verdictPass, { opacity: 0 });
-      gsap.set(verdictPending, { opacity: 1 });
-
-      // Steps initially hidden, ready to arrive smoothly on scroll
-      stepItems.forEach((el) => {
-        gsap.set(el, { opacity: 0, y: 22, scale: 0.97 });
-      });
-
-      const mm = gsap.matchMedia();
-
-      // Desktop: Pinned scrollytelling timeline
-      mm.add("(min-width: 1024px)", () => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root,
-            start: "top top",
-            end: "+=260%",
-            scrub: 1,
-            pin: true,
-            anticipatePin: 1,
-          },
-        });
-
-        // 1. Step 1 arrives & table row marker moves to S4
-        tl.to(stepItems[0], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.08);
-        tl.to(marker, { y: ROW_H * TO, duration: 0.18, ease: "power2.inOut" }, 0.10);
-
-        // 2. Step 2 arrives & sheet dimensions regenerate
-        tl.to(stepItems[1], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.32);
-        tl.to(prev, { opacity: 0, duration: 0.08 }, 0.35);
-        tl.to(cur, { opacity: 1, duration: 0.12 }, 0.41);
-
-        // 3. Step 3 arrives & gate checks verify to PASS
-        tl.to(stepItems[2], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.56);
-        tl.to(verdictPending, { opacity: 0, duration: 0.08 }, 0.60);
-        tl.to(verdictPass, { opacity: 1, duration: 0.10 }, 0.66);
-
-        // 4. Step 4 arrives & watermark lifts and signature signs
-        tl.to(stepItems[3], { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power2.out" }, 0.78);
-        tl.to(watermark, { opacity: 0, y: -40, duration: 0.14, ease: "power2.in" }, 0.82);
-        tl.to(checked, { opacity: 1, duration: 0.10 }, 0.90);
-      });
-
-      // Mobile/Tablet: Flow layout with staggered scroll reveals
-      mm.add("(max-width: 1023px)", () => {
-        stepItems.forEach((el) => {
-          gsap.to(el, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.45,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-            },
-          });
-        });
-
-        const mtl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root.querySelector("[data-sheet-stage]"),
-            start: "top 70%",
-            end: "bottom 30%",
-            scrub: 1,
-          },
-        });
-        mtl.to(marker, { y: ROW_H * TO, duration: 0.25 });
-        mtl.to(prev, { opacity: 0, duration: 0.15 }, 0.25);
-        mtl.to(cur, { opacity: 1, duration: 0.15 }, 0.35);
-        mtl.to(verdictPending, { opacity: 0, duration: 0.1 }, 0.5);
-        mtl.to(verdictPass, { opacity: 1, duration: 0.15 }, 0.55);
-        mtl.to(watermark, { opacity: 0, y: -30, duration: 0.2 }, 0.7);
-        mtl.to(checked, { opacity: 1, duration: 0.15 }, 0.85);
-      });
-
-      return () => {
-        mm.revert();
-      };
-    },
-    { scope: section },
+  const intro = (
+    <div>
+      <h2 className="max-w-[18ch] text-h2">Make the variant. Gate it. Sign it.</h2>
+      <p className="mt-4 text-body text-vx-600">
+        Pick a row from your own variant table. Vertex regenerates the sheet from your template, runs the checks, and holds it as not approved until a named person signs.
+      </p>
+    </div>
   );
 
   return (
-    <section
-      ref={section}
-      className="rule relative flex min-h-[100svh] items-center overflow-hidden pb-12 pt-20 lg:pb-16 lg:pt-28"
-      data-make
-    >
-      <div className="container">
-        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
-          {/* Left Column (5 cols): Header + Step-by-Step scrollytelling */}
-          <div className="flex flex-col justify-center lg:col-span-5">
-            <div data-intro>
-              <h2 className="text-h2">Make the variant. Gate it. Sign it.</h2>
-              <p className="mt-4 text-body text-vx-600">
-                Pick a row from your own variant table. Vertex regenerates the sheet from your template, runs the checks, and holds it as not approved until a named person signs.
-              </p>
-            </div>
-
-            <ol className="mt-8 flex flex-col gap-3.5 sm:gap-4" data-steps-list>
-              {steps.map((s, i) => (
-                <li
-                  key={s.title}
-                  data-step-item={i}
-                  className="relative flex items-start gap-4 rounded-lg border border-vx-400/40 bg-vx-100/70 p-3 sm:p-3.5 shadow-xs transition-colors"
-                >
-                  <span
-                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-vx-400 bg-vx-100 mono text-micro font-semibold text-vx-900 shadow-xs"
-                    data-step-num
-                  >
-                    {s.num}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-small font-heading font-medium text-vx-900">{s.title}</h3>
-                    <p className="mt-0.5 text-small text-vx-600 leading-relaxed">{s.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Right Column (7 cols): Enlarged Picture Container with Technical Dimension Framing */}
-          <div className="flex flex-col justify-center lg:col-span-7" data-sheet-stage>
-            <div className="flex w-full items-start gap-2.5 sm:gap-3">
-              <div
-                ref={frame}
-                className="relative flex-1 overflow-hidden rounded-xl border border-vx-400/60 bg-vx-800 p-3 sm:p-5 lg:p-6 shadow-2xl shadow-vx-900/20"
-                style={{ aspectRatio: "1400 / 990" }}
-              >
-                <Sheet
-                  id="make"
-                  row={TO}
-                  prevRow={FROM}
-                  checkedBy="S.M."
-                  watermark
-                  label={`Generated variant of drawing DRG-4120 at row ${VARIANT_ROWS[TO].size}: outer diameter ${VARIANT_ROWS[TO].a}, PCD ${VARIANT_ROWS[TO].b}, bore ${VARIANT_ROWS[TO].d}, ${VARIANT_ROWS[TO].n} holes. Checked by S.M.`}
-                />
-                {/* verdict overlay */}
-                <div className="absolute bottom-3 left-3 rounded-md border border-vx-600 bg-vx-900/95 px-3 py-2 sm:bottom-5 sm:left-5 sm:px-4 sm:py-3 shadow-lg backdrop-blur-xs">
-                  <div className="relative">
-                    <div className="flex items-baseline gap-3 sm:gap-4" data-verdict="pass">
-                      <span className="mono text-body text-vx-100 sm:text-h3 font-semibold">PASS</span>
-                      <span className="text-micro text-vx-400 sm:text-small">7 checked · 2 couldn&apos;t be checked</span>
-                    </div>
-                    <div className="absolute inset-0 flex items-baseline gap-3 sm:gap-4" data-verdict="pending" style={{ opacity: 0 }}>
-                      <span className="mono text-body text-vx-400 sm:text-h3 font-semibold">Gate</span>
-                      <span className="text-micro text-vx-400 sm:text-small">9 checks queued</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <Dim axis="y" measure={frame} className="shrink-0" />
-            </div>
-            <div className="flex w-full justify-start">
-              <Dim axis="x" measure={frame} className="mt-2.5 sm:mt-3" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div ref={root} data-make>
+      <StepScene id="make" label="Make" steps={steps} active={active} isStatic={isStatic} intro={intro} visual={visual} caption="DRG-4120 · variant S4 · generated from the customer's template" />
+    </div>
   );
 }

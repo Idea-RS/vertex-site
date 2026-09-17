@@ -281,11 +281,52 @@ p {
 }
 /* steps: the one in the centre band is at full strength, the rest recede */
 @media (min-width: 64rem) {
-  .step {
-    opacity: 0.35;
-    transition: opacity 350ms ease-out;
+  .step,
+  .step * {
+    transition: color 350ms ease-out, border-color 350ms ease-out, opacity 350ms ease-out;
   }
-  .step[data-lit="true"] {
-    opacity: 1;
+  .step:not([data-lit="true"]) .text-vx-900 {
+    color: var(--color-vx-600);
   }
+  .step:not([data-lit="true"]) .border-vx-400,
+  .step:not([data-lit="true"]) .divide-vx-400 > * {
+    border-color: color-mix(in srgb, var(--color-vx-400) 50%, transparent);
+  }
+}
+
+/* Find: the wall of sheets. Non-matching sheets step back to 25% once the query completes. */
+.wall-sheet {
+  transition: opacity 350ms ease-out, transform 350ms ease-out, border-color 350ms ease-out;
+  filter: grayscale(1) brightness(0.85);
+}
+[data-phase="result"] .wall-sheet:not([data-hit]),
+[data-phase="honest"] .wall-sheet:not([data-hit]):not([data-unreadable]) {
+  opacity: 0.25;
+}
+[data-phase="result"] .wall-sheet[data-hit],
+[data-phase="honest"] .wall-sheet[data-hit] {
+  filter: none;
+  transform: translateY(-4px);
+  border-color: var(--color-vx-100);
+}
+/* the honest step: the two sheets with no readable geometry come forward, marked, not lit */
+[data-phase="honest"] .wall-sheet[data-unreadable] {
+  opacity: 1;
+  border: 1px dashed var(--color-vx-400);
+}
+
+/* Make: the sheet's beats are 350ms transitions on the element that changed */
+.make-box [data-row-marker],
+.make-box [data-dim-current-group],
+.make-box [data-dim-prev-group],
+.make-box [data-watermark],
+.make-box [data-cell="checkedBy"] {
+  transition: opacity 350ms ease-out, transform 350ms ease-out;
+}
+.make-box [data-pass],
+.make-box [data-pass-note] {
+  transition: opacity 350ms ease-out;
+}
+.make-box:not([data-passed="true"]) [data-pass] {
+  color: var(--color-vx-400);
 }

@@ -98,17 +98,26 @@ Uses on the homepage (six):
 | 5 | Make | width of the demo frame, live | `1,184px` |
 | 6 | Between pipeline and deploy | the gap between two sections, live | `128px` |
 
-## 5. Motion budget
+## 5. Motion budget (revision 4 — one vocabulary)
 
-Lenis for smoothing. GSAP ScrollTrigger, `scrub: 1`, on every scroll-driven effect. Nothing autoplays except the hero's one-time draw-on. `will-change: transform` only while a scene's trigger is active. `prefers-reduced-motion`: no Lenis, no triggers, every scene renders its final frame.
+Lenis for smoothing. **One motion pattern on the page: sticky-left, stepping-right.** A section pins a visual in the left ~55%; the right column holds N short steps. As a step enters the centre band, the visual highlights one element — full vx-100 strokes, a 4px lift, everything else at 25%, an orange dimension-line bracket beside it measuring it — and the step's text is at full strength while the others recede. Transitions 350ms ease-out. No z-space, no blur, no planes flying, no scale beyond the lift. Steps reverse on scroll-back. Below 1024px and under reduced motion the visual is a still above the steps as a plain list.
 
-| Section | The one moment |
-|---------|----------------|
-| Hero + explainer (rev 3, one pinned scene, ≥1024px) | 0–30%: the vector re-draft draws itself over the 1937 patent scan (geometry first, dimensions ~300 ms behind) while the scan desaturates to vx-400 and fades out; 30–55%: the sheet travels into the left column of the explainer as its copy slides in; 55–80%: six planes separate with 80 ms lag and back-plane blur, labels name each; it holds exploded and collapses only on scroll-back. Hover, tap or focus lifts one plane, dims the rest to 35% and shows its description. Below 1024px and under reduced motion: the still scan with its caption, then a two-column block with the sheet exploded as a still and the six planes as a plain list. |
-| Find | camera moves forward through six depth layers of real patent drawing sheets (`public/archive/*.webp`, aspect ratios reserved so CLS stays 0; far layers desaturated toward vx-400); at 0.6 the ten hits light at full contrast and the rest dim; the result panel fills: 10 hits in 9 ms |
-| Understand | containment edges draw on as the graph enters |
-| Make | row marker moves S2→S4, dimension text updates, verdict reads PASS, watermark lifts, initials appear in the title block |
-| Everything else | still |
+Three sections use it (explainer, Find, Verify) and Make is expressed in it. The only other motion is the hero's scan-to-CAD dissolve. From the Tandem study, the rule for everything else: of six interactive families only two animate; if an element doesn't need to move, it doesn't move.
+
+| Section | Steps | What lights |
+|---|---|---|
+| Explainer | 5 | one plane of the re-drafted patent sheet per step; bracket on that plane's anchor (frame, ring OD, the 84 chain, the variant table, the title block) |
+| Industries | hover, not scroll | the row's label and a square marker; the part illustration crossfades in 250ms |
+| Find | 4 | the query types itself as step 1 scrolls; at step 2 the three matches lift and the other 33 sheets drop to 25%; step 3 the result rows; step 4 the honest line |
+| Verify | 5 + coverage | one rule per step lands the bracket on the feature it checks and ticks the rule row; the last step is the coverage bar — 6 checks against 44,800 fields, drawn at its true proportion |
+| Make | 4 | pick a row → dimensions update → PASS → signed, each a 350ms change on the element that moved, with the bracket on it |
+| Product page | hover, not scroll, not pinned | the list row's marker and colour; the pane is replaced |
+
+Between pinned sections there is at least one full viewport of calm copy (`Interlude`), so the page reads as a pinned moment, then rest, then the next.
+
+### The hero drawing (rev 4)
+
+Landscape, as the brief required: US Patent 2,529,098, George A. Noll, "Pipe coupling", 1950 — the end view of the sealing ring beside the longitudinal section, used rotated so the header reads. Provenance and processing in `docs/hero-sketch.md`; registration overlay in `shots/registration-overlay-r4.png`. The re-draft adds ten dimensions (one angular, one concentricity frame), a three-row variant table, three notes, a compact title block and an A–D / 1–8 zone grid. No parts list, no revision table.
 
 ### The hero drawing (rev 3)
 

@@ -152,6 +152,7 @@ export default function HeroExplainer() {
         };
         place();
         gsap.set(stage, { x: 0, y: 0, scale: 1, transformOrigin: "top left" });
+        layer.dataset.placed = "true";
 
         // Start state: scan visible, vector undrawn.
         PATENT_PLANES.forEach((p) => {
@@ -198,9 +199,9 @@ export default function HeroExplainer() {
   return (
     <div ref={root} className="relative" data-scene data-static={staticLayout ? "true" : undefined}>
       {/* ---------- the sticky sheet (desktop) ---------- */}
-      <div className="pointer-events-none sticky z-10 hidden lg:block [[data-static]_&]:hidden" style={{ top: NAV, height: `calc(100svh - ${NAV}px)` }} data-sticky aria-hidden="true">
+      <div className="pointer-events-none sticky z-10 hidden lg:block [[data-static]_&]:hidden" style={{ top: NAV, height: `calc(100svh - ${NAV}px)` }} data-sticky role="group" aria-label="The sheet, plane by plane">
         <div className="container relative h-full">
-          <div className="pointer-events-auto absolute" style={{ aspectRatio: `${SCAN.w} / ${SCAN.h}` }} data-stage>
+          <div className="pointer-events-auto absolute invisible [[data-placed]_&]:visible" style={{ aspectRatio: `${SCAN.w} / ${SCAN.h}`, width: "58%" }} data-stage>
             <div className="relative h-full w-full overflow-hidden rounded-lg bg-vx-800 p-3" data-box>
               <div className="relative h-full w-full" data-stack data-drawing="pending">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

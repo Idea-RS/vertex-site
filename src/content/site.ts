@@ -15,7 +15,7 @@ export const site = {
 };
 
 export const nav = [
-  { href: "/product/find/", label: "Product" },
+  { href: "/product/", label: "Product" },
   { href: "/how-it-works/", label: "How it works" },
   { href: "/security/", label: "Security" },
   { href: "/diagnostic/", label: "Diagnostic" },
@@ -23,10 +23,10 @@ export const nav = [
 ] as const;
 
 export const productNav = [
-  { href: "/product/find/", label: "Find" },
-  { href: "/product/verify/", label: "Verify" },
-  { href: "/product/make/", label: "Make" },
-  { href: "/product/archive/", label: "Archive" },
+  { href: "/product/#find", label: "Find" },
+  { href: "/product/#verify", label: "Verify" },
+  { href: "/product/#make", label: "Make" },
+  { href: "/product/#archive", label: "Archive" },
 ] as const;
 
 export const archive = {

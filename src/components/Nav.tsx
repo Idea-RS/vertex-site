@@ -14,7 +14,7 @@ export default function Nav() {
   const close = () => setOpen(false);
 
   const isActive = (href: string) =>
-    href === "/product/find/" ? pathname.startsWith("/product") : pathname.startsWith(href);
+    href === "/product/" ? pathname.startsWith("/product") : pathname.startsWith(href);
 
   useEffect(() => {
     const handleScroll = () => {
