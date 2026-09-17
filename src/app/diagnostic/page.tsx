@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Block, PageHeader, RuledList } from "@/components/PageHeader";
 import { Button } from "@/components/Button";
+import { DeliverablesList } from "@/components/DeliverablesList";
 import { diagnostic, findings, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -59,19 +60,26 @@ export default function DiagnosticPage() {
         </dl>
       </Block>
 
-      <Block title="The six deliverables">
-        <ol className="divide-y divide-vx-400 border-y border-vx-400">
-          {diagnostic.deliverables.map((d, i) => (
-            <li key={d.title} className="grid gap-2 py-4 sm:grid-cols-[3rem_1fr]">
-              <span className="mono text-small text-vx-600">{String(i + 1).padStart(2, "0")}</span>
-              <div>
-                <h3 className="text-body text-vx-900">{d.title}</h3>
-                <p className="mt-1 max-w-[56ch] text-small text-vx-600">{d.body}</p>
+      <section className="rule" id="deliverables">
+        <div className="container py-14 lg:py-24">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-12 items-start">
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-32">
+                <span className="mono text-micro text-vx-600 uppercase tracking-wider block mb-3">
+                  Outputs
+                </span>
+                <h2 className="text-h2 font-heading font-medium text-vx-900">The six deliverables</h2>
+                <p className="mt-4 text-body text-vx-600 max-w-[34ch]">
+                  Six concrete deliverables your team keeps whether or not you go further. Built directly from your own drawing archive.
+                </p>
               </div>
-            </li>
-          ))}
-        </ol>
-      </Block>
+            </div>
+            <div className="lg:col-span-8">
+              <DeliverablesList items={diagnostic.deliverables} />
+            </div>
+          </div>
+        </div>
+      </section>
 
       <Block title="What we need from you">
         <RuledList

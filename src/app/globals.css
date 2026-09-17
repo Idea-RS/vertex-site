@@ -297,7 +297,6 @@ p {
 /* Find: the wall of sheets. Non-matching sheets step back to 25% once the query completes. */
 .wall-sheet {
   transition: opacity 350ms ease-out, transform 350ms ease-out, border-color 350ms ease-out;
-  filter: grayscale(1) brightness(0.85);
 }
 [data-phase="result"] .wall-sheet:not([data-hit]),
 [data-phase="honest"] .wall-sheet:not([data-hit]):not([data-unreadable]) {
@@ -305,7 +304,7 @@ p {
 }
 [data-phase="result"] .wall-sheet[data-hit],
 [data-phase="honest"] .wall-sheet[data-hit] {
-  filter: none;
+  opacity: 1;
   transform: translateY(-4px);
   border-color: var(--color-vx-100);
 }

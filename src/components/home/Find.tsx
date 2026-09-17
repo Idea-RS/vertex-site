@@ -43,7 +43,7 @@ const LOOP = (() => {
 })();
 const SPEED = 14; // rows per second while racing
 const RAMP = 0.25; // seconds to reach full speed
-const BLUR_MAX = 4; // px, vertical, at full speed
+const BLUR_MAX = 6; // px, vertical, at full speed
 const DECEL = { ideal: 0.6, min: 0.5, max: 0.68 }; // seconds; the landing picks the frame that fits
 const UNREADABLE = 2;
 const UNREADABLE_CELLS = [5, 30]; // indices within the resting frame
@@ -58,9 +58,10 @@ const steps: Step[] = [
 export default function Find() {
   const root = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
-  const strip = useRef<HTMLDivElement>(null);
-  const stripInner = useRef<HTMLDivElement>(null);
-  const blurEl = useRef<SVGFEGaussianBlurElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const domGridRef = useRef<HTMLDivElement>(null);
+  const scratchCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
   const control = useRef<{ land: (want: boolean) => void } | null>(null);
   const isStatic = useStaticLayout();
   const active = useActiveStep(root, !isStatic);
@@ -71,6 +72,15 @@ export default function Find() {
   const shown = idx === -1 ? lastIdx : idx;
   const [settled, setSettled] = useState(false);
   const lifted = isStatic || (settled && shown >= 1);
+
+  // Preload images for canvas
+  useEffect(() => {
+    imagesRef.current = LOOP.map((item) => {
+      const img = new Image();
+      img.src = item.src;
+      return img;
+    });
+  }, []);
 
   // The query types itself over step one, driven by scroll as before, and finishes before step two.
   useGSAP(
@@ -98,11 +108,11 @@ export default function Find() {
     { scope: root },
   );
 
-  // The column: its own rAF loop. Positions are in rows so a resize never tears the frame.
+  // The column: hardware-accelerated GPU canvas while racing/decelerating, exact DOM when landed.
   useEffect(() => {
     if (isStatic) return;
-    const el = root.current, outer = strip.current, inner = stripInner.current;
-    if (!el || !outer || !inner) return;
+    const el = root.current, canvas = canvasRef.current, domGrid = domGridRef.current;
+    if (!el || !canvas || !domGrid) return;
     type Mode = "idle" | "racing" | "decel" | "landed";
     const st = {
       mode: "idle" as Mode,
@@ -112,25 +122,129 @@ export default function Find() {
       want: false, // step two (or later) is the reader's position
       park: false, // the heading came back into view while racing: come to rest, lift nothing
       inView: false,
-      blur: -1,
       raf: 0,
       last: 0,
       d: { from: 0, dist: 0, dur: 0, k: 2, t: 0 },
     };
     const heading = el.querySelector("h2");
-    // the reader is inside the section: the heading has gone up past the top of the viewport
-    const pastHeading = () => !heading || heading.getBoundingClientRect().bottom <= 0;
-    const pitch = () => (outer.offsetHeight + GAP) / (LOOP_ROWS * 2);
-    const draw = () => {
-      const rows = (((REST_START / COLS + st.pos) % LOOP_ROWS) + LOOP_ROWS) % LOOP_ROWS;
-      outer.style.transform = `translate3d(0, ${(-rows * pitch()).toFixed(2)}px, 0)`;
-      const b = Math.round(BLUR_MAX * Math.min(1, st.v / SPEED) * 20) / 20;
-      if (b !== st.blur) {
-        st.blur = b;
-        blurEl.current?.setAttribute("stdDeviation", `0 ${b}`);
-        inner.style.filter = b > 0.15 ? "url(#find-vblur)" : "none";
+    let headingDocBottom = 0;
+    const measure = () => {
+      if (heading) {
+        const r = heading.getBoundingClientRect();
+        headingDocBottom = r.bottom + window.scrollY;
       }
     };
+    measure();
+
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => measure()) : null;
+    ro?.observe(canvas);
+    if (heading) ro?.observe(heading);
+
+    // the reader is inside the section: the heading has gone up past the top of the viewport
+    const pastHeading = () => !heading || (headingDocBottom > 0 ? window.scrollY >= headingDocBottom : heading.getBoundingClientRect().bottom <= 0);
+
+    const render = (rawB: number) => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      if (width === 0 || height === 0) return;
+
+      const pxW = Math.round(width * dpr);
+      const pxH = Math.round(height * dpr);
+      if (canvas.width !== pxW || canvas.height !== pxH) {
+        canvas.width = pxW;
+        canvas.height = pxH;
+      }
+
+      if (!scratchCanvasRef.current) {
+        scratchCanvasRef.current = document.createElement("canvas");
+      }
+      const scratch = scratchCanvasRef.current;
+      if (scratch.width !== pxW || scratch.height !== pxH) {
+        scratch.width = pxW;
+        scratch.height = pxH;
+      }
+      const sctx = scratch.getContext("2d");
+      if (!sctx) return;
+
+      sctx.save();
+      sctx.scale(dpr, dpr);
+      sctx.clearRect(0, 0, width, height);
+
+      const tileSize = (width - (COLS - 1) * GAP) / COLS;
+      const pitch = tileSize + GAP;
+
+      const floatRow = (((REST_START / COLS + st.pos) % LOOP_ROWS) + LOOP_ROWS) % LOOP_ROWS;
+      const topRow = Math.floor(floatRow);
+      const rowOffset = (floatRow - topRow) * pitch;
+
+      for (let r = -1; r <= 6; r++) {
+        const loopRow = ((topRow + r) % LOOP_ROWS + LOOP_ROWS) % LOOP_ROWS;
+        const y = r * pitch - rowOffset;
+        if (y + tileSize < 0 || y > height) continue;
+
+        for (let c = 0; c < COLS; c++) {
+          const x = c * pitch;
+          const imgIndex = loopRow * COLS + c;
+          const img = imagesRef.current[imgIndex];
+
+          sctx.fillStyle = "#ffffff";
+          sctx.fillRect(x, y, tileSize, tileSize);
+
+          if (img && img.complete && img.naturalWidth > 0) {
+            sctx.save();
+            sctx.beginPath();
+            if (typeof sctx.roundRect === "function") {
+              sctx.roundRect(x, y, tileSize, tileSize, 2);
+            } else {
+              sctx.rect(x, y, tileSize, tileSize);
+            }
+            sctx.clip();
+            const srcSize = Math.min(img.naturalWidth, img.naturalHeight);
+            sctx.drawImage(img, 0, 0, srcSize, srcSize, x, y, tileSize, tileSize);
+            sctx.restore();
+          }
+
+          sctx.strokeStyle = "#415a77";
+          sctx.lineWidth = 1;
+          sctx.beginPath();
+          if (typeof sctx.roundRect === "function") {
+            sctx.roundRect(x + 0.5, y + 0.5, tileSize - 1, tileSize - 1, 2);
+          } else {
+            sctx.strokeRect(x + 0.5, y + 0.5, tileSize - 1, tileSize - 1);
+          }
+          sctx.stroke();
+        }
+      }
+      sctx.restore();
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const b = rawB * dpr;
+      if (b > 0.4) {
+        // Uniform camera shutter motion blur along Y axis.
+        // Progressive fractional blending (1 / (i + 1)) guarantees the cumulative
+        // alpha stays strictly at 1.0 (100% opaque), completely eliminating any dark/grey
+        // background bleed-through and keeping the drawing paper pure, crisp, solid white.
+        const SAMPLES = 7;
+        for (let i = 0; i < SAMPLES; i++) {
+          const t = (i / (SAMPLES - 1)) * 2 - 1; // from -1 to +1
+          ctx.globalAlpha = 1 / (i + 1);
+          ctx.drawImage(scratch, 0, t * b);
+        }
+        ctx.globalAlpha = 1.0;
+      } else {
+        ctx.drawImage(scratch, 0, 0);
+      }
+    };
+
+    const draw = () => {
+      const rawB = BLUR_MAX * Math.min(1, st.v / SPEED);
+      render(rawB);
+    };
+
     // Can the column land from here? Cubic Hermite from the current speed to rest, exactly on a resting frame.
     const tryLand = () => {
       if (st.v <= 0) return false;
@@ -148,15 +262,17 @@ export default function Find() {
       st.park = false;
       st.pos = 0;
       st.v = 0;
-      draw();
-      outer.style.willChange = "auto";
+      canvas.style.opacity = "0";
+      domGrid.style.opacity = "1";
+      domGrid.style.pointerEvents = "auto";
     };
     const settle = () => {
       st.mode = "landed";
       st.pos = 0;
       st.v = 0;
-      draw();
-      outer.style.willChange = "auto";
+      canvas.style.opacity = "0";
+      domGrid.style.opacity = "1";
+      domGrid.style.pointerEvents = "auto";
       setSettled(true);
     };
     const frame = (now: number) => {
@@ -185,7 +301,6 @@ export default function Find() {
     const run = () => {
       if (st.raf || !st.inView) return;
       st.last = 0;
-      outer.style.willChange = "transform";
       st.raf = requestAnimationFrame(frame);
     };
     const race = () => {
@@ -195,6 +310,9 @@ export default function Find() {
       st.ramp = st.mode === "decel" ? RAMP * Math.sqrt(Math.min(1, st.v / SPEED)) : 0;
       st.mode = "racing";
       setSettled(false);
+      canvas.style.opacity = "1";
+      domGrid.style.opacity = "0";
+      domGrid.style.pointerEvents = "none";
       run();
     };
     control.current = {
@@ -238,26 +356,14 @@ export default function Find() {
       if (st.mode === "racing" || st.mode === "decel") run();
     });
     io.observe(el);
-    // Load the column's sheets while the reader is still a screen or so away: an image decoding into the
-    // blurred layer mid-race forces that layer to repaint, which is the one thing that costs frames.
-    const near = new IntersectionObserver(
-      ([e]) => {
-        if (!e.isIntersecting) return;
-        inner.querySelectorAll("img").forEach((img) => {
-          img.loading = "eager";
-          img.decode().catch(() => {});
-        });
-        near.disconnect();
-      },
-      { rootMargin: "150% 0px" },
-    );
-    near.observe(el);
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    draw();
+    window.addEventListener("resize", measure, { passive: true });
     return () => {
+      ro?.disconnect();
       io.disconnect();
-      near.disconnect();
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measure);
       cancelAnimationFrame(st.raf);
       control.current = null;
     };
@@ -278,7 +384,7 @@ export default function Find() {
     return (
       <figure
         key={key}
-        className="wall-sheet m-0 overflow-hidden rounded-xs border border-vx-600 bg-vx-800"
+        className="wall-sheet m-0 overflow-hidden rounded-xs border border-vx-600 bg-white"
         style={{ aspectRatio: "1 / 1" }}
         data-hit={hit ? "true" : undefined}
         data-match={hit && primary ? MATCHES.indexOf(img.patent) : undefined}
@@ -292,22 +398,21 @@ export default function Find() {
   };
 
   const visual = (
-    <div ref={box} className="relative overflow-hidden rounded-lg bg-vx-800 p-3" data-phase={phase}>
+    <div ref={box} className="relative overflow-hidden rounded-lg bg-vx-800 p-3" style={{ contain: "paint" }} data-phase={phase}>
       {isStatic ? (
         <div className="grid grid-cols-6 gap-2" role="img" aria-label="36 drawing sheets from the archive">
           {LOOP.slice(REST_START).map((img, i) => tile(img, i, true, `s${i}`))}
         </div>
       ) : (
-        <div className="relative overflow-hidden" style={{ aspectRatio: "1 / 1" }} role="img" aria-label="Drawing sheets from the archive, passing until the search lands on 36 of them">
-          <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
-            <filter id="find-vblur" x="0" y="-10%" width="100%" height="120%" colorInterpolationFilters="sRGB">
-              <feGaussianBlur ref={blurEl} stdDeviation="0 0" edgeMode="duplicate" />
-            </filter>
-          </svg>
-          <div ref={strip} data-strip>
-            <div ref={stripInner} className="grid grid-cols-6 gap-2">
-              {[0, 1].map((copy) => LOOP.map((img, i) => tile(img, i >= REST_START ? i - REST_START : -1, copy === 0, `${copy}-${i}`)))}
-            </div>
+        <div className="relative overflow-hidden" style={{ aspectRatio: "1 / 1", contain: "paint" }} role="img" aria-label="Drawing sheets from the archive, passing until the search lands on 36 of them">
+          <canvas
+            ref={canvasRef}
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{ opacity: 0, willChange: "opacity" }}
+            aria-hidden="true"
+          />
+          <div ref={domGridRef} className="grid grid-cols-6 gap-2" style={{ opacity: 1, willChange: "opacity" }}>
+            {LOOP.slice(REST_START).map((img, i) => tile(img, i, true, `r-${i}`))}
           </div>
         </div>
       )}
