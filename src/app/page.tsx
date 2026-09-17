@@ -1,7 +1,7 @@
 import HeroExplainer from "@/components/home/HeroExplainer";
 import Industries from "@/components/home/Industries";
 import Find from "@/components/home/Find";
-import Verify from "@/components/home/Verify";
+import VerifyTimed from "@/components/home/VerifyTimed";
 import Make from "@/components/home/Make";
 import Pipeline from "@/components/home/Pipeline";
 import Deploy from "@/components/home/Deploy";
@@ -37,7 +37,7 @@ export default function HomePage() {
       >
         <p>Every drawing that contains another becomes an edge in a graph. On one manufacturer&apos;s archive there were over 50,000 of them, and the graph is where the expensive surprises live: the assembly that still calls for revision A two years after B, and the part referenced by nothing that the plant makes every week.</p>
       </Interlude>
-      <Verify />
+      <VerifyTimed />
       <Interlude title="What passes the gate is what you can make.">
         <p>The same rules that verify a drawing you already have are the rules a generated variant has to pass before it exists. That is the whole reason the checks are deterministic: a verdict has to mean the same thing on a sheet drawn in 1950 and on one Vertex regenerated this morning.</p>
         <p>So the next section reads the same way as the last one. Pick a row, watch the sheet follow it, watch the gate run, and watch a named person sign.</p>

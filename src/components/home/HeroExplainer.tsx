@@ -211,6 +211,7 @@ export default function HeroExplainer() {
                     key={p}
                     className="plane-layer absolute inset-0"
                     data-layer={p}
+                    role="button"
                     tabIndex={0}
                     aria-label={`${PATENT_PLANE_LABELS[p]}: jump to its step`}
                     onMouseEnter={() => active && jump(p)}

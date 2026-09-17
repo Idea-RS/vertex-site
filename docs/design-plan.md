@@ -102,18 +102,26 @@ Uses on the homepage (six):
 
 Lenis for smoothing. **One motion pattern on the page: sticky-left, stepping-right.** A section pins a visual in the left ~55%; the right column holds N short steps. As a step enters the centre band, the visual highlights one element — full vx-100 strokes, a 4px lift, everything else at 25%, an orange dimension-line bracket beside it measuring it — and the step's text is at full strength while the others recede. Transitions 350ms ease-out. No z-space, no blur, no planes flying, no scale beyond the lift. Steps reverse on scroll-back. Below 1024px and under reduced motion the visual is a still above the steps as a plain list.
 
-Three sections use it (explainer, Find, Verify) and Make is expressed in it. The only other motion is the hero's scan-to-CAD dissolve. From the Tandem study, the rule for everything else: of six interactive families only two animate; if an element doesn't need to move, it doesn't move.
+Three sections use it (explainer, Find, Make) and Verify is the page's one timed rhythm. The only other motion is the hero's scan-to-CAD dissolve. From the Tandem study, the rule for everything else: of six interactive families only two animate; if an element doesn't need to move, it doesn't move.
 
 | Section | Steps | What lights |
 |---|---|---|
 | Explainer | 5 | one plane of the re-drafted patent sheet per step; bracket on that plane's anchor (frame, ring OD, the 84 chain, the variant table, the title block) |
 | Industries | hover, not scroll | the row's label and a square marker; the part illustration crossfades in 250ms |
-| Find | 4 | the query types itself as step 1 scrolls; at step 2 the three matches lift and the other 33 sheets drop to 25%; step 3 the result rows; step 4 the honest line |
-| Verify | 5 + coverage | one rule per step lands the bracket on the feature it checks and ticks the rule row; the last step is the coverage bar — 6 checks against 44,800 fields, drawn at its true proportion |
-| Make | 4 | pick a row → dimensions update → PASS → signed, each a 350ms change on the element that moved, with the bracket on it |
+| Find (rev 5) | 4 | a column of sheets races upward with scroll (a 54-sheet set tiled twice, a vertical blur of 0–4px scaled to scroll velocity); at step 2 it decelerates onto the resting frame (500ms ease-out), the blur clears, the query finishes, the three matches lift and the other 33 drop to 25%; step 3 the result rows; step 4 the honest line. Phones keep the still 6 × 6 wall |
+| Verify (rev 5) | timed, 5 × 4s | not scrubbed: all five rule headings stacked, a thin orange line under the active one fills over 4s, the finished heading steps back to vx-600 and the next lights; the other side crossfades a small figure of what the rule checks (350ms); after the fifth the coverage bar resolves — 6 checks against 44,800 fields, a 2px sliver at its true proportion. Plays on enter, pauses on leave, a click on a heading restarts there; reduced motion shows all five with their figures and no timer |
+| Make (rev 5) | 4 | a camera: one transform on the sheet wrapper (scale + translate, origin top-left, 700ms ease-in-out) frames the step's region from its own bbox — 3× into the variant table, 1.8× onto the dimension chains, the whole sheet for the gate, 4× into the title block — and the beat plays there as a 350ms change with the bracket on it. Below 1024px and under reduced motion each step carries a static crop computed the same way |
 | Product page | hover, not scroll, not pinned | the list row's marker and colour; the pane is replaced |
 
 Between pinned sections there is at least one full viewport of calm copy (`Interlude`), so the page reads as a pinned moment, then rest, then the next.
+
+### Part figures (rev 5)
+
+The eight industry parts are traced from public-domain US patent figures (US 2,218,016; 1,707,664; 1,899,799; 1,739,779; 1,521,934; 2,423,345; 2,390,148; 1,678,640), each an orthographic view with centrelines, witness lines and hatching where the source is a section. Provenance in `docs/part-icons.md`.
+
+### Lighthouse (rev 5, desktop preset, static export)
+
+Home: performance 99, accessibility 100, best practices 100, SEO 100, CLS 0. Product: 100 / 100 / 100 / 100, CLS 0. Page weight is recorded in the rev-5 commit message against the rev-4 build.
 
 ### The hero drawing (rev 4)
 

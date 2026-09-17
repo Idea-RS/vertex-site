@@ -10,8 +10,8 @@ import { Dim } from "@/components/Dim";
  * The step in the centre band is the active one — the parent lights one
  * element of the visual, dims the rest to 25%, and lands an orange bracket
  * beside it. Transitions are 350ms ease-out, nothing else moves; on scroll-back
- * the steps reverse. Below 1024px the visual is a static image above the steps
- * as a plain list.
+ * the steps reverse. Below 1024px and under reduced motion the visual is a still
+ * above the steps, which are a plain list with nothing dimmed.
  */
 
 export type Step = { key: string; title: string; what: string; vertex?: string };
@@ -62,12 +62,13 @@ export type BracketSide = "right" | "left" | "above" | "below" | "inside-right";
  * anchor is found by `selector` each time `active` changes, after one frame so
  * the element's 350ms lift has started from its final position.
  */
-export function Bracket({ box, selector, active, side = "right", tone = "dark", inset = 0 }: { box: RefObject<HTMLElement | HTMLDivElement | null>; selector: string | null; active: string | null; side?: BracketSide; tone?: "dark" | "light"; inset?: number }) {
+export function Bracket({ box, selector, active, side = "right", tone = "dark", inset = 0, delay = 0 }: { box: RefObject<HTMLElement | HTMLDivElement | null>; selector: string | null; active: string | null; side?: BracketSide; tone?: "dark" | "light"; inset?: number; delay?: number }) {
   const [b, setB] = useState<{ axis: "x" | "y"; left: number; top: number; height?: number; width?: number } | null>(null);
   const target = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const boxEl = box.current;
-    const id = requestAnimationFrame(() => {
+    let raf = 0;
+    const timer = setTimeout(() => { raf = requestAnimationFrame(() => {
       const anchor = boxEl && selector && active ? boxEl.querySelector<Element>(selector) : null;
       if (!boxEl || !anchor) return setB(null);
       const a = anchor.getBoundingClientRect();
@@ -82,9 +83,9 @@ export function Bracket({ box, selector, active, side = "right", tone = "dark", 
       else if (s === "left") setB({ axis: "y", left: r.left - gap - T, top: r.top, height: r.h });
       else if (s === "inside-right") setB({ axis: "y", left: r.left + r.w - gap - T, top: r.top, height: r.h });
       else setB({ axis: "y", left: r.left + r.w + gap, top: r.top, height: r.h });
-    });
-    return () => cancelAnimationFrame(id);
-  }, [box, selector, active, side]);
+    }); }, delay);
+    return () => { clearTimeout(timer); cancelAnimationFrame(raf); };
+  }, [box, selector, active, side, delay]);
   if (!b) return null;
   return (
     <div className="pointer-events-none absolute" style={{ top: inset + b.top, left: inset + b.left, height: b.height ?? 24, width: b.width ?? 24 }} key={active ?? ""} aria-hidden="true">
@@ -124,21 +125,23 @@ export function StepScene({
   return (
     <section className="rule relative" id={id} aria-label={label} data-static={isStatic ? "true" : undefined}>
       <div className="container lg:grid lg:grid-cols-12 lg:gap-8">
-        <div className="pt-12 lg:col-span-7 lg:pt-0">
-          <div className={isStatic ? "" : "lg:sticky"} style={isStatic ? undefined : { top: NAV, height: `calc(100svh - ${NAV}px)` }}>
-            <div className={isStatic ? "" : "flex h-full flex-col justify-center"}>
-              <div className="w-full lg:w-[92%]">{visual}</div>
-              {caption && <div className="mono mt-3 text-micro text-vx-600">{caption}</div>}
+        {visual && (
+          <div className="pt-12 lg:col-span-7 lg:pt-0">
+            <div className={isStatic ? "" : "lg:sticky"} style={isStatic ? undefined : { top: NAV, height: `calc(100svh - ${NAV}px)` }}>
+              <div className={isStatic ? "" : "flex h-full flex-col justify-center"}>
+                <div className="w-full lg:w-[92%]">{visual}</div>
+                {caption && <div className="mono mt-3 text-micro text-vx-600">{caption}</div>}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="lg:col-span-5">
-          {intro && <div className="max-w-[44ch] pb-10 pt-12 lg:pb-[24svh] lg:pt-[36svh]">{intro}</div>}
-          <ol className={intro ? "lg:pb-[30svh]" : "pt-12 lg:pb-[30svh] lg:pt-[36svh]"}>
+        )}
+        <div className={visual ? "lg:col-span-5" : "lg:col-span-7"}>
+          {intro && <div className={`max-w-[44ch] pb-10 pt-12 ${isStatic ? "" : "lg:pb-[24svh] lg:pt-[36svh]"}`}>{intro}</div>}
+          <ol className={isStatic ? "pb-12" : intro ? "lg:pb-[30svh]" : "pt-12 lg:pb-[30svh] lg:pt-[36svh]"}>
             {steps.map((s, i) => {
               const lit = active === s.key;
               return (
-                <li key={s.key} data-step={s.key} className="step border-t border-vx-400 py-8 lg:flex lg:min-h-[70svh] lg:items-center lg:border-0 lg:py-0" data-lit={lit ? "true" : undefined}>
+                <li key={s.key} data-step={s.key} className={`step border-t border-vx-400 py-8 ${isStatic ? "" : "lg:flex lg:min-h-[70svh] lg:items-center lg:border-0 lg:py-0"}`} data-lit={lit ? "true" : undefined}>
                   {renderStep ? (
                     renderStep(s, i, lit)
                   ) : (

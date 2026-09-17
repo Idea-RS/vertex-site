@@ -84,8 +84,8 @@ export function Dim({
 
   useEffect(() => {
     if (!animate || prefersReducedMotion()) {
-      setAnimProgress(1);
-      return;
+      const id = requestAnimationFrame(() => setAnimProgress(1));
+      return () => cancelAnimationFrame(id);
     }
 
     const el = wrap.current;

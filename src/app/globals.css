@@ -285,11 +285,11 @@ p {
   .step * {
     transition: color 350ms ease-out, border-color 350ms ease-out, opacity 350ms ease-out;
   }
-  .step:not([data-lit="true"]) .text-vx-900 {
+  section:not([data-static]) .step:not([data-lit="true"]) .text-vx-900 {
     color: var(--color-vx-600);
   }
-  .step:not([data-lit="true"]) .border-vx-400,
-  .step:not([data-lit="true"]) .divide-vx-400 > * {
+  section:not([data-static]) .step:not([data-lit="true"]) .border-vx-400,
+  section:not([data-static]) .step:not([data-lit="true"]) .divide-vx-400 > * {
     border-color: color-mix(in srgb, var(--color-vx-400) 50%, transparent);
   }
 }
@@ -329,4 +329,7 @@ p {
 }
 .make-box:not([data-passed="true"]) [data-pass] {
   color: var(--color-vx-400);
+}
+.make-box [data-row] text {
+  transition: fill 350ms ease-out;
 }
