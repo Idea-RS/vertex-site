@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { nav } from "@/content/site";
 import { Wordmark } from "./Wordmark";
+import { FlipText } from "./ui/flip-text";
 
 export default function Nav() {
   const pathname = usePathname();
@@ -13,8 +14,11 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const close = () => setOpen(false);
 
-  const isActive = (href: string) =>
-    href === "/product/" ? pathname.startsWith("/product") : pathname.startsWith(href);
+  const isActive = (href: string) => {
+    if (href === "/product/") return pathname.startsWith("/product");
+    if (href === "/flip/") return pathname.startsWith("/flip");
+    return pathname.startsWith(href);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,10 +34,10 @@ export default function Nav() {
       className={`sticky z-40 transition-all duration-300 ease-out ${
         scrolled
           ? "bg-transparent pointer-events-none pt-2 sm:pt-3"
-          : "bg-vx-100 pointer-events-auto pt-0"
+          : "bg-vx-100 pointer-events-auto pt-8 sm:pt-10"
       }`}
       style={{
-        top: scrolled ? "calc(var(--inset) + 8px)" : "var(--inset)",
+        top: scrolled ? "calc(var(--inset) + 10px)" : "var(--inset)",
       }}
     >
       <div className="container pointer-events-auto">
@@ -50,23 +54,34 @@ export default function Nav() {
           </Link>
 
           <ul className="hidden items-center gap-8 lg:flex">
-            {nav.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                  className={`text-small transition-colors duration-150 hover:text-vx-900 ${
-                    isActive(item.href) ? "text-vx-900" : "text-vx-600"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            {nav.map((item) => {
+              const active = isActive(item.href);
+              const isFlip = item.href === "/flip/";
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`inline-flex items-center text-[16px] transition-colors duration-150 hover:text-vx-900 ${
+                      active ? "text-vx-900 font-medium" : "text-vx-600"
+                    } ${isFlip ? "flip-hover-trigger" : ""}`}
+                  >
+                    {isFlip ? (
+                      <FlipText duration={0.8} loop={true}>
+                        {item.label}
+                      </FlipText>
+                    ) : (
+                      item.label
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
             <li>
               <Link
                 href="/diagnostic/"
-                className={`inline-flex items-center rounded-sm border px-4 text-small text-vx-900 transition-colors duration-150 ${
+                className={`inline-flex items-center rounded-sm border px-4 text-[16px] text-vx-900 transition-colors duration-150 ${
                   scrolled
                     ? "h-8 border-vx-600/70 bg-vx-100/70 hover:border-vx-900"
                     : "h-9 border-vx-400 hover:border-vx-900"
@@ -115,17 +130,31 @@ export default function Nav() {
                   : "container"
               }`}
             >
-              {nav.map((item) => (
-                <li key={item.href} className="border-b border-vx-400/50 last:border-0">
-                  <Link
-                    href={item.href}
-                    onClick={close}
-                    className={`block py-4 text-h3 ${isActive(item.href) ? "text-vx-900" : "text-vx-600"}`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {nav.map((item) => {
+                const active = isActive(item.href);
+                const isFlip = item.href === "/flip/";
+
+                return (
+                  <li key={item.href} className="border-b border-vx-400/50 last:border-0">
+                    <Link
+                      href={item.href}
+                      onClick={close}
+                      aria-current={active ? "page" : undefined}
+                      className={`block py-4 text-h3 transition-colors duration-150 ${
+                        active ? "text-vx-900 font-medium" : "text-vx-600 hover:text-vx-900"
+                      } ${isFlip ? "flip-hover-trigger" : ""}`}
+                    >
+                      {isFlip ? (
+                        <FlipText duration={0.8} loop={true}>
+                          {item.label}
+                        </FlipText>
+                      ) : (
+                        item.label
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
               <li className="py-4">
                 <Link
                   href="/diagnostic/"

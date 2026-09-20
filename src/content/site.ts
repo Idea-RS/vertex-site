@@ -16,7 +16,7 @@ export const site = {
 
 export const nav = [
   { href: "/product/", label: "Product" },
-  { href: "/#reconstruct", label: "2D to 3D" },
+  { href: "/flip/", label: "FLIP" },
   { href: "/how-it-works/", label: "How it works" },
   { href: "/security/", label: "Security" },
   { href: "/diagnostic/", label: "Diagnostic" },

@@ -420,4 +420,71 @@ p {
   animation: orb-ring-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
+/* ------------------------------------------------------------------
+   FlipText (VengeanceUI)
+------------------------------------------------------------------- */
+.flip-text-wrapper {
+  perspective: 1000px;
+  display: inline-block;
+  line-height: 1;
+}
+
+.flip-char {
+  position: relative;
+  display: inline-block;
+  transform-style: preserve-3d;
+  height: 1.2em;
+  line-height: 1.2em;
+  vertical-align: middle;
+  color: inherit;
+  -webkit-text-fill-color: transparent;
+  animation: flip-char-roll var(--flip-duration, 0.8s) var(--flip-delay, 0s) var(--flip-iteration, infinite) cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.flip-char::before,
+.flip-char::after {
+  content: attr(data-char);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+  backface-visibility: hidden;
+}
+
+/* Front Face */
+.flip-char::after {
+  transform: translateZ(0.6em);
+}
+
+/* Bottom Face (rolls up smoothly into place) */
+.flip-char::before {
+  transform: rotateX(-90deg) translateZ(0.6em);
+}
+
+@keyframes flip-char-roll {
+  0% {
+    transform: rotateX(0deg);
+  }
+  35%, 100% {
+    transform: rotateX(90deg);
+  }
+}
+
+/* Hover-only trigger for navbar link */
+.flip-hover-trigger .flip-char {
+  animation: none;
+}
+
+.flip-hover-trigger:hover .flip-char {
+  animation: flip-char-roll var(--flip-duration, 0.8s) var(--flip-delay, 0s) var(--flip-iteration, infinite) cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+
+
 
