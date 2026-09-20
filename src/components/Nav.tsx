@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { nav } from "@/content/site";
 import { Wordmark } from "./Wordmark";
 import { FlipText } from "./ui/flip-text";
+import { CornerButton, ArrowNEIcon } from "./ui/corner-button";
 
 export default function Nav() {
   const pathname = usePathname();
@@ -78,17 +79,15 @@ export default function Nav() {
                 </li>
               );
             })}
-            <li>
-              <Link
-                href="/diagnostic/"
-                className={`inline-flex items-center rounded-sm border px-4 text-[16px] text-vx-900 transition-colors duration-150 ${
-                  scrolled
-                    ? "h-8 border-vx-600/70 bg-vx-100/70 hover:border-vx-900"
-                    : "h-9 border-vx-400 hover:border-vx-900"
-                }`}
+            <li className="flex items-center">
+              <CornerButton
+                href="/login/"
+                icon={<ArrowNEIcon className="corner-btn-svg" />}
+                accentColor="#1b263b"
+                wrapperClassName="[--cb-padding:0.35rem_0.5rem] [--cb-btn-padding:0.4rem_0.85rem] [--cb-font-size:0.925rem] [--cb-icon-size:16px]"
               >
-                Book a diagnostic
-              </Link>
+                Login
+              </CornerButton>
             </li>
           </ul>
 
@@ -156,13 +155,14 @@ export default function Nav() {
                 );
               })}
               <li className="py-4">
-                <Link
-                  href="/diagnostic/"
+                <CornerButton
+                  href="/login/"
                   onClick={close}
-                  className="inline-flex h-11 items-center rounded-sm border border-vx-400 px-5 text-body text-vx-900"
+                  icon={<ArrowNEIcon className="corner-btn-svg" />}
+                  accentColor="#1b263b"
                 >
-                  Book a diagnostic
-                </Link>
+                  Login
+                </CornerButton>
               </li>
             </ul>
           </motion.div>
