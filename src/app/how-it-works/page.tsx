@@ -48,7 +48,7 @@ export default function HowItWorksPage() {
         lede="Exact where the data is exact, inferred where it isn't, and never confused about which is which. Here is what happens to a drawing from the moment Vertex sees it."
       />
 
-      <section className="rule">
+      <section>
         <div className="container py-12 lg:py-20">
           <LaneDiagram />
         </div>

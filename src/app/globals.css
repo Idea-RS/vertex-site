@@ -21,15 +21,22 @@
      secondary text on raised panels (vx-400 on vx-800 is 4.45:1). */
   --color-muted-raised: color-mix(in srgb, #e0e1dd 72%, #1b263b);
 
+  --font-instrument-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-instrument-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
+  --font-space-grotesk: var(--font-space-grotesk), monospace, sans-serif;
+  --font-dm-serif: var(--font-dm-serif), Georgia, serif;
+  --font-chivo: var(--font-chivo), sans-serif;
+  --font-syne: var(--font-syne), sans-serif;
   --font-cormorant: var(--font-cormorant), Cormorant, Georgia, serif;
-  --font-mitr: var(--font-mitr), Mitr, system-ui, sans-serif;
-  --font-karma: var(--font-karma), Karma, Georgia, serif;
-  --font-title: var(--font-cormorant), Cormorant, Georgia, serif;
-  --font-heading: var(--font-mitr), Mitr, system-ui, sans-serif;
-  --font-body: var(--font-karma), Karma, Georgia, serif;
-  --font-sans: var(--font-mitr), Mitr, system-ui, sans-serif;
-  --font-serif: var(--font-cormorant), Cormorant, Georgia, serif;
   --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+
+  --font-title: var(--font-dm-serif);
+  --font-heading: var(--font-space-grotesk);
+  --font-body: var(--font-instrument-sans);
+  --font-sans: var(--font-instrument-sans);
+  --font-serif: var(--font-dm-serif);
+
+  --color-surface-inset: #ebeff4;
 
   /* Radius encodes hierarchy: larger surface, larger radius. */
   --radius-*: initial;
@@ -82,7 +89,7 @@
    Base
 ------------------------------------------------------------------- */
 html {
-  background: var(--color-vx-900);
+  background: transparent;
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
 }
@@ -102,7 +109,7 @@ html.lenis body {
 }
 
 body {
-  background: var(--color-vx-900);
+  background: transparent;
   color: var(--color-vx-900);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -124,30 +131,29 @@ body {
   border-radius: 6px;
 }
 
-h1 {
+h1,
+.text-display {
   font-family: var(--font-title);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.015em;
   text-wrap: balance;
 }
 
 h2,
-h3,
-h4 {
-  font-family: var(--font-heading);
-  font-weight: 500;
+.text-h2 {
+  font-family: var(--font-title);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
-.text-display {
-  font-family: var(--font-title);
-  font-weight: 500;
-}
-
-.text-h2,
+h3,
+h4,
 .text-h3 {
   font-family: var(--font-heading);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 button,
@@ -190,13 +196,15 @@ p {
    resting on the dark blueprint desk (vx-900 / #0D1B2A). */
 .sheet {
   margin: var(--inset);
+  margin-bottom: clamp(3rem, 7vw, 6rem);
   background: var(--color-vx-100);
   border: 1px solid var(--frame-line);
   border-radius: var(--radius-lg);
   min-height: calc(100svh - 2 * var(--inset));
   position: relative;
+  z-index: 10;
   overflow: clip;
-  box-shadow: 0 16px 48px -12px rgba(13, 27, 42, 0.45);
+  box-shadow: 0 24px 64px -16px rgba(13, 27, 42, 0.6), 0 0 0 1px var(--frame-line);
 }
 
 .container {
@@ -332,3 +340,84 @@ p {
 .make-box [data-row] text {
   transition: fill 350ms ease-out;
 }
+
+/* Subtle engineering CAD dot grid */
+.cad-dot-grid {
+  background-image: radial-gradient(color-mix(in srgb, var(--color-vx-600) 22%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Technical surface card inset */
+.surface-inset {
+  background-color: var(--color-surface-inset);
+  border: 1px solid color-mix(in srgb, var(--color-vx-400) 45%, transparent);
+}
+
+/* Blueprint spotlight card with cursor illumination */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-vx-800);
+}
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(119, 141, 169, 0.14), transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes pane-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-pane-enter {
+  animation: pane-enter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Signature Orange Glowing Pulsating Orb */
+@keyframes orb-glow-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 6px 1.5px rgba(240, 168, 104, 0.85), 0 0 14px 3px rgba(240, 168, 104, 0.45);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.25);
+    box-shadow: 0 0 10px 3px rgba(240, 168, 104, 1), 0 0 22px 6px rgba(240, 168, 104, 0.75);
+    opacity: 1;
+  }
+}
+
+.animate-orb-glow {
+  animation: orb-glow-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes orb-ring-ping {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.85;
+  }
+  75%, 100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.animate-orb-ping {
+  animation: orb-ring-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+

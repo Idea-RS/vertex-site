@@ -1,103 +1,82 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { DemoFrame } from "@/components/DemoFrame";
 import { productPanes, type ProductPaneId } from "@/content/product";
-import { scrollToElement } from "@/lib/motion";
 
 /**
- * The product page as a sticky list beside scrolling blocks. Left: Find ·
- * Verify · Make · Archive, sticky for the full height of the section and
- * released only where the section ends. Right: each surface as a full block,
- * stacked, scrolling normally. The block crossing the centre band lights its
- * row (square marker, vx-900; the rest vx-600). Hovering a row once the list
- * is stuck, clicking it, or focusing it scrolls smoothly back to the start of
- * that block: a Lenis scrollTo, 600ms ease-in-out, never a jump. Deep links
- * land on the block's start. Below 1024px the list is a row of anchors above
- * the blocks and nothing is sticky.
+ * Product page interactive panes.
+ * Left: navigation options (Find, Verify, Make, Archive).
+ * Right: ONLY the selected or hovered feature's description and content is shown.
  */
-
-const TOP = 120; // clears the floating nav; the list sticks here and blocks land here
-const HOVER_INTENT = 80; // ms: a pointer passing over rows on its way elsewhere doesn't scroll the page
-
 export function ProductPanes() {
-  const root = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<ProductPaneId>("find");
-  const lockUntil = useRef(0);
-  const hover = useRef(0);
 
-  // The block in the centre band is the active one.
+  // Synchronize with hash on load and hashchange (e.g. /product/#verify or footer links)
   useEffect(() => {
-    const el = root.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (performance.now() < lockUntil.current) return; // a recall scroll is passing other blocks
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(e.target.id as ProductPaneId);
-        });
-      },
-      { rootMargin: "-49% 0px -49% 0px", threshold: 0 },
-    );
-    el.querySelectorAll("[data-surface]").forEach((b) => io.observe(b));
-    return () => io.disconnect();
-  }, []);
-
-  // A hash change while on the page (a footer link, the back button) glides to its block.
-  useEffect(() => {
-    const onHash = () => {
-      const id = window.location.hash.slice(1);
-      const block = productPanes.some((p) => p.id === id) ? document.getElementById(id) : null;
-      if (block) go(id as ProductPaneId);
+    const applyHash = () => {
+      if (typeof window === "undefined") return;
+      const hash = window.location.hash.replace("#", "") as ProductPaneId;
+      if (productPanes.some((p) => p.id === hash)) {
+        setActive(hash);
+      }
     };
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
   }, []);
 
-  function go(id: ProductPaneId) {
-    const block = document.getElementById(id);
-    if (!block) return;
-    lockUntil.current = performance.now() + 700;
+  const select = (id: ProductPaneId) => {
     setActive(id);
-    scrollToElement(block, { offset: TOP, duration: 0.6 });
-  }
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `#${id}`);
+    }
+  };
 
-  const recall = (id: ProductPaneId) => ({
-    href: `#${id}`,
-    onClick: (e: React.MouseEvent) => {
-      e.preventDefault();
-      history.replaceState(null, "", `#${id}`);
-      go(id);
-    },
-  });
+  const activePane = productPanes.find((p) => p.id === active) ?? productPanes[0];
+  const activeIndex = productPanes.findIndex((p) => p.id === activePane.id);
 
   return (
-    <div ref={root} className="container lg:grid lg:grid-cols-12 lg:gap-8">
-      {/* desktop: the sticky list */}
+    <div className="container lg:grid lg:grid-cols-12 lg:gap-12">
+      {/* Desktop navigation: sticky list on the left */}
       <div className="hidden lg:col-span-4 lg:block">
-        <nav className="sticky" style={{ top: TOP }} aria-label="Product surfaces">
-          <ul>
+        <nav className="sticky top-[120px]" aria-label="Product surfaces" role="tablist">
+          <ul className="space-y-1">
             {productPanes.map((p, i) => {
               const on = p.id === active;
               return (
-                <li key={p.id}>
+                <li key={p.id} onMouseEnter={() => setActive(p.id)}>
                   <a
-                    {...recall(p.id)}
-                    className={`flex items-center gap-3 py-2 text-h3 transition-colors duration-200 ${on ? "text-vx-900" : "text-vx-600 hover:text-vx-900"}`}
-                    onMouseEnter={() => {
-                      window.clearTimeout(hover.current);
-                      hover.current = window.setTimeout(() => {
-                        // only once the list is stuck: at the top of the page a passing pointer shouldn't move it
-                        if ((root.current?.getBoundingClientRect().top ?? 1e9) <= TOP + 1) go(p.id);
-                      }, HOVER_INTENT);
+                    href={`#${p.id}`}
+                    role="tab"
+                    aria-selected={on}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      select(p.id);
                     }}
-                    onMouseLeave={() => window.clearTimeout(hover.current)}
-                    onFocus={() => go(p.id)}
+                    onMouseEnter={() => setActive(p.id)}
+                    onFocus={() => setActive(p.id)}
+                    className={`group flex w-full items-center gap-3.5 py-3 text-h3 transition-colors duration-150 cursor-pointer ${
+                      on ? "text-vx-900 font-medium" : "text-vx-600 hover:text-vx-900"
+                    }`}
                     aria-current={on ? "true" : undefined}
                   >
-                    <span className={`block h-2 w-2 shrink-0 bg-vx-900 transition-opacity duration-200 ${on ? "opacity-100" : "opacity-0"}`} aria-hidden="true" />
-                    <span className="mono w-6 text-micro text-vx-600">{String(i + 1).padStart(2, "0")}</span>
-                    {p.name}
+                    <span
+                      className={`block h-2 w-2 shrink-0 bg-vx-900 transition-all duration-150 ${
+                        on
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-50 group-hover:opacity-30 group-hover:scale-100"
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <span
+                      className={`mono w-6 text-micro transition-colors ${
+                        on ? "text-vx-900 font-semibold" : "text-vx-600 group-hover:text-vx-900"
+                      }`}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>{p.name}</span>
                   </a>
                 </li>
               );
@@ -106,45 +85,70 @@ export function ProductPanes() {
         </nav>
       </div>
 
+      {/* Right side: ONLY the selected or hovered feature is displayed */}
       <div className="lg:col-span-8">
-        {/* below lg: a row of anchors, not sticky */}
-        <nav className="mb-10 flex flex-wrap gap-x-6 gap-y-2 border-b border-vx-400 pb-4 lg:hidden" aria-label="Product surfaces">
-          {productPanes.map((p) => (
-            <a key={p.id} {...recall(p.id)} className="py-2 text-body text-vx-900 underline decoration-vx-400 underline-offset-4">
-              {p.name}
-            </a>
-          ))}
+        {/* Mobile navigation: row of tabs */}
+        <nav className="mb-8 flex flex-wrap gap-2 border-b border-vx-400/40 pb-4 lg:hidden" aria-label="Product surfaces" role="tablist">
+          {productPanes.map((p, i) => {
+            const on = p.id === active;
+            return (
+              <a
+                key={p.id}
+                href={`#${p.id}`}
+                role="tab"
+                aria-selected={on}
+                onClick={(e) => {
+                  e.preventDefault();
+                  select(p.id);
+                }}
+                className={`flex items-center gap-2 rounded-xs px-3.5 py-2 text-small transition-colors ${
+                  on
+                    ? "bg-vx-900 text-vx-100 font-medium"
+                    : "text-vx-600 hover:text-vx-900 hover:bg-vx-200/60"
+                }`}
+                aria-current={on ? "true" : undefined}
+              >
+                <span className="mono text-micro opacity-70">{String(i + 1).padStart(2, "0")}</span>
+                <span>{p.name}</span>
+              </a>
+            );
+          })}
         </nav>
 
-        {productPanes.map((p, i) => (
-          <article key={p.id} id={p.id} data-surface className={`scroll-mt-[120px] ${i ? "border-t border-vx-400 pt-12 lg:pt-16" : ""} pb-16 lg:pb-24`} aria-labelledby={`${p.id}-heading`}>
-            <p className="mono text-micro text-vx-600">
-              {String(i + 1).padStart(2, "0")} · {p.name}
-            </p>
-            <h2 id={`${p.id}-heading`} className="mt-3 max-w-[22ch] text-h2">
-              {p.heading}
-            </h2>
-            <div className="mt-6 max-w-[60ch] space-y-3">
-              {p.body.map((t) => (
-                <p key={t} className="text-body text-vx-600">
-                  {t}
-                </p>
-              ))}
-            </div>
-            <div className="mt-8">
-              <DemoFrame label={p.name} />
-            </div>
-            <dl className="mt-8 grid gap-6 border-t border-vx-400 pt-6 sm:grid-cols-3">
-              {p.numbers.map((n) => (
-                <div key={n.label}>
-                  <dt className="mono text-[clamp(1.75rem,3vw,2.5rem)] leading-none text-vx-900">{n.value}</dt>
-                  <dd className="mt-2 max-w-[24ch] text-small text-vx-600">{n.label}</dd>
-                </div>
-              ))}
-            </dl>
-          </article>
-        ))}
+        {/* Selected feature description and demo */}
+        <article
+          key={activePane.id}
+          id={activePane.id}
+          className="animate-pane-enter pb-8 lg:pb-16"
+          aria-labelledby={`${activePane.id}-heading`}
+        >
+          <p className="mono text-micro text-vx-600">
+            {String(activeIndex + 1).padStart(2, "0")} · {activePane.name}
+          </p>
+          <h2 id={`${activePane.id}-heading`} className="mt-3 max-w-[24ch] text-h2 font-heading font-medium text-vx-900">
+            {activePane.heading}
+          </h2>
+          <div className="mt-6 max-w-[60ch] space-y-3">
+            {activePane.body.map((t) => (
+              <p key={t} className="text-body text-vx-600">
+                {t}
+              </p>
+            ))}
+          </div>
+          <div className="mt-8">
+            <DemoFrame label={activePane.name} />
+          </div>
+          <dl className="mt-8 grid gap-6 border-t border-vx-400 pt-6 sm:grid-cols-3">
+            {activePane.numbers.map((n) => (
+              <div key={n.label}>
+                <dt className="mono text-[clamp(1.75rem,3vw,2.5rem)] leading-none text-vx-900 font-medium">{n.value}</dt>
+                <dd className="mt-2 max-w-[24ch] text-small text-vx-600">{n.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </article>
       </div>
     </div>
   );
 }
+

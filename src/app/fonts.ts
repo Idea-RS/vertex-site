@@ -1,23 +1,59 @@
-import { Cormorant, Mitr, Karma } from "next/font/google";
+import {
+  Cormorant,
+  Instrument_Serif,
+  Instrument_Sans,
+  Space_Grotesk,
+  DM_Serif_Display,
+  Chivo,
+  Syne,
+} from "next/font/google";
 import localFont from "next/font/local";
+
+export const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
+  display: "swap",
+  weight: "400",
+});
+
+export const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-instrument-sans",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+export const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+export const dmSerifDisplay = DM_Serif_Display({
+  subsets: ["latin"],
+  variable: "--font-dm-serif",
+  display: "swap",
+  weight: "400",
+});
+
+export const chivo = Chivo({
+  subsets: ["latin"],
+  variable: "--font-chivo",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+export const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
+  display: "swap",
+  weight: ["500", "600", "700", "800"],
+});
 
 export const cormorant = Cormorant({
   subsets: ["latin"],
   variable: "--font-cormorant",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-export const mitr = Mitr({
-  subsets: ["latin"],
-  variable: "--font-mitr",
-  display: "swap",
-  weight: ["200", "300", "400", "500", "600", "700"],
-});
-
-export const karma = Karma({
-  subsets: ["latin"],
-  variable: "--font-karma",
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
 });

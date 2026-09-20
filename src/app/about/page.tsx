@@ -16,7 +16,7 @@ export default function AboutPage() {
         lede="Vertex is built against one real archive, with the draughtsmen and engineering managers who use it every day. Every number on this site was measured there."
       />
 
-      <section className="rule">
+      <section>
         <div className="container grid gap-10 py-12 md:grid-cols-2 lg:py-20">
           {founders.map((f, i) => (
             <div key={i} className="border-t border-vx-400 pt-6">

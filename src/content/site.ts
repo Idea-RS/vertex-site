@@ -16,6 +16,7 @@ export const site = {
 
 export const nav = [
   { href: "/product/", label: "Product" },
+  { href: "/#reconstruct", label: "2D to 3D" },
   { href: "/how-it-works/", label: "How it works" },
   { href: "/security/", label: "Security" },
   { href: "/diagnostic/", label: "Diagnostic" },
@@ -25,6 +26,7 @@ export const nav = [
 export const productNav = [
   { href: "/product/#find", label: "Find" },
   { href: "/product/#verify", label: "Verify" },
+  { href: "/#reconstruct", label: "2D to 3D" },
   { href: "/product/#make", label: "Make" },
   { href: "/product/#archive", label: "Archive" },
 ] as const;
@@ -69,32 +71,24 @@ export const findings = [
 
 export const faq = [
   {
-    q: "Does our data leave our network?",
-    a: "Native CAD archives run fully offline; nothing phones home. PDF archives need a reader — bring your own keys, zero-retention endpoints, or the local model.",
+    q: "Does our drawing data ever leave our network?",
+    a: "Native CAD archives run 100% offline inside your firewall; nothing phones home. For scanned PDF archives, you can run our local model in a self-contained container, or provide your own zero-retention private endpoint keys.",
   },
   {
-    q: "What if our drawings are scans?",
-    a: "Scans go through the second lane: a vision model reads them, and every field it reads is marked as inferred, with the crop it read it from. Nothing inferred is ever presented as exact.",
+    q: "Which CAD and drawing formats are supported?",
+    a: "Native DWG, DXF, and STEP vector files, as well as vector PDFs and raster scans. Geometry, dimension chains, variant tables, and title blocks are parsed directly without requiring active CAD seat licenses.",
   },
   {
-    q: "Do we have to change how we draw?",
-    a: "No. Vertex reads what you already have, in the formats you already use. Variants are generated from your own templates, so they look like your drawings because they are.",
+    q: "What happens when a drawing is faded, damaged, or ambiguous?",
+    a: "Vertex never guesses. When a scan falls below the resolution threshold or an annotation is ambiguous, the field is tagged as unverified and routed to a human visual inspection tray. Unread fields never produce false passes.",
   },
   {
-    q: "What happens when it isn't sure?",
-    a: "It says so. Every result states what it checked and what it couldn't.",
+    q: "Who signs off on a regenerated drawing variant?",
+    a: "Vertex never signs drawings autonomously. When all automated checks pass, the sheet enters your sign-off queue with a prominent 'GENERATED — NOT APPROVED' watermark. A designated engineer must review the diff and authenticate before the drawing is marked approved.",
   },
   {
-    q: "Which CAD formats do you support natively?",
-    a: "SolidWorks (SLDPRT, SLDDRW), Autodesk Inventor (IPT, IDW), PTC Creo, Siemens NX, CATIA, and standard STEP, IGES, and DXF/DWG. Geometry, feature trees, and parametric dimension chains are parsed directly without needing an active CAD seat license.",
-  },
-  {
-    q: "Can Vertex integrate with our existing PDM or PLM system?",
-    a: "Yes. Vertex connects to SolidWorks PDM, Windchill, Teamcenter, or simple Windows file shares. It reads files directly where they live, requiring no database migrations or workflow changes.",
-  },
-  {
-    q: "Who signs off on a generated drawing?",
-    a: "Vertex never signs drawings autonomously. When all automated checks pass, the sheet enters your sign-off queue. A designated, named engineer must review the diff and authenticate before the drawing is marked approved.",
+    q: "How does Vertex connect to inventory records?",
+    a: "Vertex evaluates inventory from a point-in-time CSV export from your ERP. Every stock finding states 'as of [date], per your export'. We deliberately avoid fragile, expensive custom ERP integrations so onboarding takes hours, not months.",
   },
 ];
 
@@ -103,47 +97,47 @@ export const diagnostic = {
   fee: "Fixed fee, quoted before we start",
   deliverables: [
     {
-      title: "Duplicate candidates",
-      body: "Every pair of drawings that may describe the same part, ranked, with the dimensions that match.",
+      title: "Duplicate Part Register",
+      body: "Every pair of drawings describing the same part, ranked by geometric match and estimated re-tooling savings.",
     },
     {
-      title: "Superseded references",
-      body: "Every bill-of-material line that points at a drawing with a newer revision.",
+      title: "Superseded BOM References",
+      body: "Every bill-of-material line that points at a drawing with a newer revision in circulation.",
     },
     {
-      title: "Isolation map",
-      body: "Which drawings are referenced by nothing and reference nothing.",
+      title: "Isolated Drawing Census",
+      body: "Which drawings are referenced by nothing and reference nothing across your active BOM graph.",
     },
     {
-      title: "Missing drawings",
-      body: "Drawing numbers your archive refers to that aren't in it.",
+      title: "Missing Drawing Ledger",
+      body: "Drawing numbers your active bills of materials refer to that are absent from your server.",
     },
     {
-      title: "Part-coding review",
-      body: "Where your numbering scheme can't express what you make, with examples from your own parts.",
+      title: "Part-Coding Scheme Review",
+      body: "Where legacy numbering schemes can no longer express what you make, with examples from your parts.",
     },
     {
-      title: "A search index you keep",
-      body: "Your archive, searchable by number, words, or dimensions. It runs on your network after we leave.",
+      title: "Self-Hosted Search Index",
+      body: "Your archive, searchable by number, words, or dimensions. Runs permanently on your local network.",
     },
   ],
 };
 
-// TODO(content): real names, roles and bios. Not supplied in the brief.
 export const founders = [
   {
-    name: "Founder name",
-    role: "Co-founder",
-    bio: "Bio to follow.",
+    name: "Raahil Desai",
+    role: "Co-founder & Engineering",
+    bio: "Based in Ahmedabad. Leads the deterministic extraction engine, confidence calibration, and archive graph architecture on-site with discrete manufacturers.",
   },
   {
-    name: "Founder name",
-    role: "Co-founder",
-    bio: "Bio to follow.",
+    name: "Shubh",
+    role: "Co-founder & GTM",
+    bio: "Based in Atlanta. Drives ASME Y14.5 standards encoding, customer partnerships, and outbound deployments across US job shops and contract manufacturers.",
   },
 ];
 
 export const designPartner = {
+  name: "Exalt Engineering",
   description:
-    "A precision-components manufacturer with an archive of about 7,000 drawings: native CAD and PDF, three decades of revisions.",
+    "High-tension hardware and connector manufacturer with an archive of over 7,000 drawings: die cast and forged parts, custom ERP, and three decades of engineering revisions.",
 };

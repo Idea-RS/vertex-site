@@ -139,7 +139,6 @@ export default function Nav() {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className={`rule transition-opacity duration-300 ${scrolled ? "opacity-0" : "opacity-100"}`} />
     </header>
   );
 }

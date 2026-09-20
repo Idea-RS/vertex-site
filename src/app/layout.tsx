@@ -1,11 +1,20 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { cormorant, mitr, karma, plexMono } from "./fonts";
+import {
+  instrumentSerif,
+  instrumentSans,
+  spaceGrotesk,
+  dmSerifDisplay,
+  chivo,
+  syne,
+  cormorant,
+  plexMono,
+} from "./fonts";
 import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import DitherBackground from "@/components/DitherBackground";
 import { site } from "@/content/site";
-import SheetTopMask from "@/components/SheetTopMask";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
@@ -28,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${mitr.variable} ${karma.variable} ${plexMono.variable}`}
+      className={`${instrumentSerif.variable} ${instrumentSans.variable} ${spaceGrotesk.variable} ${dmSerifDisplay.variable} ${chivo.variable} ${syne.variable} ${cormorant.variable} ${plexMono.variable}`}
     >
       <body>
         <noscript>
@@ -41,12 +50,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <SheetTopMask />
+        <DitherBackground />
         <div className="sheet">
           <Nav />
           <main id="main">{children}</main>
-          <Footer />
         </div>
+        <Footer />
         <Analytics />
       </body>
     </html>

@@ -128,16 +128,18 @@ export function StepScene({
         {visual && (
           <div className="pt-12 lg:col-span-7 lg:pt-0">
             <div className={isStatic ? "" : "lg:sticky"} style={isStatic ? undefined : { top: NAV, height: `calc(100svh - ${NAV}px)` }}>
-              <div className={isStatic ? "" : "flex h-full flex-col justify-center"}>
-                <div className="w-full lg:w-[92%]">{visual}</div>
-                {caption && <div className="mono mt-3 text-micro text-vx-600">{caption}</div>}
+              <div className={isStatic ? "" : "flex h-full flex-col justify-center py-6"}>
+                <div className="my-auto w-full max-w-full lg:max-w-[min(100%,calc(100svh-180px))] lg:w-[92%] mx-auto lg:mx-0">
+                  {visual}
+                  {caption && <div className="mono mt-3 text-micro text-vx-600">{caption}</div>}
+                </div>
               </div>
             </div>
           </div>
         )}
         <div className={visual ? "lg:col-span-5" : "lg:col-span-7"}>
-          {intro && <div className={`max-w-[44ch] pb-10 pt-12 ${isStatic ? "" : "lg:pb-[24svh] lg:pt-[36svh]"}`}>{intro}</div>}
-          <ol className={isStatic ? "pb-12" : intro ? "lg:pb-[30svh]" : "pt-12 lg:pb-[30svh] lg:pt-[36svh]"}>
+          {intro && <div className={`max-w-[44ch] pb-10 pt-12 ${isStatic ? "" : "lg:pb-[18svh] lg:pt-10"}`}>{intro}</div>}
+          <ol className={isStatic ? "pb-12" : intro ? "lg:pb-[30svh]" : "pt-12 lg:pb-[30svh] lg:pt-10"}>
             {steps.map((s, i) => {
               const lit = active === s.key;
               return (

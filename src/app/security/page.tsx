@@ -18,7 +18,7 @@ export default function SecurityPage() {
         lede="Vertex is built to run where your drawings are. This page says exactly what moves in each deployment, and what we can and can't see. If something isn't listed here, ask, and we'll add it."
       />
 
-      <section className="rule">
+      <section>
         <div className="container py-12 lg:py-20">
           <DeploySplit />
         </div>

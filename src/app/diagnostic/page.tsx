@@ -24,7 +24,7 @@ export default function DiagnosticPage() {
         </div>
       </PageHeader>
 
-      <section className="rule">
+      <section>
         <div className="container py-12 lg:py-20">
           <div className="grid gap-8 border-t border-vx-400 pt-8 sm:grid-cols-3">
             {[

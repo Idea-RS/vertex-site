@@ -15,7 +15,7 @@ export default function ProductPage() {
         title="Four surfaces. One archive."
         lede="Find any part, verify what can be verified, make variants from your own templates, and see what the archive has never told you. Each surface reports what it read and what it couldn't."
       />
-      <section className="rule">
+      <section>
         <div className="py-12 lg:py-20">
           <ProductPanes />
         </div>
