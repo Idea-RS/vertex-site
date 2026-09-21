@@ -217,30 +217,12 @@ export function DraftingTableVisual() {
   };
 
   return (
-    <div className="relative my-10 overflow-hidden rounded-lg border border-vx-400/80 bg-vx-100 p-4 shadow-xl sm:p-6 lg:p-8">
-      {/* Top Telemetry Bar */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-vx-400/40 pb-3">
-        <div className="flex items-center gap-2.5">
-          <PulseOrb size="sm" />
-          <span className="mono text-micro font-medium uppercase tracking-wider text-vx-900">
-            HERO VISUAL · 2D DRAFTING TABLE ⇄ 3D B-REP MODEL
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="mono text-micro text-vx-600">
-            DRG-4120 FLANGE
-          </span>
-          <span className="rounded-xs bg-emerald-950/20 border border-emerald-600/40 px-2 py-0.5 mono text-micro font-bold text-emerald-800">
-            BIT-IDENTICAL
-          </span>
-        </div>
-      </div>
-
-      {/* Main Hero Split Grid */}
-      <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12 lg:gap-4">
+    <div className="my-10 lg:my-14">
+      {/* Main Hero Split Grid - Free-standing on the page */}
+      <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-6">
         {/* Left: 3D CAD Solid Viewport */}
-        <div className="lg:col-span-5">
-          <div className="relative overflow-hidden rounded-md border border-vx-600 bg-vx-900 shadow-2xl">
+        <div className="lg:col-span-5 flex flex-col">
+          <div className="relative overflow-hidden rounded-sm border border-vx-600 bg-vx-900 shadow-2xl">
             {/* Viewport Header */}
             <div className="flex items-center justify-between border-b border-vx-600/70 bg-vx-900/95 px-3.5 py-2">
               <div className="flex items-center gap-2">
@@ -298,20 +280,25 @@ export function DraftingTableVisual() {
               </div>
             </div>
           </div>
+          {/* 3D Model Footer Note */}
+          <div className="mt-2.5 flex items-center justify-between px-1 text-micro text-vx-600 mono">
+            <span>OPEN CASCADE B-REP SOLID</span>
+            <span className="text-dim-deep font-medium">BIT-IDENTICAL CAD MODEL</span>
+          </div>
         </div>
 
         {/* Center: 2D ⇄ 3D Flow Connector */}
-        <div className="flex flex-col items-center justify-center lg:col-span-2 py-2">
+        <div className="flex flex-col items-center justify-center lg:col-span-2 py-4">
           {/* Desktop horizontal flow */}
           <div className="hidden lg:flex flex-col items-center gap-2.5">
             <span className="mono text-micro font-bold text-vx-900 tracking-wider">
               2D ⇄ 3D
             </span>
             <div className="relative flex items-center justify-center w-32">
-              <div className="h-[2px] w-full bg-gradient-to-r from-vx-600 via-dim to-vx-600" />
-              <div className="absolute -left-1 text-dim font-bold text-sm">◀</div>
-              <div className="absolute -right-1 text-dim font-bold text-sm">▶</div>
-              <div className="absolute h-3 w-3 rounded-full bg-dim animate-ping opacity-70" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-vx-400 via-dim-deep to-vx-400" />
+              <div className="absolute -left-1 text-dim-deep font-bold text-sm">◀</div>
+              <div className="absolute -right-1 text-dim-deep font-bold text-sm">▶</div>
+              <div className="absolute h-3 w-3 rounded-full bg-dim animate-ping opacity-60" />
             </div>
             <span className="mono text-micro text-dim-deep font-semibold">
               Reconstructed in seconds
@@ -322,7 +309,7 @@ export function DraftingTableVisual() {
           </div>
 
           {/* Mobile vertical flow */}
-          <div className="flex lg:hidden items-center justify-center gap-3 py-2">
+          <div className="flex lg:hidden items-center justify-center gap-3 py-3">
             <div className="h-[1px] w-12 bg-vx-400" />
             <span className="mono text-micro font-semibold text-vx-900">
               ▲ 3D SOLID ⇄ 2D DRAWING ▼
@@ -332,10 +319,10 @@ export function DraftingTableVisual() {
         </div>
 
         {/* Right: Full Top-Down Architectural Drafting Board with Taped Blueprint & Moving T-Square */}
-        <div className="lg:col-span-5">
-          <div className="relative overflow-hidden rounded-md border border-vx-600 bg-vx-900 p-2 shadow-2xl">
+        <div className="lg:col-span-5 flex flex-col">
+          <div className="relative overflow-hidden rounded-sm border border-vx-600 bg-vx-900 shadow-2xl">
             {/* Viewport Header */}
-            <div className="mb-2 flex items-center justify-between border-b border-vx-600/70 px-2 pb-1.5">
+            <div className="flex items-center justify-between border-b border-vx-600/70 bg-vx-900/95 px-3.5 py-2">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-dim" />
                 <span className="mono text-micro font-semibold text-vx-100">
@@ -348,7 +335,7 @@ export function DraftingTableVisual() {
             </div>
 
             {/* Full Top-Down Drafting Table Board Surface */}
-            <div className="relative h-[360px] w-full overflow-hidden rounded-xs bg-[#0a1420] sm:h-[430px] select-none">
+            <div className="relative h-[360px] w-full overflow-hidden bg-[#0d1b2a] sm:h-[430px] select-none">
               {/* Top-Down Drafting Table SVG */}
               <svg
                 viewBox="0 0 760 520"
@@ -800,12 +787,12 @@ export function DraftingTableVisual() {
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Visual Footer Note */}
-            <div className="mt-2 flex items-center justify-between px-1 text-micro text-vx-400">
-              <span>TOP-DOWN DRAFTING BOARD · DRG-4120</span>
-              <span className="text-dim font-medium">AUTOMATIC T-SQUARE TRACE</span>
-            </div>
+          {/* Visual Footer Note */}
+          <div className="mt-2.5 flex items-center justify-between px-1 text-micro text-vx-600 mono">
+            <span>TOP-DOWN DRAFTING BOARD · DRG-4120</span>
+            <span className="text-dim-deep font-medium">AUTOMATIC T-SQUARE TRACE</span>
           </div>
         </div>
       </div>
