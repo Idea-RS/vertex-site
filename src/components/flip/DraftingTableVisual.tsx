@@ -257,7 +257,7 @@ export function DraftingTableVisual() {
             {/* Three.js Canvas */}
             <div
               ref={containerRef}
-              className="relative h-[320px] w-full cursor-grab active:cursor-grabbing sm:h-[380px]"
+              className="relative h-[360px] w-full cursor-grab active:cursor-grabbing sm:h-[430px]"
               onMouseDown={() => setIsOrbiting(true)}
               onMouseUp={() => setIsOrbiting(false)}
               onTouchStart={() => setIsOrbiting(true)}
@@ -331,7 +331,7 @@ export function DraftingTableVisual() {
           </div>
         </div>
 
-        {/* Right: Architectural Drafting Table with 2D Engineering Sheet & Moving T-Square */}
+        {/* Right: Full Top-Down Architectural Drafting Board with Taped Blueprint & Moving T-Square */}
         <div className="lg:col-span-5">
           <div className="relative overflow-hidden rounded-md border border-vx-600 bg-vx-900 p-2 shadow-2xl">
             {/* Viewport Header */}
@@ -339,7 +339,7 @@ export function DraftingTableVisual() {
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-dim" />
                 <span className="mono text-micro font-semibold text-vx-100">
-                  DRAFTING TABLE · 2D PRINT
+                  DRAFTING BOARD · 2D BLUEPRINT
                 </span>
               </div>
               <span className="mono text-micro text-vx-400">
@@ -347,185 +347,401 @@ export function DraftingTableVisual() {
               </span>
             </div>
 
-            {/* Drafting Table Illustration Container */}
-            <div className="relative h-[320px] w-full overflow-hidden rounded-xs bg-[#0b1624] sm:h-[380px] select-none">
-              {/* Detailed Technical Blueprint Drafting Table SVG */}
+            {/* Full Top-Down Drafting Table Board Surface */}
+            <div className="relative h-[360px] w-full overflow-hidden rounded-xs bg-[#0a1420] sm:h-[430px] select-none">
+              {/* Top-Down Drafting Table SVG */}
               <svg
-                viewBox="0 0 580 440"
+                viewBox="0 0 760 520"
                 className="pointer-events-none absolute inset-0 h-full w-full"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                {/* Blueprint Background Grid */}
                 <defs>
-                  <pattern id="table-grid" width="16" height="16" patternUnits="userSpaceOnUse">
-                    <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#132438" strokeWidth="0.5" />
+                  {/* Subtle 20mm drafting grid */}
+                  <pattern id="board-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                    <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#132438" strokeWidth="0.6" />
                   </pattern>
+
+                  {/* 45° Section Hatching pattern */}
+                  <pattern id="section-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                    <line x1="0" y1="0" x2="0" y2="8" stroke="#e0e1dd" strokeWidth="0.8" opacity="0.65" />
+                  </pattern>
+
+                  {/* Masking tape texture filter */}
+                  <filter id="tape-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#000000" floodOpacity="0.5" />
+                  </filter>
+
+                  {/* T-Square blade drop shadow */}
+                  <filter id="blade-shadow" x="-5%" y="-20%" width="110%" height="200%">
+                    <feDropShadow dx="0" dy="8" stdDeviation="5" floodColor="#000000" floodOpacity="0.6" />
+                  </filter>
                 </defs>
-                <rect width="580" height="440" fill="url(#table-grid)" />
 
-                {/* ── Drafting Workbench Stand Underneath ── */}
-                {/* Floor Shadow */}
-                <ellipse cx="290" cy="425" rx="230" ry="8" fill="#040a12" opacity="0.8" />
+                {/* ── 1. Drafting Board Vinyl Mat Surface ── */}
+                <rect x="0" y="0" width="760" height="520" fill="#0d1b2a" />
+                <rect x="44" y="24" width="716" height="472" fill="url(#board-grid)" />
 
-                {/* Heavy Cast-Iron Base Feet & Levelers */}
-                <path d="M70 415 L140 415 L125 390 L85 390 Z" fill="#1b263b" stroke="#415a77" strokeWidth="1.5" />
-                <path d="M440 415 L510 415 L495 390 L455 390 Z" fill="#1b263b" stroke="#415a77" strokeWidth="1.5" />
-                <rect x="90" y="415" width="30" height="6" rx="1" fill="#778da9" />
-                <rect x="460" y="415" width="30" height="6" rx="1" fill="#778da9" />
+                {/* ── 2. Top Precision Aluminum Metric Ruler Bar ── */}
+                <rect x="44" y="0" width="716" height="24" fill="#142232" stroke="#415a77" strokeWidth="1" />
+                {Array.from({ length: 36 }).map((_, i) => (
+                  <g key={`top-tick-${i}`}>
+                    <line
+                      x1={54 + i * 19.5}
+                      y1={24}
+                      x2={54 + i * 19.5}
+                      y2={i % 5 === 0 ? 12 : 18}
+                      stroke="#778da9"
+                      strokeWidth={i % 5 === 0 ? 1.2 : 0.75}
+                    />
+                    {i % 5 === 0 && (
+                      <text
+                        x={54 + i * 19.5}
+                        y={9}
+                        fill="#778da9"
+                        fontSize="6.5"
+                        fontFamily="var(--font-mono)"
+                        textAnchor="middle"
+                      >
+                        {i * 10}
+                      </text>
+                    )}
+                  </g>
+                ))}
 
-                {/* Slotted Telescoping Elevation Uprights */}
-                <path d="M105 390 L135 270" stroke="#415a77" strokeWidth="8" strokeLinecap="round" />
-                <path d="M475 390 L445 270" stroke="#415a77" strokeWidth="8" strokeLinecap="round" />
-                {/* Height calibration ticks on uprights */}
-                <line x1="112" y1="360" x2="120" y2="360" stroke="#778da9" strokeWidth="1.5" />
-                <line x1="117" y1="340" x2="125" y2="340" stroke="#778da9" strokeWidth="1.5" />
-                <line x1="122" y1="320" x2="130" y2="320" stroke="#778da9" strokeWidth="1.5" />
-                <line x1="468" y1="360" x2="460" y2="360" stroke="#778da9" strokeWidth="1.5" />
-                <line x1="463" y1="340" x2="455" y2="340" stroke="#778da9" strokeWidth="1.5" />
-                <line x1="458" y1="320" x2="450" y2="320" stroke="#778da9" strokeWidth="1.5" />
+                {/* ── 3. Left Board Edge with Steel Guide Rail (for T-Square) ── */}
+                <rect x="0" y="0" width="44" height="520" fill="#182330" stroke="#415a77" strokeWidth="1" />
+                {/* Precision Polished Steel Guide Rod */}
+                <line x1="22" y1="4" x2="22" y2="516" stroke="#778da9" strokeWidth="3" strokeLinecap="round" />
+                <line x1="21" y1="4" x2="21" y2="516" stroke="#e0e1dd" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+                {/* Brass End Stop Bumpers */}
+                <circle cx="22" cy="12" r="5" fill="#f0a868" stroke="#0d1b2a" strokeWidth="1" />
+                <circle cx="22" cy="508" r="5" fill="#f0a868" stroke="#0d1b2a" strokeWidth="1" />
+                {/* Vertical Ruler Graduations along edge */}
+                {Array.from({ length: 26 }).map((_, i) => (
+                  <line
+                    key={`vert-tick-${i}`}
+                    x1={44}
+                    y1={24 + i * 19}
+                    x2={i % 5 === 0 ? 34 : 39}
+                    stroke="#778da9"
+                    strokeWidth={i % 5 === 0 ? 1.2 : 0.75}
+                  />
+                ))}
 
-                {/* Lower Cross Stretcher & Foot Pedal Bar */}
-                <rect x="110" y="375" width="360" height="8" rx="2" fill="#1b263b" stroke="#415a77" strokeWidth="1" />
-                <rect x="190" y="380" width="200" height="4" rx="1" fill="#778da9" />
+                {/* Parallel Motion Wire Cable in Top & Bottom corners */}
+                <circle cx="54" cy="34" r="4" fill="#f0a868" stroke="#415a77" strokeWidth="1" />
+                <circle cx="746" cy="34" r="4" fill="#f0a868" stroke="#415a77" strokeWidth="1" />
+                <line x1="54" y1="34" x2="746" y2="34" stroke="#415a77" strokeWidth="0.75" strokeDasharray="3 2" />
 
-                {/* Draughtsman Tool Shelf */}
-                <rect x="145" y="295" width="290" height="18" rx="2" fill="#142132" stroke="#415a77" strokeWidth="1.5" />
-                {/* Drafting Pencil */}
-                <line x1="165" y1="304" x2="225" y2="304" stroke="#f0a868" strokeWidth="3" strokeLinecap="round" />
-                <polygon points="160,304 165,302 165,306" fill="#e0e1dd" />
-                {/* Compass / Divider */}
-                <path d="M245 310 L260 298 L275 310" stroke="#778da9" strokeWidth="1.5" fill="none" />
-                <circle cx="260" cy="298" r="2.5" fill="#f0a868" />
-                {/* 45° Acrylic Set-Square Triangle */}
-                <polygon points="295,310 335,310 335,295" fill="rgba(224, 225, 221, 0.2)" stroke="#778da9" strokeWidth="1" />
-                <polygon points="305,308 328,308 328,299" fill="#0b1624" />
-                {/* Eraser */}
-                <rect x="350" y="300" width="26" height="10" rx="1" fill="#e0e1dd" stroke="#415a77" strokeWidth="1" />
-
-                {/* Board Tilt Mechanism & Large Adjustment Handwheel on Right */}
-                <circle cx="530" cy="180" r="16" fill="#1b263b" stroke="#778da9" strokeWidth="2" />
-                <circle cx="530" cy="180" r="6" fill="#778da9" />
-                {/* Handwheel Crank Handle */}
-                <path d="M530 180 L545 155" stroke="#778da9" strokeWidth="3" strokeLinecap="round" />
-                <circle cx="545" cy="155" r="4" fill="#f0a868" />
-
-                {/* Dual Locking Knobs on Left & Right */}
-                <circle cx="45" cy="180" r="10" fill="#243447" stroke="#778da9" strokeWidth="1.5" />
-                <circle cx="45" cy="180" r="4" fill="#778da9" />
-                <circle cx="525" cy="180" r="10" fill="#243447" stroke="#778da9" strokeWidth="1.5" />
-
-                {/* ── Main Tilted Drafting Board Surface ── */}
-                <rect x="42" y="20" width="485" height="280" rx="6" fill="#142132" stroke="#415a77" strokeWidth="2" />
-                {/* Board Left Guide Edge (Precision Track for T-square) */}
-                <line x1="45" y1="22" x2="45" y2="298" stroke="#778da9" strokeWidth="2.5" />
-                {/* Board Inner Recess */}
-                <rect x="50" y="26" width="470" height="268" rx="4" fill="#0d1b2a" stroke="#22364c" strokeWidth="1" />
-
-                {/* Parallel Motion Wire Guide Pulleys in Top Corners */}
-                <circle cx="58" cy="34" r="5" fill="#415a77" stroke="#778da9" strokeWidth="1" />
-                <circle cx="512" cy="34" r="5" fill="#415a77" stroke="#778da9" strokeWidth="1" />
-                <line x1="58" y1="34" x2="512" y2="34" stroke="#415a77" strokeWidth="0.75" strokeDasharray="3 2" />
-
-                {/* ── The 2D Engineering Drawing Sheet (DRG-4120) ── */}
-                <g id="engineering-sheet">
-                  {/* Sheet Canvas with Blue Material */}
-                  <rect x="68" y="40" width="434" height="240" rx="2" fill="#172436" stroke="#415a77" strokeWidth="1.5" />
+                {/* ── 4. The 2D Engineering Blueprint Sheet (DRG-4120) ── */}
+                <g id="blueprint-drawing-sheet" filter="url(#tape-shadow)">
+                  {/* Blueprint Sheet Background */}
+                  <rect x="74" y="44" width="650" height="434" rx="2" fill="#142134" stroke="#415a77" strokeWidth="1.5" />
                   
-                  {/* Drafting Tape Corners */}
-                  <polygon points="68,52 80,40 68,40" fill="#778da9" opacity="0.7" />
-                  <polygon points="490,40 502,52 502,40" fill="#778da9" opacity="0.7" />
-                  <polygon points="68,268 80,280 68,280" fill="#778da9" opacity="0.7" />
-                  <polygon points="490,280 502,268 502,280" fill="#778da9" opacity="0.7" />
+                  {/* Inner Border Frame */}
+                  <rect x="84" y="52" width="630" height="418" fill="none" stroke="#e0e1dd" strokeWidth="1.4" />
+                  <rect x="88" y="56" width="622" height="410" fill="none" stroke="#415a77" strokeWidth="0.75" />
 
-                  {/* Standard Drawing Frame & Zone Grids */}
-                  <rect x="75" y="46" width="420" height="228" fill="none" stroke="#e0e1dd" strokeWidth="1.2" />
-                  <rect x="79" y="50" width="412" height="220" fill="none" stroke="#415a77" strokeWidth="0.75" />
+                  {/* Coordinate Zones (A, B, C, D and 1..6) */}
+                  <g fill="#778da9" fontSize="7" fontFamily="var(--font-mono)">
+                    <text x="180" y="50" textAnchor="middle">1</text>
+                    <text x="290" y="50" textAnchor="middle">2</text>
+                    <text x="400" y="50" textAnchor="middle">3</text>
+                    <text x="510" y="50" textAnchor="middle">4</text>
+                    <text x="620" y="50" textAnchor="middle">5</text>
 
-                  {/* ── View 1: Top / Plan View (Flange & Bolt Circles) ── */}
-                  <g transform="translate(175, 142)">
-                    {/* Centrelines */}
-                    <line x1="-62" y1="0" x2="62" y2="0" stroke="#778da9" strokeWidth="0.75" strokeDasharray="16 3 3 3" />
-                    <line x1="0" y1="-62" x2="0" y2="62" stroke="#778da9" strokeWidth="0.75" strokeDasharray="16 3 3 3" />
-
-                    {/* Outer Flange Circle Ø160 */}
-                    <circle cx="0" cy="0" r="52" stroke="#e0e1dd" strokeWidth="1.5" />
-                    {/* PCD Circle Ø130 */}
-                    <circle cx="0" cy="0" r="40" stroke="#f0a868" strokeWidth="0.8" strokeDasharray="4 3" />
-                    {/* Hub Circle Ø70 */}
-                    <circle cx="0" cy="0" r="29" stroke="#e0e1dd" strokeWidth="1.2" />
-                    {/* Center Bore Ø40 */}
-                    <circle cx="0" cy="0" r="15" stroke="#e0e1dd" strokeWidth="1.2" />
-
-                    {/* 8 Bolt Holes */}
-                    {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
-                      const rad = (deg * Math.PI) / 180;
-                      const bx = Math.cos(rad) * 40;
-                      const by = Math.sin(rad) * 40;
-                      return <circle key={deg} cx={bx} cy={by} r="3.75" stroke="#e0e1dd" strokeWidth="1" fill="#172436" />;
-                    })}
-
-                    <text x="-52" y="-44" fill="#f0a868" fontSize="8.5" fontFamily="var(--font-mono)" fontWeight="600">
-                      PCD Ø130.0
-                    </text>
-                    <text x="0" y="58" fill="#778da9" fontSize="7.5" fontFamily="var(--font-mono)" textAnchor="middle">
-                      TOP VIEW (PLAN)
-                    </text>
+                    <text x="80" y="140">A</text>
+                    <text x="80" y="240">B</text>
+                    <text x="80" y="340">C</text>
+                    <text x="80" y="420">D</text>
                   </g>
 
-                  {/* ── View 2: Section A-A (Elevation & Hatching) ── */}
-                  <g transform="translate(365, 142)">
-                    {/* Centerline */}
-                    <line x1="0" y1="-60" x2="0" y2="60" stroke="#778da9" strokeWidth="0.75" strokeDasharray="16 3 3 3" />
+                  {/* Sheet Header Linework */}
+                  <text x="96" y="68" fill="#778da9" fontSize="7.5" fontFamily="var(--font-mono)" letterSpacing="0.08em">
+                    VERTEX FLIP ENGINE · B-REP KERNEL RECONSTRUCTION · ASME Y14.5
+                  </text>
+                  <line x1="88" y1="72" x2="710" y2="72" stroke="#415a77" strokeWidth="0.75" />
 
-                    {/* Flange Body Base */}
-                    <rect x="-52" y="-12" width="104" height="24" stroke="#e0e1dd" strokeWidth="1.5" fill="none" />
-                    {/* Raised Hub */}
-                    <rect x="-29" y="-40" width="58" height="28" stroke="#e0e1dd" strokeWidth="1.2" fill="none" />
-                    {/* Bore Cutout Through-Hole */}
-                    <rect x="-15" y="-40" width="30" height="52" stroke="#778da9" strokeWidth="1" strokeDasharray="3 2" fill="none" />
+                  {/* Third-Angle Projection Symbol in Upper Right */}
+                  <g transform="translate(680, 64)">
+                    <circle cx="-32" cy="0" r="4.5" stroke="#778da9" strokeWidth="0.75" fill="none" />
+                    <circle cx="-32" cy="0" r="2" stroke="#778da9" strokeWidth="0.75" fill="none" />
+                    <line x1="-40" y1="0" x2="-24" y2="0" stroke="#778da9" strokeWidth="0.5" strokeDasharray="3 1" />
+                    <polygon points="-16,-4 -4,-2 -4,2 -16,4" stroke="#778da9" strokeWidth="0.75" fill="none" />
+                    <line x1="-20" y1="0" x2="0" y2="0" stroke="#778da9" strokeWidth="0.5" strokeDasharray="3 1" />
+                  </g>
 
-                    {/* Section Hatching Lines */}
-                    <line x1="-48" y1="12" x2="-36" y2="-12" stroke="#e0e1dd" strokeWidth="0.75" opacity="0.6" />
-                    <line x1="-40" y1="12" x2="-28" y2="-12" stroke="#e0e1dd" strokeWidth="0.75" opacity="0.6" />
-                    <line x1="28" y1="12" x2="40" y2="-12" stroke="#e0e1dd" strokeWidth="0.75" opacity="0.6" />
-                    <line x1="36" y1="12" x2="48" y2="-12" stroke="#e0e1dd" strokeWidth="0.75" opacity="0.6" />
+                  {/* ── VIEW 1: Section A-A (Elevation & Hatching) ── */}
+                  <g transform="translate(235, 220)">
+                    {/* View Centerlines */}
+                    <line x1="0" y1="-95" x2="0" y2="95" stroke="#778da9" strokeWidth="0.75" strokeDasharray="18 3 3 3" />
 
-                    {/* Dimension Line Ø160 */}
-                    <line x1="-52" y1="20" x2="52" y2="20" stroke="#f0a868" strokeWidth="0.8" />
-                    <text x="0" y="29" fill="#f0a868" fontSize="8.5" fontFamily="var(--font-mono)" textAnchor="middle">
-                      Ø160.0 mm
+                    {/* Outer Flange Base (solid outline) */}
+                    <rect x="-85" y="-14" width="170" height="28" stroke="#e0e1dd" strokeWidth="1.6" fill="none" />
+                    
+                    {/* Section Hatching in Flange Wings */}
+                    <rect x="-85" y="-14" width="46" height="28" fill="url(#section-hatch)" stroke="#e0e1dd" strokeWidth="1.4" />
+                    <rect x="39" y="-14" width="46" height="28" fill="url(#section-hatch)" stroke="#e0e1dd" strokeWidth="1.4" />
+
+                    {/* Center Raised Hub Boss */}
+                    <rect x="-39" y="-56" width="78" height="42" stroke="#e0e1dd" strokeWidth="1.6" fill="none" />
+                    <rect x="-39" y="-56" width="18" height="42" fill="url(#section-hatch)" stroke="#e0e1dd" strokeWidth="1.4" />
+                    <rect x="21" y="-56" width="18" height="42" fill="url(#section-hatch)" stroke="#e0e1dd" strokeWidth="1.4" />
+
+                    {/* Center Bore Hole (dashed through line) */}
+                    <rect x="-21" y="-56" width="42" height="70" stroke="#778da9" strokeWidth="1" strokeDasharray="4 2" fill="#0e1b2a" opacity="0.8" />
+
+                    {/* Drilled Bolt Holes in Section */}
+                    <rect x="-72" y="-14" width="12" height="28" stroke="#778da9" strokeWidth="0.9" strokeDasharray="3 2" fill="#0e1b2a" opacity="0.8" />
+                    <rect x="60" y="-14" width="12" height="28" stroke="#778da9" strokeWidth="0.9" strokeDasharray="3 2" fill="#0e1b2a" opacity="0.8" />
+
+                    {/* Dimension: Total Height 39.0mm */}
+                    <line x1="98" y1="-56" x2="98" y2="14" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="92" y1="-56" x2="104" y2="-56" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="92" y1="14" x2="104" y2="14" stroke="#f0a868" strokeWidth="0.9" />
+                    <polygon points="98,-56 96,-48 100,-48" fill="#f0a868" />
+                    <polygon points="98,14 96,6 100,6" fill="#f0a868" />
+                    <text x="110" y="-18" fill="#f0a868" fontSize="9" fontFamily="var(--font-mono)" fontWeight="600">
+                      39.0 mm
                     </text>
-                    <text x="0" y="58" fill="#778da9" fontSize="7.5" fontFamily="var(--font-mono)" textAnchor="middle">
+
+                    {/* Dimension: Flange Thickness 11.0mm */}
+                    <line x1="-98" y1="-14" x2="-98" y2="14" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="-104" y1="-14" x2="-92" y2="-14" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="-104" y1="14" x2="-92" y2="14" stroke="#f0a868" strokeWidth="0.9" />
+                    <text x="-128" y="3" fill="#f0a868" fontSize="8" fontFamily="var(--font-mono)">
+                      11.0
+                    </text>
+
+                    {/* Dimension: Hub Diameter Ø70.0mm */}
+                    <line x1="-39" y1="-68" x2="39" y2="-68" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="-39" y1="-62" x2="-39" y2="-74" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="39" y1="-62" x2="39" y2="-74" stroke="#f0a868" strokeWidth="0.9" />
+                    <polygon points="-39,-68 -31,-70 -31,-66" fill="#f0a868" />
+                    <polygon points="39,-68 31,-70 31,-66" fill="#f0a868" />
+                    <text x="0" y="-74" fill="#f0a868" fontSize="8.5" fontFamily="var(--font-mono)" textAnchor="middle">
+                      Ø70.0 mm
+                    </text>
+
+                    {/* Dimension: Flange Diameter Ø160.0mm */}
+                    <line x1="-85" y1="30" x2="85" y2="30" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="-85" y1="24" x2="-85" y2="36" stroke="#f0a868" strokeWidth="0.9" />
+                    <line x1="85" y1="24" x2="85" y2="36" stroke="#f0a868" strokeWidth="0.9" />
+                    <polygon points="-85,30 -77,28 -77,32" fill="#f0a868" />
+                    <polygon points="85,30 77,28 77,32" fill="#f0a868" />
+                    <text x="0" y="42" fill="#f0a868" fontSize="9.5" fontFamily="var(--font-mono)" fontWeight="600" textAnchor="middle">
+                      Ø160.00 ±0.05
+                    </text>
+
+                    {/* View Caption */}
+                    <text x="0" y="70" fill="#e0e1dd" fontSize="9" fontFamily="var(--font-mono)" fontWeight="600" textAnchor="middle">
                       SECTION A-A
                     </text>
+                    <text x="0" y="82" fill="#778da9" fontSize="7.5" fontFamily="var(--font-mono)" textAnchor="middle">
+                      SCALE 1:1 · FULL PENETRATION
+                    </text>
                   </g>
 
-                  {/* ── Anonymised Title Block ── */}
-                  <g transform="translate(325, 218)">
-                    <rect x="0" y="0" width="162" height="48" fill="#101a26" stroke="#e0e1dd" strokeWidth="1" />
-                    <line x1="0" y1="16" x2="162" y2="16" stroke="#415a77" strokeWidth="0.75" />
-                    <line x1="0" y1="32" x2="162" y2="32" stroke="#415a77" strokeWidth="0.75" />
-                    <line x1="90" y1="0" x2="90" y2="32" stroke="#415a77" strokeWidth="0.75" />
+                  {/* ── VIEW 2: Top / Plan View (Bolt Circle & PCD) ── */}
+                  <g transform="translate(525, 215)">
+                    {/* View Centerlines */}
+                    <line x1="-95" y1="0" x2="95" y2="0" stroke="#778da9" strokeWidth="0.75" strokeDasharray="18 3 3 3" />
+                    <line x1="0" y1="-95" x2="0" y2="95" stroke="#778da9" strokeWidth="0.75" strokeDasharray="18 3 3 3" />
 
-                    {/* Redaction Bars */}
-                    <rect x="8" y="5" width="72" height="7" fill="#415a77" rx="1" />
-                    <rect x="8" y="21" width="58" height="6" fill="#415a77" rx="1" />
+                    {/* Outer Flange Diameter Ø160.0 */}
+                    <circle cx="0" cy="0" r="72" stroke="#e0e1dd" strokeWidth="1.8" fill="none" />
+
+                    {/* Pitch Circle Diameter Ø130.0 (Dashed Amber) */}
+                    <circle cx="0" cy="0" r="56" stroke="#f0a868" strokeWidth="1" strokeDasharray="5 3" fill="none" />
+
+                    {/* Raised Hub Outline Ø70.0 */}
+                    <circle cx="0" cy="0" r="34" stroke="#e0e1dd" strokeWidth="1.4" fill="none" />
+
+                    {/* Center Bore Cutout Ø40.0 */}
+                    <circle cx="0" cy="0" r="18" stroke="#e0e1dd" strokeWidth="1.4" fill="#0d1b2a" />
+
+                    {/* 8× Drilled Through-Holes on PCD */}
+                    {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+                      const rad = (deg * Math.PI) / 180;
+                      const hx = Math.cos(rad) * 56;
+                      const hy = Math.sin(rad) * 56;
+                      return (
+                        <g key={`hole-${deg}`}>
+                          <circle cx={hx} cy={hy} r="5" stroke="#e0e1dd" strokeWidth="1.1" fill="#142134" />
+                          <line x1={hx - 7} y1={hy} x2={hx + 7} y2={hy} stroke="#778da9" strokeWidth="0.5" />
+                          <line x1={hx} y1={hy - 7} x2={hx} y2={hy + 7} stroke="#778da9" strokeWidth="0.5" />
+                        </g>
+                      );
+                    })}
+
+                    {/* Callout Leader for PCD & 8 Holes */}
+                    <path d="M40 -40 L75 -70 L130 -70" stroke="#f0a868" strokeWidth="1" fill="none" />
+                    <circle cx="40" cy="-40" r="2" fill="#f0a868" />
+                    <text x="80" y="-76" fill="#f0a868" fontSize="8.5" fontFamily="var(--font-mono)" fontWeight="600">
+                      8× Ø11.0 THRU
+                    </text>
+                    <text x="80" y="-63" fill="#f0a868" fontSize="7.5" fontFamily="var(--font-mono)">
+                      ON PCD Ø130.0 EQ SP
+                    </text>
+
+                    {/* Center Bore Callout */}
+                    <text x="-70" y="-55" fill="#778da9" fontSize="8" fontFamily="var(--font-mono)">
+                      Ø40.0 H7 BORE
+                    </text>
+
+                    {/* View Caption */}
+                    <text x="0" y="86" fill="#e0e1dd" fontSize="9" fontFamily="var(--font-mono)" fontWeight="600" textAnchor="middle">
+                      PLAN VIEW (TOP)
+                    </text>
+                  </g>
+
+                  {/* ── Anonymised Title Block (Bottom Right) ── */}
+                  <g transform="translate(420, 362)">
+                    <rect x="0" y="0" width="286" height="98" fill="#101c2a" stroke="#e0e1dd" strokeWidth="1.4" />
                     
-                    <text x="96" y="12" fill="#e0e1dd" fontSize="7.5" fontFamily="var(--font-mono)">
-                      REV 04 · PASS
+                    {/* Title Block Horizontal Dividers */}
+                    <line x1="0" y1="24" x2="286" y2="24" stroke="#415a77" strokeWidth="0.9" />
+                    <line x1="0" y1="50" x2="286" y2="50" stroke="#415a77" strokeWidth="0.9" />
+                    <line x1="0" y1="74" x2="286" y2="74" stroke="#415a77" strokeWidth="0.9" />
+
+                    {/* Vertical Dividers */}
+                    <line x1="145" y1="0" x2="145" y2="50" stroke="#415a77" strokeWidth="0.9" />
+                    <line x1="215" y1="24" x2="215" y2="50" stroke="#415a77" strokeWidth="0.9" />
+                    <line x1="100" y1="50" x2="100" y2="74" stroke="#415a77" strokeWidth="0.9" />
+                    <line x1="190" y1="50" x2="190" y2="74" stroke="#415a77" strokeWidth="0.9" />
+
+                    {/* Confidential Redaction Bars */}
+                    <rect x="10" y="8" width="80" height="9" fill="#415a77" rx="1.5" />
+                    <rect x="10" y="32" width="60" height="8" fill="#415a77" rx="1.5" />
+                    
+                    {/* Drawing Metadata */}
+                    <text x="152" y="16" fill="#e0e1dd" fontSize="8" fontFamily="var(--font-mono)" fontWeight="600">
+                      DRG NO: DRG-4120
                     </text>
-                    <text x="96" y="26" fill="#778da9" fontSize="7" fontFamily="var(--font-mono)">
-                      TOL ±0.05 mm
+                    <text x="152" y="38" fill="#778da9" fontSize="7.5" fontFamily="var(--font-mono)">
+                      REV: 04 (LATEST)
                     </text>
-                    <text x="8" y="42" fill="#e0e1dd" fontSize="8.5" fontFamily="var(--font-mono)" fontWeight="700">
-                      DRG-4120 FLANGE
+                    <text x="222" y="38" fill="#778da9" fontSize="7.5" fontFamily="var(--font-mono)">
+                      SHEET: 1/1
+                    </text>
+
+                    <text x="10" y="64" fill="#778da9" fontSize="7" fontFamily="var(--font-mono)">
+                      SCALE: 1:1
+                    </text>
+                    <text x="108" y="64" fill="#778da9" fontSize="7" fontFamily="var(--font-mono)">
+                      MATL: AlSi10Mg
+                    </text>
+                    <text x="198" y="64" fill="#778da9" fontSize="7" fontFamily="var(--font-mono)">
+                      TOL: ISO 2768-m
+                    </text>
+
+                    {/* Verification & Part Title */}
+                    <text x="10" y="88" fill="#e0e1dd" fontSize="9" fontFamily="var(--font-mono)" fontWeight="700">
+                      FLANGE HOUSING · 3D RECONSTRUCTION
+                    </text>
+                    <text x="235" y="88" fill="#10b981" fontSize="7.5" fontFamily="var(--font-mono)" fontWeight="600">
+                      ✓ PASS
                     </text>
                   </g>
+
+                  {/* ── 4 Drafting Masking Tape Strips (at 45° across 4 corners) ── */}
+                  {/* Top-Left Corner Tape */}
+                  <polygon
+                    points="60,86 86,60 118,92 92,118"
+                    fill="#ede4cf"
+                    opacity="0.82"
+                    stroke="#d4c7a8"
+                    strokeWidth="0.75"
+                    filter="url(#tape-shadow)"
+                  />
+                  {/* Top-Right Corner Tape */}
+                  <polygon
+                    points="696,60 722,86 690,118 664,92"
+                    fill="#ede4cf"
+                    opacity="0.82"
+                    stroke="#d4c7a8"
+                    strokeWidth="0.75"
+                    filter="url(#tape-shadow)"
+                  />
+                  {/* Bottom-Left Corner Tape */}
+                  <polygon
+                    points="60,436 92,404 118,430 86,462"
+                    fill="#ede4cf"
+                    opacity="0.82"
+                    stroke="#d4c7a8"
+                    strokeWidth="0.75"
+                    filter="url(#tape-shadow)"
+                  />
+                  {/* Bottom-Right Corner Tape */}
+                  <polygon
+                    points="664,430 690,404 722,436 696,462"
+                    fill="#ede4cf"
+                    opacity="0.82"
+                    stroke="#d4c7a8"
+                    strokeWidth="0.75"
+                    filter="url(#tape-shadow)"
+                  />
+                </g>
+
+                {/* ── 5. Draughtsman Instruments on the Board ── */}
+                {/* 45° Transparent Acrylic Drafting Set-Square Triangle in Upper Right */}
+                <g transform="translate(620, 80) rotate(15)" opacity="0.85">
+                  <polygon
+                    points="0,0 80,0 80,80"
+                    fill="rgba(224, 225, 221, 0.16)"
+                    stroke="#778da9"
+                    strokeWidth="1.2"
+                  />
+                  <polygon
+                    points="20,16 65,16 65,60"
+                    fill="#0d1b2a"
+                    stroke="#415a77"
+                    strokeWidth="0.9"
+                  />
+                  {/* Graduation ticks along edge */}
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <line
+                      key={`sq-tick-${i}`}
+                      x1={i * 10}
+                      y1={0}
+                      x2={i * 10}
+                      y2={4}
+                      stroke="#e0e1dd"
+                      strokeWidth="0.7"
+                    />
+                  ))}
+                  <circle cx="48" cy="36" r="6" stroke="#778da9" strokeWidth="0.8" fill="none" />
+                </g>
+
+                {/* ── 6. Bottom Edge Tray with Drafting Pencil and Eraser ── */}
+                <rect x="44" y="496" width="716" height="24" fill="#121e2c" stroke="#415a77" strokeWidth="1" />
+                
+                {/* Precision Mechanical Clutch Pencil */}
+                <g transform="translate(220, 506)">
+                  {/* Hexagonal Gold/Amber Barrel */}
+                  <rect x="0" y="0" width="140" height="6" rx="1.5" fill="#f0a868" stroke="#8f4a14" strokeWidth="0.8" />
+                  {/* Knurled Metal Grip */}
+                  <rect x="140" y="0" width="28" height="6" fill="#778da9" stroke="#415a77" strokeWidth="0.8" />
+                  {/* Steel Cone & 0.5mm Graphite Lead */}
+                  <polygon points="168,0 178,3 168,6" fill="#415a77" />
+                  <line x1="178" y1="3" x2="184" y2="3" stroke="#e0e1dd" strokeWidth="1" strokeLinecap="round" />
+                  {/* Metal Pocket Clip */}
+                  <rect x="18" y="-1.5" width="24" height="2" fill="#e0e1dd" />
+                </g>
+
+                {/* Vinyl Technical Eraser Block */}
+                <g transform="translate(420, 501)">
+                  <rect x="0" y="0" width="46" height="14" rx="1.5" fill="#e0e1dd" stroke="#415a77" strokeWidth="0.8" />
+                  {/* Blue Cardboard Sleeve */}
+                  <rect x="0" y="0" width="26" height="14" rx="1" fill="#1b263b" stroke="#415a77" strokeWidth="0.8" />
+                  <text x="4" y="10" fill="#e0e1dd" fontSize="6.5" fontFamily="var(--font-mono)" fontWeight="600">
+                    2B
+                  </text>
                 </g>
               </svg>
 
-              {/* ── The Animated Moving T-Square ── */}
+              {/* ── 7. The Animated Moving Precision T-Square ── */}
               <div
                 className="pointer-events-none absolute left-0 w-full animate-t-square"
                 style={{
@@ -533,52 +749,53 @@ export function DraftingTableVisual() {
                 }}
               >
                 <div className="relative flex items-center">
-                  {/* T-Square Head (Sliding vertically against the left edge of the board) */}
+                  {/* T-Square Head (rides vertically flush against the left steel guide rail) */}
                   <div
-                    className="relative z-20 flex h-28 w-7 flex-col items-center justify-between rounded-xs border border-vx-900 bg-[#283748] py-2.5 shadow-2xl"
+                    className="relative z-30 flex h-36 w-11 flex-col items-center justify-between rounded-xs border-y border-r border-[#415a77] bg-[#1a2838] py-3.5 shadow-2xl"
                     style={{
-                      boxShadow: "3px 0 8px rgba(0,0,0,0.7)",
+                      boxShadow: "4px 0 14px rgba(0,0,0,0.85)",
                     }}
                   >
-                    {/* Brass Rivet Fasteners */}
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#f0a868] border border-black/50" />
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#f0a868] border border-black/50" />
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#f0a868] border border-black/50" />
+                    {/* Brass Rivet Fasteners on Head */}
+                    <div className="h-2 w-2 rounded-full bg-[#f0a868] border border-black/60 shadow-xs" />
+                    <div className="h-2 w-2 rounded-full bg-[#f0a868] border border-black/60 shadow-xs" />
+                    <div className="h-2 w-2 rounded-full bg-[#f0a868] border border-black/60 shadow-xs" />
+                    <div className="h-2 w-2 rounded-full bg-[#f0a868] border border-black/60 shadow-xs" />
                   </div>
 
-                  {/* T-Square Blade (Precision transparent acrylic ruler across the drawing) */}
+                  {/* T-Square Blade (Full-width transparent acrylic ruler across the blueprint) */}
                   <div
-                    className="relative z-10 -ml-1 h-9 w-[495px] rounded-r-xs border-y border-r border-[#778da9]/80 bg-gradient-to-b from-white/30 via-white/15 to-white/5 backdrop-blur-[2px]"
+                    className="relative z-20 -ml-1 h-11 w-[720px] rounded-r-xs border-y border-r border-[#778da9]/90 bg-gradient-to-b from-white/35 via-white/18 to-white/5 backdrop-blur-[2.5px]"
                     style={{
-                      boxShadow: "0 6px 12px rgba(0,0,0,0.5)",
+                      boxShadow: "0 8px 18px rgba(0,0,0,0.65)",
                     }}
                   >
-                    {/* Millimeter Graduation Marks along top edge */}
-                    <div className="flex h-3.5 w-full items-end justify-between px-2.5 opacity-90">
-                      {Array.from({ length: 42 }).map((_, idx) => (
+                    {/* Millimeter Graduation Marks along top beveled edge */}
+                    <div className="flex h-4 w-full items-end justify-between px-3 opacity-95">
+                      {Array.from({ length: 58 }).map((_, idx) => (
                         <div
-                          key={idx}
+                          key={`blade-tick-${idx}`}
                           className="bg-vx-900"
                           style={{
                             width: "1px",
-                            height: idx % 5 === 0 ? "9px" : "4.5px",
+                            height: idx % 5 === 0 ? "11px" : "5px",
                           }}
                         />
                       ))}
                     </div>
 
-                    {/* Scale Nomenclature */}
-                    <div className="flex items-center justify-between px-3 pt-0.5">
-                      <span className="mono text-[8.5px] font-bold text-vx-900 opacity-95 tracking-widest select-none">
-                        DRAUGHTSMAN T-SQUARE · 600mm
+                    {/* Blade Scale Nomenclature */}
+                    <div className="flex items-center justify-between px-4 pt-0.5">
+                      <span className="mono text-[9px] font-bold text-vx-900 opacity-95 tracking-widest select-none">
+                        PRECISION DRAUGHTSMAN T-SQUARE · 700mm
                       </span>
-                      <span className="mono text-[8px] font-mono font-semibold text-vx-900 opacity-80">
-                        VERTEX CAD SYSTEM
+                      <span className="mono text-[8.5px] font-mono font-bold text-vx-900 opacity-85">
+                        VERTEX FLIP · BIT-IDENTICAL TRACE
                       </span>
                     </div>
 
-                    {/* Bevelled Acrylic Guide Edge */}
-                    <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#f0a868]/90" />
+                    {/* Bevelled Acrylic Amber Guide Edge */}
+                    <div className="absolute bottom-0 left-0 h-[2.5px] w-full bg-[#f0a868]" />
                   </div>
                 </div>
               </div>
@@ -586,8 +803,8 @@ export function DraftingTableVisual() {
 
             {/* Visual Footer Note */}
             <div className="mt-2 flex items-center justify-between px-1 text-micro text-vx-400">
-              <span>ANONYMISED TITLE BLOCK</span>
-              <span className="text-dim">AUTOMATIC T-SQUARE TRACE</span>
+              <span>TOP-DOWN DRAFTING BOARD · DRG-4120</span>
+              <span className="text-dim font-medium">AUTOMATIC T-SQUARE TRACE</span>
             </div>
           </div>
         </div>
@@ -597,25 +814,26 @@ export function DraftingTableVisual() {
       <style>{`
         @keyframes tSquareGlide {
           0% {
-            transform: translateY(24px);
+            transform: translateY(28px);
           }
-          30% {
-            transform: translateY(180px);
+          28% {
+            transform: translateY(160px);
           }
-          50% {
-            transform: translateY(225px);
+          52% {
+            transform: translateY(285px);
           }
-          75% {
-            transform: translateY(90px);
+          76% {
+            transform: translateY(95px);
           }
           100% {
-            transform: translateY(24px);
+            transform: translateY(28px);
           }
         }
         .animate-t-square {
-          animation: tSquareGlide 9s ease-in-out infinite;
+          animation: tSquareGlide 10s ease-in-out infinite;
         }
       `}</style>
     </div>
   );
 }
+
