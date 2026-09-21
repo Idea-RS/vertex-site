@@ -79,11 +79,11 @@ export function DraftingTableVisual() {
     solidGroupRef.current = solidGroup;
     scene.add(solidGroup);
 
-    // Premium machined bead-blasted aluminum material
+    // Premium machined bead-blasted aluminum material (rich slate-steel for light canvas contrast)
     const cadMaterial = new THREE.MeshStandardMaterial({
-      color: 0xc4cdd8,
+      color: 0x5a6d85,
       metalness: 0.35,
-      roughness: 0.28,
+      roughness: 0.3,
       clippingPlanes: [clipPlane],
       clipShadows: true,
       polygonOffset: true,
@@ -113,7 +113,7 @@ export function DraftingTableVisual() {
     // 3. Center Through-Bore Cutout
     const boreGeo = new THREE.CylinderGeometry(15, 15, 45, 48);
     const boreMat = new THREE.MeshStandardMaterial({
-      color: 0x1b263b,
+      color: 0x1b2838,
       roughness: 0.5,
       clippingPlanes: [clipPlane],
     });
@@ -140,23 +140,24 @@ export function DraftingTableVisual() {
     }
 
     // Coordinate plane grid floor
-    const grid = new THREE.GridHelper(140, 14, 0x415a77, 0x1b263b);
+    const grid = new THREE.GridHelper(140, 14, 0x778da9, 0xa3b8cc);
     grid.position.y = -12;
     if (!Array.isArray(grid.material)) {
-      grid.material.opacity = 0.3;
+      grid.material.opacity = 0.35;
       grid.material.transparent = true;
     }
     scene.add(grid);
 
-    // Subtle idle rotation
-    let idleAngle = 0;
+    // Subtle ambient dust float animation
+    let tick = 0;
     const animate = () => {
       animFrameIdRef.current = requestAnimationFrame(animate);
       if (!isVisibleRef.current) return;
 
-      if (!isOrbiting && activeView === "iso") {
-        idleAngle += 0.0025;
-        solidGroup.rotation.y = Math.sin(idleAngle) * 0.24;
+      tick += 0.01;
+      if (solidGroupRef.current) {
+        // Very gentle idle sway
+        solidGroupRef.current.position.y = Math.sin(tick) * 0.75;
       }
 
       controls.update();
@@ -164,14 +165,16 @@ export function DraftingTableVisual() {
     };
     animate();
 
+    // IntersectionObserver to pause rendering when offscreen
     const observer = new IntersectionObserver(
       ([entry]) => {
         isVisibleRef.current = entry.isIntersecting;
       },
-      { threshold: 0.05 }
+      { threshold: 0.1 }
     );
     observer.observe(containerRef.current);
 
+    // Resize Handler
     const handleResize = () => {
       if (!containerRef.current || !rendererRef.current || !cameraRef.current) return;
       const newW = containerRef.current.clientWidth;
@@ -183,29 +186,28 @@ export function DraftingTableVisual() {
     window.addEventListener("resize", handleResize);
 
     return () => {
-      observer.disconnect();
       window.removeEventListener("resize", handleResize);
+      observer.disconnect();
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
       renderer.dispose();
     };
-  }, [isOrbiting, activeView]);
+  }, []);
 
+  // Preset Views Handler
   const setPresetView = (view: "iso" | "front" | "top" | "section") => {
     setActiveView(view);
-    if (!cameraRef.current || !controlsRef.current || !solidGroupRef.current) return;
-
-    solidGroupRef.current.rotation.set(0, 0, 0);
+    if (!cameraRef.current || !controlsRef.current) return;
 
     if (view === "iso") {
-      cameraRef.current.position.set(125, 90, 135);
+      cameraRef.current.position.set(130, 95, 140);
       controlsRef.current.target.set(0, 4, 0);
       if (clipPlaneRef.current) clipPlaneRef.current.constant = 100;
     } else if (view === "front") {
-      cameraRef.current.position.set(0, 8, 175);
+      cameraRef.current.position.set(0, 10, 190);
       controlsRef.current.target.set(0, 4, 0);
       if (clipPlaneRef.current) clipPlaneRef.current.constant = 100;
     } else if (view === "top") {
-      cameraRef.current.position.set(0, 175, 0);
+      cameraRef.current.position.set(0, 190, 0.1);
       controlsRef.current.target.set(0, 0, 0);
       if (clipPlaneRef.current) clipPlaneRef.current.constant = 100;
     } else if (view === "section") {
@@ -218,51 +220,44 @@ export function DraftingTableVisual() {
 
   return (
     <div className="my-10 lg:my-14">
-      {/* Main Hero Split Grid - Free-standing on the page */}
+      {/* Main Hero Split Grid - Free-standing directly on page canvas without containers */}
       <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-6">
-        {/* Left: 3D CAD Solid Viewport */}
+        {/* Left: 3D CAD Solid - Free-standing on page */}
         <div className="lg:col-span-5 flex flex-col">
-          <div className="relative overflow-hidden rounded-sm border border-vx-600 bg-vx-900 shadow-2xl">
-            {/* Viewport Header */}
-            <div className="flex items-center justify-between border-b border-vx-600/70 bg-vx-900/95 px-3.5 py-2">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="mono text-micro font-semibold text-vx-100">
-                  3D CAD SOLID · PARAMETRIC
-                </span>
-              </div>
-              <span className="mono text-micro text-dim">
-                B-REP STEP
-              </span>
-            </div>
-
-            {/* Three.js Canvas */}
+          <div className="relative">
+            {/* Canvas Container */}
             <div
               ref={containerRef}
-              className="relative h-[360px] w-full cursor-grab active:cursor-grabbing sm:h-[430px]"
+              className="relative h-[360px] w-full cursor-grab active:cursor-grabbing sm:h-[430px] select-none"
               onMouseDown={() => setIsOrbiting(true)}
               onMouseUp={() => setIsOrbiting(false)}
               onTouchStart={() => setIsOrbiting(true)}
               onTouchEnd={() => setIsOrbiting(false)}
             >
+              {/* Soft Ground Contact Shadow */}
+              <div className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 w-48 sm:w-64 h-8 rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(13,27,42,0.18)_0%,_transparent_75%)] blur-sm" />
+
               <canvas ref={canvasRef} className="h-full w-full outline-hidden" />
 
-              {/* Viewport Technical Annotations */}
-              <div className="pointer-events-none absolute top-3 left-3 mono text-micro text-vx-400/85 select-none leading-relaxed">
-                <div>Ø160.0 × 39.0 mm FLANGE</div>
-                <div>8× Ø11.0 THRU ON PCD Ø130.0</div>
-                <div>CONSTRAINED FEATURE TREE</div>
+              {/* Viewport Technical Annotations floating freely */}
+              <div className="pointer-events-none absolute top-1 left-1 mono text-micro text-vx-800 select-none leading-relaxed">
+                <div className="flex items-center gap-1.5 font-semibold text-vx-900">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                  <span>3D CAD SOLID · PARAMETRIC</span>
+                </div>
+                <div className="text-[11px] text-vx-600">Ø160.0 × 39.0 mm FLANGE</div>
+                <div className="text-[11px] text-vx-600">8× Ø11.0 THRU ON PCD Ø130.0</div>
               </div>
 
-              <div className="pointer-events-none absolute bottom-3 right-3 mono text-micro text-vx-400/60 select-none">
-                CLICK &amp; DRAG TO ORBIT
+              <div className="pointer-events-none absolute bottom-1 right-1 mono text-[10px] text-vx-600/80 select-none">
+                CLICK &amp; DRAG TO ORBIT · SCROLL TO ZOOM
               </div>
             </div>
 
-            {/* View Presets Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-1.5 border-t border-vx-600/70 bg-vx-800/90 px-3 py-2">
-              <span className="mono text-micro text-vx-400">View Angle:</span>
-              <div className="flex gap-1">
+            {/* Minimalist Floating View Presets Pills */}
+            <div className="mt-2 flex items-center justify-between px-1">
+              <div className="flex items-center gap-1 mono text-micro text-vx-600">
+                <span className="mr-1">VIEW:</span>
                 {(["iso", "front", "top", "section"] as const).map((view) => (
                   <button
                     key={view}
@@ -270,18 +265,21 @@ export function DraftingTableVisual() {
                     onClick={() => setPresetView(view)}
                     className={`rounded-xs px-2.5 py-0.5 mono text-micro font-medium transition-colors ${
                       activeView === view
-                        ? "border border-dim bg-dim/20 text-dim"
-                        : "border border-vx-600 bg-vx-900/60 text-vx-400 hover:text-vx-100"
+                        ? "bg-vx-900 text-vx-100 shadow-xs"
+                        : "bg-white/80 hover:bg-white text-vx-700 border border-vx-400/50"
                     }`}
                   >
                     {view.toUpperCase()}
                   </button>
                 ))}
               </div>
+              <span className="mono text-micro text-dim-deep font-semibold">
+                B-REP STEP
+              </span>
             </div>
           </div>
           {/* 3D Model Footer Note */}
-          <div className="mt-2.5 flex items-center justify-between px-1 text-micro text-vx-600 mono">
+          <div className="mt-2 flex items-center justify-between px-1 text-micro text-vx-600 mono">
             <span>OPEN CASCADE B-REP SOLID</span>
             <span className="text-dim-deep font-medium">BIT-IDENTICAL CAD MODEL</span>
           </div>
@@ -318,24 +316,11 @@ export function DraftingTableVisual() {
           </div>
         </div>
 
-        {/* Right: Full Top-Down Architectural Drafting Board with Taped Blueprint & Moving T-Square */}
+        {/* Right: Full Top-Down Architectural Drafting Board with Taped Blueprint & Moving T-Square - Free-standing on page */}
         <div className="lg:col-span-5 flex flex-col">
-          <div className="relative overflow-hidden rounded-sm border border-vx-600 bg-vx-900 shadow-2xl">
-            {/* Viewport Header */}
-            <div className="flex items-center justify-between border-b border-vx-600/70 bg-vx-900/95 px-3.5 py-2">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-dim" />
-                <span className="mono text-micro font-semibold text-vx-100">
-                  DRAFTING BOARD · 2D BLUEPRINT
-                </span>
-              </div>
-              <span className="mono text-micro text-vx-400">
-                DRG-4120 · SHEET 1
-              </span>
-            </div>
-
+          <div className="relative">
             {/* Full Top-Down Drafting Table Board Surface */}
-            <div className="relative h-[360px] w-full overflow-hidden bg-[#0d1b2a] sm:h-[430px] select-none">
+            <div className="relative h-[360px] w-full overflow-hidden sm:h-[430px] select-none">
               {/* Top-Down Drafting Table SVG */}
               <svg
                 viewBox="0 0 760 520"
@@ -354,9 +339,14 @@ export function DraftingTableVisual() {
                     <line x1="0" y1="0" x2="0" y2="8" stroke="#e0e1dd" strokeWidth="0.8" opacity="0.65" />
                   </pattern>
 
+                  {/* Sheet realistic drop shadow */}
+                  <filter id="sheet-drop-shadow" x="-5%" y="-5%" width="115%" height="115%">
+                    <feDropShadow dx="0" dy="8" stdDeviation="8" floodColor="#0d1b2a" floodOpacity="0.25" />
+                  </filter>
+
                   {/* Masking tape texture filter */}
                   <filter id="tape-shadow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#000000" floodOpacity="0.5" />
+                    <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#0d1b2a" floodOpacity="0.3" />
                   </filter>
 
                   {/* T-Square blade drop shadow */}
@@ -365,26 +355,26 @@ export function DraftingTableVisual() {
                   </filter>
                 </defs>
 
-                {/* ── 1. Drafting Board Vinyl Mat Surface ── */}
-                <rect x="0" y="0" width="760" height="520" fill="#0d1b2a" />
+                {/* ── 0. Physical Drafting Board Vinyl Mat Surface ── */}
+                <rect x="0" y="0" width="760" height="520" rx="4" fill="#0d1b2a" stroke="#415a77" strokeWidth="1" />
                 <rect x="44" y="24" width="716" height="472" fill="url(#board-grid)" />
 
-                {/* ── 2. Top Precision Aluminum Metric Ruler Bar ── */}
-                <rect x="44" y="0" width="716" height="24" fill="#142232" stroke="#415a77" strokeWidth="1" />
-                {Array.from({ length: 36 }).map((_, i) => (
+                {/* ── 1. Top Precision Aluminum Metric Ruler Bar ── */}
+                <rect x="54" y="6" width="670" height="20" rx="1" fill="#142232" stroke="#415a77" strokeWidth="1" />
+                {Array.from({ length: 34 }).map((_, i) => (
                   <g key={`top-tick-${i}`}>
                     <line
-                      x1={54 + i * 19.5}
-                      y1={24}
-                      x2={54 + i * 19.5}
-                      y2={i % 5 === 0 ? 12 : 18}
+                      x1={64 + i * 19.5}
+                      y1={26}
+                      x2={64 + i * 19.5}
+                      y2={i % 5 === 0 ? 14 : 20}
                       stroke="#778da9"
                       strokeWidth={i % 5 === 0 ? 1.2 : 0.75}
                     />
                     {i % 5 === 0 && (
                       <text
-                        x={54 + i * 19.5}
-                        y={9}
+                        x={64 + i * 19.5}
+                        y={12}
                         fill="#778da9"
                         fontSize="6.5"
                         fontFamily="var(--font-mono)"
@@ -752,7 +742,7 @@ export function DraftingTableVisual() {
 
                   {/* T-Square Blade (Full-width transparent acrylic ruler across the blueprint) */}
                   <div
-                    className="relative z-20 -ml-1 h-11 w-[720px] rounded-r-xs border-y border-r border-[#778da9]/90 bg-gradient-to-b from-white/35 via-white/18 to-white/5 backdrop-blur-[2.5px]"
+                    className="relative z-20 -ml-1 h-11 w-[calc(100%-40px)] rounded-r-xs border-y border-r border-[#778da9]/90 bg-gradient-to-b from-white/35 via-white/18 to-white/5 backdrop-blur-[2.5px]"
                     style={{
                       boxShadow: "0 8px 18px rgba(0,0,0,0.65)",
                     }}
