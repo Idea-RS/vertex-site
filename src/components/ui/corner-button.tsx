@@ -202,11 +202,11 @@ export function CornerButton({
             0px 20px 15px rgba(3,7,18,.08),
             0px 32px 24px rgba(3,7,18,.1);
           transition:
-            background-color 0.2s ease-in-out,
-            color 0.2s ease-in-out,
-            transform 0.2s ease-in-out,
-            box-shadow 0.2s ease-in-out,
-            border-radius 0.3s ease-in-out;
+            background-color 0.25s ease-in-out,
+            color 0.25s ease-in-out,
+            transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.3s ease-in-out,
+            border-radius 0.35s ease-in-out;
         }
         .corner-btn:hover {
           background-color: var(--cb-hover-bg, #fff);
@@ -227,6 +227,7 @@ export function CornerButton({
 
         /* ── Icon ─────────────────────────── */
         .corner-btn-svg {
+          display: block;
           height: var(--cb-icon-size, 24px);
           width: var(--cb-icon-size, 24px);
           flex-shrink: 0;
@@ -235,7 +236,7 @@ export function CornerButton({
           stroke-linejoin: round;
           stroke: var(--cb-text-color, #0007);
           fill: #fffa;
-          transition: all 0.3s ease-in-out;
+          transition: stroke 0.25s ease-in-out, fill 0.25s ease-in-out;
         }
         .corner-btn:hover .corner-btn-svg {
           stroke: var(--cb-hover-text, #0008);
@@ -251,17 +252,19 @@ export function CornerButton({
           fill: none !important;
           stroke: var(--cb-text-color, currentColor);
           stroke-width: 2.25;
-          transform: rotate(0deg) translateX(0);
-          transform-origin: center;
+          transform: rotate(0deg);
+          transform-origin: 50% 50%;
+          will-change: transform;
+          backface-visibility: hidden;
           transition:
-            transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-            stroke 0.2s ease-in-out;
+            transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+            stroke 0.25s ease-in-out;
         }
         .corner-btn:hover .corner-btn-svg.corner-arrow-ne,
         .corner-btn:hover .corner-btn-svg.corner-arrow {
           fill: none !important;
           stroke: var(--cb-hover-text, currentColor);
-          transform: rotate(-45deg) translateX(1px);
+          transform: rotate(-45deg);
         }
 
         /* ── Dots ─────────────────────────── */
