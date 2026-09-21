@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import { Button } from "@/components/Button";
 import { DraftingTableVisual } from "@/components/flip/DraftingTableVisual";
+import {
+  PipelineDiagramSvg,
+  VerificationDiagramSvg,
+  FeatureTreeDiagramSvg,
+  DivergenceDiagramSvg,
+  ModelToDrawingDiagramSvg,
+  DeploymentDiagramSvg,
+} from "@/components/flip/FlipDiagrams";
 
 export const metadata: Metadata = {
   title: "FLIP — Parametric 3D from 2D Drawings | Vertex",
@@ -28,7 +36,7 @@ export default function FlipPage() {
           </div>
         </div>
 
-        {/* Hero Visual: Drafting Table ⇄ 3D Render with Moving T-Square */}
+        {/* Hero Visual: Drafting Table ⇄ 3D CAD Render with Moving T-Square */}
         <DraftingTableVisual />
       </section>
 
@@ -48,7 +56,7 @@ export default function FlipPage() {
 
             {/* Pipeline Strip: Read → Trace → Plan → Build → Verify */}
             <div className="mt-8 overflow-x-auto pb-2">
-              <div className="inline-flex min-w-full sm:min-w-0 items-center rounded-sm border border-vx-400/80 bg-white/60 p-2 shadow-xs">
+              <div className="inline-flex min-w-full sm:min-w-0 items-center rounded-sm border border-vx-400/80 bg-white/70 p-2 shadow-xs">
                 {(["Read", "Trace", "Plan", "Build", "Verify"] as const).map((step, idx, arr) => (
                   <div key={step} className="flex items-center">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-xs bg-vx-100 border border-vx-400/40">
@@ -68,6 +76,11 @@ export default function FlipPage() {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Technical Pipeline SVG Diagram */}
+          <div className="mt-8">
+            <PipelineDiagramSvg />
           </div>
         </div>
       </section>
@@ -115,6 +128,11 @@ export default function FlipPage() {
               Nothing ships silently.
             </p>
           </div>
+
+          {/* Technical Verification SVG Diagram */}
+          <div className="mt-8">
+            <VerificationDiagramSvg />
+          </div>
         </div>
       </section>
 
@@ -137,7 +155,7 @@ export default function FlipPage() {
               ].map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-xs border border-vx-400/70 bg-white/70 px-3 py-1 text-small text-vx-900"
+                  className="rounded-xs border border-vx-400/70 bg-white/80 px-3 py-1 text-small text-vx-900"
                 >
                   {tag}
                 </span>
@@ -150,19 +168,24 @@ export default function FlipPage() {
 
             {/* Provenance Line Style Demonstration */}
             <div className="mt-5 flex flex-wrap items-center gap-4 text-small text-vx-900">
-              <div className="inline-flex items-center gap-2 rounded-xs border border-solid border-vx-900 px-3 py-1.5 bg-white/50">
+              <div className="inline-flex items-center gap-2 rounded-xs border border-solid border-vx-900 px-3 py-1.5 bg-white/60">
                 <span className="mono font-semibold">Read</span>
                 <span className="text-micro text-vx-600">(solid border)</span>
               </div>
-              <div className="inline-flex items-center gap-2 rounded-xs border border-dashed border-vx-900 px-3 py-1.5 bg-white/50">
+              <div className="inline-flex items-center gap-2 rounded-xs border border-dashed border-vx-900 px-3 py-1.5 bg-white/60">
                 <span className="mono font-semibold">Inferred</span>
                 <span className="text-micro text-vx-600">(dashed border)</span>
               </div>
-              <div className="inline-flex items-center gap-2 rounded-xs border border-dotted border-vx-900 px-3 py-1.5 bg-white/50">
+              <div className="inline-flex items-center gap-2 rounded-xs border border-dotted border-vx-900 px-3 py-1.5 bg-white/60">
                 <span className="mono font-semibold">Chosen</span>
                 <span className="text-micro text-vx-600">(dotted border)</span>
               </div>
             </div>
+          </div>
+
+          {/* Technical Feature Tree SVG Diagram */}
+          <div className="mt-8">
+            <FeatureTreeDiagramSvg />
           </div>
         </div>
       </section>
@@ -179,6 +202,11 @@ export default function FlipPage() {
               disagrees with it.
             </p>
           </div>
+
+          {/* Technical Divergence Detection SVG Diagram */}
+          <div className="mt-8">
+            <DivergenceDiagramSvg />
+          </div>
         </div>
       </section>
 
@@ -192,7 +220,7 @@ export default function FlipPage() {
                   <tr className="border-b border-vx-400/40">
                     <th
                       scope="row"
-                      className="w-32 py-3.5 px-4 mono text-small font-semibold text-vx-900 bg-vx-100/50"
+                      className="w-32 py-3.5 px-4 mono text-small font-semibold text-vx-900 bg-vx-100/60"
                     >
                       Inputs
                     </th>
@@ -203,7 +231,7 @@ export default function FlipPage() {
                   <tr>
                     <th
                       scope="row"
-                      className="w-32 py-3.5 px-4 mono text-small font-semibold text-vx-900 bg-vx-100/50"
+                      className="w-32 py-3.5 px-4 mono text-small font-semibold text-vx-900 bg-vx-100/60"
                     >
                       Outputs
                     </th>
@@ -243,6 +271,11 @@ export default function FlipPage() {
               </Button>
             </div>
           </div>
+
+          {/* Technical Model-to-Drawing SVG Diagram */}
+          <div className="mt-8">
+            <ModelToDrawingDiagramSvg />
+          </div>
         </div>
       </section>
 
@@ -256,6 +289,11 @@ export default function FlipPage() {
             <p className="mt-4 text-body text-vx-600 leading-relaxed">
               Self-hosted, with no outbound connections by default.
             </p>
+          </div>
+
+          {/* Technical Deployment Topology SVG Diagram */}
+          <div className="mt-8">
+            <DeploymentDiagramSvg />
           </div>
         </div>
       </section>
