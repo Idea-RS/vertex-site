@@ -53,59 +53,69 @@ export default function Nav() {
             <Wordmark />
           </Link>
 
-          <ul className="hidden items-center gap-8 lg:flex">
-            {nav.map((item) => {
-              const active = isActive(item.href);
-              const isFlip = item.href === "/flip";
+          {pathname === "/" ? (
+            <div className="flex items-center gap-3">
+              <span className="mono text-micro rounded-xs bg-dim/10 border border-dim/30 px-2.5 py-1 text-dim-deep font-semibold uppercase tracking-wider">
+                FLIP · LAUNCH 2026
+              </span>
+            </div>
+          ) : (
+            <>
+              <ul className="hidden items-center gap-8 lg:flex">
+                {nav.map((item) => {
+                  const active = isActive(item.href);
+                  const isFlip = item.href === "/flip";
 
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`inline-flex items-center text-[16px] transition-colors duration-150 hover:text-vx-900 ${
-                      active ? "text-vx-900 font-medium" : "text-vx-600"
-                    } ${isFlip ? "flip-hover-trigger" : ""}`}
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        className={`inline-flex items-center text-[16px] transition-colors duration-150 hover:text-vx-900 ${
+                          active ? "text-vx-900 font-medium" : "text-vx-600"
+                        } ${isFlip ? "flip-hover-trigger" : ""}`}
+                      >
+                        {isFlip ? (
+                          <FlipText duration={0.8} loop={true}>
+                            {item.label}
+                          </FlipText>
+                        ) : (
+                          item.label
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+                <li className="flex items-center">
+                  <CornerButton
+                    href="/flip#join"
+                    icon={<ArrowNEIcon className="corner-btn-svg" />}
+                    accentColor="#1b263b"
+                    wrapperClassName="[--cb-padding:0.35rem_0.5rem] [--cb-btn-padding:0.4rem_0.85rem] [--cb-font-size:0.925rem] [--cb-icon-size:16px]"
                   >
-                    {isFlip ? (
-                      <FlipText duration={0.8} loop={true}>
-                        {item.label}
-                      </FlipText>
-                    ) : (
-                      item.label
-                    )}
-                  </Link>
+                    Login
+                  </CornerButton>
                 </li>
-              );
-            })}
-            <li className="flex items-center">
-              <CornerButton
-                href="/flip#join"
-                icon={<ArrowNEIcon className="corner-btn-svg" />}
-                accentColor="#1b263b"
-                wrapperClassName="[--cb-padding:0.35rem_0.5rem] [--cb-btn-padding:0.4rem_0.85rem] [--cb-font-size:0.925rem] [--cb-icon-size:16px]"
-              >
-                Login
-              </CornerButton>
-            </li>
-          </ul>
+              </ul>
 
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-vx-900 lg:hidden"
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-              {open ? (
-                <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.25" />
-              ) : (
-                <path d="M2 6h16M2 10h16M2 14h16" stroke="currentColor" strokeWidth="1.25" />
-              )}
-            </svg>
-          </button>
+              <button
+                type="button"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-vx-900 lg:hidden"
+                aria-expanded={open}
+                aria-controls="mobile-nav"
+                aria-label={open ? "Close menu" : "Open menu"}
+                onClick={() => setOpen((v) => !v)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                  {open ? (
+                    <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.25" />
+                  ) : (
+                    <path d="M2 6h16M2 10h16M2 14h16" stroke="currentColor" strokeWidth="1.25" />
+                  )}
+                </svg>
+              </button>
+            </>
+          )}
         </nav>
       </div>
 

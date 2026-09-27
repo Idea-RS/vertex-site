@@ -1,4 +1,8 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { site } from "@/content/site";
 import { Wordmark } from "./Wordmark";
 
@@ -22,6 +26,27 @@ const columns = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  // Minimal footer on root teaser page
+  if (pathname === "/") {
+    return (
+      <footer className="relative z-10 w-full text-vx-100">
+        <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-micro mono text-dim border-t border-vx-400/20">
+          <span>© {new Date().getFullYear()} Vertex Intelligence. All rights reserved.</span>
+          <div className="flex items-center gap-6">
+            <Link href="/privacy" className="underline hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <a href={`mailto:${site.contactEmail}`} className="hover:text-white transition-colors">
+              {site.contactEmail}
+            </a>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="relative z-10 w-full text-vx-100 [text-shadow:0_0_6px_#0d1b2a,0_0_12px_#0d1b2a,0_0_24px_#0d1b2a,0_0_48px_#0d1b2a,2px_2px_6px_#0d1b2a,-2px_-2px_6px_#0d1b2a]">
       <div className="container pb-16 pt-8 lg:pb-20 lg:pt-12">
