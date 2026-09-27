@@ -29,13 +29,13 @@ export function AudienceTiles() {
     <section className="rule section py-16 sm:py-20 lg:py-24" id="audience">
       <div className="container">
         <div className="max-w-[64ch] mb-12">
-          <div className="mono text-micro uppercase tracking-wider text-vx-600 mb-3">
+          <div className="mono text-micro uppercase tracking-wider text-[#EFC07B] font-semibold mb-3">
             Applications
           </div>
-          <h2 className="text-h2 font-heading text-vx-900 leading-[1.08] tracking-[-0.02em]">
+          <h2 className="text-h2 font-heading text-vx-100 leading-[1.08] tracking-[-0.02em]">
             Who it&apos;s for.
           </h2>
-          <p className="mt-4 text-body text-vx-600 leading-relaxed">
+          <p className="mt-4 text-body text-vx-400 leading-relaxed">
             From precision machine shops quoting batch runs to engineering offices digitising decades of drawings.
           </p>
         </div>
@@ -44,19 +44,19 @@ export function AudienceTiles() {
           {AUDIENCES.map((item, idx) => (
             <div
               key={idx}
-              className="flex flex-col justify-between rounded-lg border border-vx-400/60 bg-white/70 p-6 sm:p-7 shadow-xs transition-all hover:border-vx-600 hover:shadow-sm"
+              className="flex flex-col justify-between rounded-xl border border-[#0F3460] bg-[#16213E] p-6 sm:p-7 shadow-xl transition-all hover:border-[#EFC07B]/70"
             >
               <div>
-                <div className="mono text-micro text-dim-deep font-semibold uppercase tracking-wider mb-2">
+                <div className="mono text-micro text-[#EFC07B] font-semibold uppercase tracking-wider mb-2">
                   0{idx + 1}
                 </div>
-                <h3 className="text-h3 font-heading text-vx-900 leading-snug">
+                <h3 className="text-h3 font-heading text-vx-100 leading-snug">
                   {item.audience}
                 </h3>
-                <p className="mt-2 text-small font-medium text-vx-700">
+                <p className="mt-2 text-small font-medium text-[#EFC07B]/90">
                   {item.tagline}
                 </p>
-                <p className="mt-4 text-small text-vx-600 leading-relaxed">
+                <p className="mt-4 text-small text-vx-400 leading-relaxed">
                   {item.description}
                 </p>
               </div>

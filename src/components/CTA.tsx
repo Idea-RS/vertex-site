@@ -18,7 +18,7 @@ export function CTA({
         <div className="max-w-[34ch]">
           <h2 className="text-h2 text-center">{title}</h2>
         </div>
-        <p className="mt-5 max-w-[54ch] text-body text-vx-600 text-center">{body}</p>
+        <p className="mt-5 max-w-[54ch] text-body text-vx-300 text-center">{body}</p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
           <Button href="/diagnostic/" variant="accent">
             Book the diagnostic

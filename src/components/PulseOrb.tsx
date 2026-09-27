@@ -6,8 +6,8 @@ interface PulseOrbProps {
 }
 
 /**
- * Solid signature-orange pulsating indicator orb.
- * Uses Vertex's signature orange (#f0a868) with a solid core,
+ * Solid signature-amber pulsating indicator orb.
+ * Uses Vertex's signature Pastel Amber (#efc07b) with a solid core,
  * breathing glow effect, and an expanding radar ping pulse ring.
  */
 export function PulseOrb({ className = "", size = "sm" }: PulseOrbProps) {

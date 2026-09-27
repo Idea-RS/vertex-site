@@ -22,9 +22,8 @@ const useReducedMotion = () =>
  *
  * Can animate smoothly from 0 to the target dimension when scrolled into view.
  *
- * Two tones. "light" (default) is drawn on the vx-100 canvas in the deep
- * dimension orange (#8F4A14, 5.1:1 on vx-100). "dark" is drawn inside a dark
- * viewport in the bright orange (#F0A868, 7.6:1 on vx-800).
+ * Precision architectural dimensions drawn in Pastel Amber (#EFC07B)
+ * with Prussian Blue hairlines (#0F3460).
  */
 export function Dim({
   axis = "x",
@@ -169,8 +168,8 @@ export function Dim({
         ? { height: T, width: "100%" }
         : { width: T, height: "100%" };
 
-  const orange = tone === "dark" ? "#F0A868" : "#8F4A14";
-  const rule = tone === "dark" ? "#415A77" : "#778DA9";
+  const orange = "#EFC07B"; // Pastel Amber
+  const rule = "#0F3460";   // Prussian Blue
   const textStyle = { fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" as const };
 
   // Tick progression: ticks drop down / extend as dimension approaches ends

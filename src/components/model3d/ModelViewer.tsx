@@ -96,7 +96,7 @@ export function ModelViewer({
     fillLight.position.set(-4, 2, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xf0a868, 0.8);
+    const rimLight = new THREE.DirectionalLight(0xefc07b, 0.9); // Pastel Amber accent rim
     rimLight.position.set(0, -3, -4);
     scene.add(rimLight);
 
@@ -124,18 +124,18 @@ export function ModelViewer({
 
             if (mesh.material) {
               const stdMat = mesh.material as THREE.MeshStandardMaterial;
-              stdMat.color = new THREE.Color(0x3e5c76); // vx-cad metallic blue
-              stdMat.metalness = 0.35;
-              stdMat.roughness = 0.45;
+              stdMat.color = new THREE.Color(0x223a5e); // Deep Prussian Blue CAD steel
+              stdMat.metalness = 0.4;
+              stdMat.roughness = 0.4;
             }
 
             // Add subtle wireframe edges
             try {
               const edgesGeom = new THREE.EdgesGeometry(mesh.geometry, 25);
               const edgesMat = new THREE.LineBasicMaterial({
-                color: 0x778da9,
+                color: 0x0f3460, // Prussian Blue structural wireframe
                 transparent: true,
-                opacity: 0.6,
+                opacity: 0.8,
               });
               const line = new THREE.LineSegments(edgesGeom, edgesMat);
               mesh.add(line);
@@ -210,16 +210,16 @@ export function ModelViewer({
       aria-label="Interactive 3D model viewport"
     >
       {/* Subtle CAD grid overlay */}
-      <div className="pointer-events-none absolute inset-0 opacity-15 bg-[radial-gradient(#778da9_1px,transparent_1px)] [background-size:20px_20px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-20 bg-[radial-gradient(#0f3460_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* Canvas */}
       <canvas ref={canvasRef} className="h-full w-full cursor-grab active:cursor-grabbing block" />
 
       {/* Loading state indicator */}
       {loading && inView && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-vx-900/40 backdrop-blur-2xs">
-          <div className="flex items-center gap-2 rounded-xs border border-vx-600/50 bg-vx-800/90 px-3 py-1.5 mono text-micro text-dim">
-            <span className="h-1.5 w-1.5 rounded-full bg-dim animate-ping" />
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#1A1A2E]/60 backdrop-blur-2xs">
+          <div className="flex items-center gap-2 rounded-xs border border-[#0F3460] bg-[#16213E]/95 px-3 py-1.5 mono text-micro text-[#EFC07B]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#EFC07B] animate-ping" />
             <span>MOUNTING SOLID...</span>
           </div>
         </div>

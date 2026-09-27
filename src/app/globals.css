@@ -1,25 +1,36 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   Vertex design tokens
-   Five blues, one accent. Nothing else is structural.
-   Light canvas; blue is the material. Drawing viewports stay dark.
+   Vertex Design System — Precision Industrial Palette
+   Midnight Blue (#1A1A2E) · Dark Navy Blue (#16213E) · Prussian Blue (#0F3460) · Pastel Amber (#EFC07B)
 ------------------------------------------------------------------- */
 @theme {
   --color-*: initial;
-  --color-vx-900: #0d1b2a; /* primary text on the light canvas; deepest surface */
-  --color-vx-800: #1b263b; /* the material: drawing viewports, cards, the primary CTA */
-  --color-vx-600: #415a77; /* secondary text on light (5.4:1); hairlines inside dark viewports */
-  --color-vx-400: #778da9; /* rules and borders on light; dimension text inside dark viewports. Never text on light (2.6:1). */
-  --color-vx-100: #f7f6f6ff; /* page canvas; linework and text inside dark viewports */
-  --color-dim: #f0a868; /* dimension orange, inside dark viewports only (7.6:1 on vx-800) */
-  --color-dim-deep: #8f4a14; /* dimension orange re-derived for the light canvas (5.1:1 on vx-100) */
+
+  /* The 4-Color Architectural Palette */
+  --color-midnight: #1a1a2e; /* Deep canvas & background base */
+  --color-navy: #16213e;     /* Elevated surfaces, cards, viewports */
+  --color-prussian: #0f3460; /* Structural borders, active CAD states */
+  --color-amber: #efc07b;    /* Signature accent, dimension lines, focal CTAs */
+
+  /* Structural Token Mapping */
+  --color-vx-950: #121221;   /* Inset well / darkest viewport background */
+  --color-vx-900: #1a1a2e;   /* Midnight Blue: page canvas & primary backdrop */
+  --color-vx-800: #16213e;   /* Dark Navy Blue: cards, panels, viewports */
+  --color-vx-700: #0f3460;   /* Prussian Blue: borders, interactive buttons */
+  --color-vx-600: #1f3454;   /* Secondary hairline borders */
+  --color-vx-500: #64748b;   /* Muted metadata labels */
+  --color-vx-400: #94a3b8;   /* Secondary slate text & rules */
+  --color-vx-300: #cbd5e1;   /* Medium light text */
+  --color-vx-200: #e2e8f0;   /* Light body / subtitle text */
+  --color-vx-100: #f8fafc;   /* Crisp white headings & icons */
+
+  --color-dim: #efc07b;      /* Pastel Amber */
+  --color-dim-deep: #efc07b; /* Pastel Amber */
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  /* Derived tint, not a new hue: vx-100 mixed into vx-800 for small
-     secondary text on raised panels (vx-400 on vx-800 is 4.45:1). */
-  --color-muted-raised: color-mix(in srgb, #e0e1dd 72%, #1b263b);
+  --color-muted-raised: #94a3b8;
 
   --font-instrument-serif: var(--font-instrument-serif), Georgia, serif;
   --font-instrument-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
@@ -36,15 +47,17 @@
   --font-sans: var(--font-instrument-sans);
   --font-serif: var(--font-dm-serif);
 
-  --color-surface-inset: #ebeff4;
+  --color-surface-inset: #121221;
 
-  /* Radius encodes hierarchy: larger surface, larger radius. */
+  /* Radius hierarchy */
   --radius-*: initial;
   --radius-none: 0;
-  --radius-xs: 6px; /* chips */
-  --radius-sm: 8px; /* buttons, inputs */
-  --radius-md: 12px; /* cards, panels */
-  --radius-lg: 16px; /* containers, DemoFrame, the page wrapper */
+  --radius-2xs: 4px;
+  --radius-xs: 6px;   /* chips */
+  --radius-sm: 8px;   /* buttons, inputs */
+  --radius-md: 12px;  /* cards, panels */
+  --radius-lg: 16px;  /* containers, the page wrapper */
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
   --shadow-*: initial;
@@ -75,8 +88,8 @@
 :root {
   --inset: 10px;
   --content-max: 1280px;
-  --frame-line: color-mix(in srgb, #778da9 45%, transparent);
-  color-scheme: light;
+  --frame-line: rgba(15, 52, 96, 0.65);
+  color-scheme: dark;
 }
 
 @media (min-width: 64rem) {
@@ -89,7 +102,7 @@
    Base
 ------------------------------------------------------------------- */
 html {
-  background: transparent;
+  background: #1a1a2e;
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
 }
@@ -109,8 +122,8 @@ html.lenis body {
 }
 
 body {
-  background: transparent;
-  color: var(--color-vx-900);
+  background: #1a1a2e;
+  color: #f8fafc;
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
@@ -121,12 +134,12 @@ body {
 }
 
 ::selection {
-  background: var(--color-vx-800);
-  color: var(--color-vx-100);
+  background: #0f3460;
+  color: #efc07b;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-vx-900);
+  outline: 2px solid #efc07b;
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -137,6 +150,7 @@ h1,
   font-weight: 400;
   letter-spacing: -0.015em;
   text-wrap: balance;
+  color: #f8fafc;
 }
 
 h2,
@@ -145,6 +159,7 @@ h2,
   font-weight: 400;
   letter-spacing: -0.01em;
   text-wrap: balance;
+  color: #f8fafc;
 }
 
 h3,
@@ -154,6 +169,7 @@ h4,
   font-weight: 600;
   letter-spacing: -0.01em;
   text-wrap: balance;
+  color: #f8fafc;
 }
 
 button,
@@ -175,36 +191,37 @@ p {
 
 /* Popped-out floating navbar on scroll */
 .nav-popped {
-  border: 1.5px dotted var(--color-dim-deep);
-  box-shadow: 0 10px 30px -5px rgba(13, 27, 42, 0.12), 0 2px 10px -2px rgba(143, 74, 20, 0.12);
+  border: 1px solid rgba(15, 52, 96, 0.85);
+  background: rgba(22, 33, 62, 0.92);
+  box-shadow: 0 16px 36px -8px rgba(10, 10, 25, 0.7), 0 0 20px -5px rgba(239, 192, 123, 0.1);
 }
 
-/* Text links: hairline underline in vx-600, brightens on hover. No arrows. */
+/* Text links: Pastel Amber underline, brightens on hover */
 .link {
-  color: var(--color-vx-900);
+  color: #f8fafc;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  text-decoration-color: var(--color-vx-400);
-  transition: text-decoration-color 150ms ease;
+  text-decoration-color: rgba(239, 192, 123, 0.6);
+  transition: color 150ms ease, text-decoration-color 150ms ease;
 }
 .link:hover {
-  text-decoration-color: var(--color-vx-900);
+  color: #efc07b;
+  text-decoration-color: #efc07b;
 }
 
-/* The in-flow sheet wrapper: inset from the viewport, faint hairline frame,
-   resting on the dark blueprint desk (vx-900 / #0D1B2A). */
+/* In-flow sheet wrapper on Midnight Blue canvas */
 .sheet {
   margin: var(--inset);
   margin-bottom: clamp(3rem, 7vw, 6rem);
-  background: var(--color-vx-100);
-  border: 1px solid var(--frame-line);
+  background: #1a1a2e;
+  border: 1px solid rgba(15, 52, 96, 0.65);
   border-radius: var(--radius-lg);
   min-height: calc(100svh - 2 * var(--inset));
   position: relative;
   z-index: 10;
   overflow: clip;
-  box-shadow: 0 24px 64px -16px rgba(13, 27, 42, 0.6), 0 0 0 1px var(--frame-line);
+  box-shadow: 0 24px 64px -16px rgba(10, 10, 25, 0.85), 0 0 0 1px rgba(15, 52, 96, 0.5);
 }
 
 .container {
@@ -215,7 +232,7 @@ p {
 }
 
 .rule {
-  border-top: 1px solid var(--color-vx-400);
+  border-top: 1px solid rgba(15, 52, 96, 0.6);
 }
 
 /* Section rhythm */
@@ -223,7 +240,7 @@ p {
   padding-block: clamp(4rem, 9vw, 8rem);
 }
 
-/* Drawing linework defaults, applied to inline SVG sheets */
+/* Drawing linework defaults */
 .sheet-svg {
   display: block;
   width: 100%;
@@ -239,8 +256,6 @@ p {
   stroke-width: 1;
 }
 
-/* The hero's linework stays undrawn until the draw-on starts, so there is no
-   flash of a finished sheet before it draws. Reduced motion shows it complete. */
 @media (prefers-reduced-motion: no-preference) {
   [data-drawing="pending"] .draw {
     stroke-dasharray: 1;
@@ -258,233 +273,6 @@ p {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
-
-/* The one vocabulary: a lit plane goes to full vx-100 strokes and lifts 4px; the
-   rest dim to 25%. 350ms ease-out, nothing else moves. */
-.plane-layer {
-  transition: opacity 350ms ease-out, transform 350ms ease-out;
-  pointer-events: none;
-  outline: none;
-}
-.plane-layer svg * {
-  pointer-events: visiblePainted;
-}
-.plane-layer svg .hit {
-  pointer-events: fill;
-}
-.plane-layer[data-state="dim"] {
-  opacity: 0.25;
-}
-.plane-layer[data-state="active"] {
-  transform: translateY(-4px);
-  --color-vx-400: var(--color-vx-100);
-  --color-vx-600: var(--color-vx-100);
-}
-.plane-layer:focus-visible svg {
-  outline: 2px solid var(--color-dim);
-  outline-offset: 4px;
-  border-radius: 6px;
-}
-/* steps: the one in the centre band is at full strength, the rest recede */
-@media (min-width: 64rem) {
-  .step,
-  .step * {
-    transition: color 350ms ease-out, border-color 350ms ease-out, opacity 350ms ease-out;
-  }
-  section:not([data-static]) .step:not([data-lit="true"]) .text-vx-900 {
-    color: var(--color-vx-600);
-  }
-  section:not([data-static]) .step:not([data-lit="true"]) .border-vx-400,
-  section:not([data-static]) .step:not([data-lit="true"]) .divide-vx-400 > * {
-    border-color: color-mix(in srgb, var(--color-vx-400) 50%, transparent);
-  }
-}
-
-/* Find: the wall of sheets. Non-matching sheets step back to 25% once the query completes. */
-.wall-sheet {
-  transition: opacity 350ms ease-out, transform 350ms ease-out, border-color 350ms ease-out;
-}
-[data-phase="result"] .wall-sheet:not([data-hit]),
-[data-phase="honest"] .wall-sheet:not([data-hit]):not([data-unreadable]) {
-  opacity: 0.25;
-}
-[data-phase="result"] .wall-sheet[data-hit],
-[data-phase="honest"] .wall-sheet[data-hit] {
-  opacity: 1;
-  transform: translateY(-4px);
-  border-color: var(--color-vx-100);
-}
-/* the honest step: the two sheets with no readable geometry come forward, marked, not lit */
-[data-phase="honest"] .wall-sheet[data-unreadable] {
-  opacity: 1;
-  border: 1px dashed var(--color-vx-400);
-}
-
-/* Make: the sheet's beats are 350ms transitions on the element that changed */
-.make-box [data-row-marker],
-.make-box [data-dim-current-group],
-.make-box [data-dim-prev-group],
-.make-box [data-watermark],
-.make-box [data-cell="checkedBy"] {
-  transition: opacity 350ms ease-out, transform 350ms ease-out;
-}
-.make-box [data-pass],
-.make-box [data-pass-note] {
-  transition: opacity 350ms ease-out;
-}
-.make-box:not([data-passed="true"]) [data-pass] {
-  color: var(--color-vx-400);
-}
-.make-box [data-row] text {
-  transition: fill 350ms ease-out;
-}
-
-/* Subtle engineering CAD dot grid */
-.cad-dot-grid {
-  background-image: radial-gradient(color-mix(in srgb, var(--color-vx-600) 22%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* Technical surface card inset */
-.surface-inset {
-  background-color: var(--color-surface-inset);
-  border: 1px solid color-mix(in srgb, var(--color-vx-400) 45%, transparent);
-}
-
-/* Blueprint spotlight card with cursor illumination */
-.spotlight-card {
-  position: relative;
-  overflow: hidden;
-  background-color: var(--color-vx-800);
-}
-.spotlight-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(119, 141, 169, 0.14), transparent 60%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-.spotlight-card:hover::before {
-  opacity: 1;
-}
-
-@keyframes pane-enter {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-pane-enter {
-  animation: pane-enter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Signature Orange Glowing Pulsating Orb */
-@keyframes orb-glow-pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 6px 1.5px rgba(240, 168, 104, 0.85), 0 0 14px 3px rgba(240, 168, 104, 0.45);
-    opacity: 0.95;
-  }
-  50% {
-    transform: scale(1.25);
-    box-shadow: 0 0 10px 3px rgba(240, 168, 104, 1), 0 0 22px 6px rgba(240, 168, 104, 0.75);
-    opacity: 1;
-  }
-}
-
-.animate-orb-glow {
-  animation: orb-glow-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes orb-ring-ping {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.85;
-  }
-  75%, 100% {
-    transform: scale(2.6);
-    opacity: 0;
-  }
-}
-
-.animate-orb-ping {
-  animation: orb-ring-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-/* ------------------------------------------------------------------
-   FlipText (VengeanceUI)
-------------------------------------------------------------------- */
-.flip-text-wrapper {
-  perspective: 1000px;
-  display: inline-block;
-  line-height: 1;
-}
-
-.flip-char {
-  position: relative;
-  display: inline-block;
-  transform-style: preserve-3d;
-  height: 1.2em;
-  line-height: 1.2em;
-  vertical-align: middle;
-  color: inherit;
-  -webkit-text-fill-color: transparent;
-  animation: flip-char-roll var(--flip-duration, 0.8s) var(--flip-delay, 0s) var(--flip-iteration, infinite) cubic-bezier(0.45, 0.05, 0.55, 0.95);
-}
-
-.flip-char::before,
-.flip-char::after {
-  content: attr(data-char);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: inherit;
-  -webkit-text-fill-color: currentColor;
-  backface-visibility: hidden;
-}
-
-/* Front Face */
-.flip-char::after {
-  transform: translateZ(0.6em);
-}
-
-/* Bottom Face (rolls up smoothly into place) */
-.flip-char::before {
-  transform: rotateX(-90deg) translateZ(0.6em);
-}
-
-@keyframes flip-char-roll {
-  0% {
-    transform: rotateX(0deg);
-  }
-  35%, 100% {
-    transform: rotateX(90deg);
-  }
-}
-
-/* Hover-only trigger for navbar link */
-.flip-hover-trigger .flip-char {
-  animation: none;
-}
-
-.flip-hover-trigger:hover .flip-char {
-  animation: flip-char-roll var(--flip-duration, 0.8s) var(--flip-delay, 0s) var(--flip-iteration, infinite) cubic-bezier(0.45, 0.05, 0.55, 0.95);
-}
-
-
-
-

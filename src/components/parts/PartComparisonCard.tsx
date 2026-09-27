@@ -55,15 +55,15 @@ export function PartComparisonCard({
   };
 
   return (
-    <div className="flex flex-col rounded-xl border border-vx-400/50 bg-vx-900 shadow-xl overflow-hidden transition-all hover:border-vx-400">
+    <div className="flex flex-col rounded-xl border border-[#0F3460] bg-[#16213E] shadow-2xl overflow-hidden transition-all hover:border-[#EFC07B]/70">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-vx-600/60 bg-vx-800/90 px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#0F3460] bg-[#16213E]/95 px-5 py-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="mono text-xs font-semibold uppercase tracking-wider text-dim">
+            <span className="mono text-xs font-semibold uppercase tracking-wider text-[#EFC07B]">
               {title}
             </span>
-            <span className="text-vx-500">·</span>
+            <span className="text-[#0F3460]">·</span>
             <span className="text-small text-vx-200 font-medium font-heading">
               {subtitle}
             </span>
@@ -73,7 +73,7 @@ export function PartComparisonCard({
           {specs.map((spec, i) => (
             <span
               key={i}
-              className="mono text-[11px] rounded-xs border border-vx-600 bg-vx-900/80 px-2 py-0.5 text-vx-300"
+              className="mono text-[11px] rounded-xs border border-[#0F3460] bg-[#1A1A2E] px-2 py-0.5 text-vx-300"
             >
               {spec}
             </span>
@@ -84,7 +84,7 @@ export function PartComparisonCard({
       {/* Interactive Wipe Viewport */}
       <div
         ref={containerRef}
-        className="relative h-[340px] sm:h-[400px] w-full overflow-hidden bg-vx-950 select-none cursor-ew-resize"
+        className="relative h-[340px] sm:h-[400px] w-full overflow-hidden bg-[#1A1A2E] select-none cursor-ew-resize"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -99,14 +99,14 @@ export function PartComparisonCard({
         {/* Layer 1 (Underneath): 3D Solid Model */}
         <div className="absolute inset-0">
           <ModelViewer modelUrl={modelUrl} interactive={true} autoRotate={false} />
-          <div className="pointer-events-none absolute bottom-3 right-3 rounded-2xs bg-vx-900/80 border border-vx-600/60 px-2 py-1 mono text-[10px] text-vx-300 backdrop-blur-xs">
+          <div className="pointer-events-none absolute bottom-3 right-3 rounded-2xs bg-[#1A1A2E]/90 border border-[#0F3460] px-2 py-1 mono text-[10px] text-vx-300 backdrop-blur-xs">
             3D SOLID (STEP)
           </div>
         </div>
 
         {/* Layer 2 (Top Wipe): 2D Vector Drawing clipped to sliderPos */}
         <div
-          className="absolute inset-0 overflow-hidden border-r border-dim"
+          className="absolute inset-0 overflow-hidden border-r-2 border-[#EFC07B]"
           style={{ width: `${sliderPos}%` }}
         >
           <div className="relative h-full w-[800px] max-w-none">
@@ -118,7 +118,7 @@ export function PartComparisonCard({
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
-          <div className="pointer-events-none absolute bottom-3 left-3 rounded-2xs bg-vx-900/80 border border-vx-600/60 px-2 py-1 mono text-[10px] text-dim backdrop-blur-xs">
+          <div className="pointer-events-none absolute bottom-3 left-3 rounded-2xs bg-[#1A1A2E]/90 border border-[#0F3460] px-2 py-1 mono text-[10px] text-[#EFC07B] backdrop-blur-xs font-semibold">
             2D DRAWING (REDACTED)
           </div>
         </div>
@@ -128,7 +128,7 @@ export function PartComparisonCard({
           className="pointer-events-none absolute top-0 bottom-0 flex flex-col items-center justify-center"
           style={{ left: `calc(${sliderPos}% - 12px)` }}
         >
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-dim text-vx-900 shadow-md border border-vx-100/30">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#EFC07B] text-[#1A1A2E] shadow-lg border border-[#F8FAFC]/30">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
               <path d="M5.5 3.5L2 8l3.5 4.5V9h5v3.5L14 8l-3.5-4.5V7h-5V3.5z" />
             </svg>
@@ -137,9 +137,9 @@ export function PartComparisonCard({
       </div>
 
       {/* Instruction hint */}
-      <div className="flex items-center justify-between border-t border-vx-600/40 bg-vx-800/50 px-4 py-2 text-micro mono text-vx-400">
+      <div className="flex items-center justify-between border-t border-[#0F3460] bg-[#16213E] px-4 py-2 text-micro mono text-vx-400">
         <span>← DRAG TO WIPE →</span>
-        <span className="text-dim">ORBIT 3D ON RIGHT</span>
+        <span className="text-[#EFC07B]">ORBIT 3D ON RIGHT</span>
       </div>
     </div>
   );
@@ -150,13 +150,13 @@ export function TwoPartsSection() {
     <section className="rule section" id="parts">
       <div className="container">
         <div className="max-w-[64ch] mb-12">
-          <div className="mono text-micro uppercase tracking-wider text-vx-600 mb-3">
+          <div className="mono text-micro uppercase tracking-wider text-[#EFC07B] font-semibold mb-3">
             Deterministic Solid Reconstruction
           </div>
-          <h2 className="text-h2 font-heading text-vx-900 leading-[1.08] tracking-[-0.02em]">
+          <h2 className="text-h2 font-heading text-vx-100 leading-[1.08] tracking-[-0.02em]">
             Two real parts. Zero guessed dimensions.
           </h2>
-          <p className="mt-4 text-body text-vx-600 leading-relaxed">
+          <p className="mt-4 text-body text-vx-400 leading-relaxed">
             Drag across each part to wipe between the original engineering drawing and FLIP&apos;s generated 3D solid model. Click and drag the 3D side to inspect geometry and verified faces.
           </p>
         </div>

@@ -30,7 +30,7 @@ export function SecurityDetails() {
           {/* Left Column: Sticky Headings Navigation */}
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-32">
-              <span className="mono text-micro text-vx-600 uppercase tracking-wider block mb-4">
+              <span className="mono text-micro text-[#EFC07B] font-semibold uppercase tracking-wider block mb-4">
                 Security breakdown
               </span>
 
@@ -47,21 +47,21 @@ export function SecurityDetails() {
                       aria-current={isActive ? "true" : undefined}
                       className={`group relative flex w-full items-center justify-between rounded-lg px-4 py-3.5 text-left transition-all duration-150 ${
                         isActive
-                          ? "bg-vx-200/70 text-vx-900 shadow-xs"
-                          : "text-vx-600 hover:bg-vx-200/35 hover:text-vx-900"
+                          ? "bg-[#16213E] text-white border border-[#0F3460] shadow-md"
+                          : "text-vx-400 hover:bg-[#16213E]/50 hover:text-vx-100"
                       }`}
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <span
                           className={`mono text-micro transition-colors ${
-                            isActive ? "font-semibold text-dim-deep" : "text-vx-500 group-hover:text-vx-700"
+                            isActive ? "font-semibold text-[#EFC07B]" : "text-vx-500 group-hover:text-vx-300"
                           }`}
                         >
                           {sec.num}
                         </span>
                         <span
                           className={`text-h3 font-heading truncate ${
-                            isActive ? "font-medium text-vx-900" : "font-normal text-vx-600 group-hover:text-vx-900"
+                            isActive ? "font-medium text-vx-100" : "font-normal text-vx-400 group-hover:text-vx-100"
                           }`}
                         >
                           {sec.title}
@@ -71,7 +71,7 @@ export function SecurityDetails() {
                       {/* Active indicator bar */}
                       {isActive && (
                         <span
-                          className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[2.5px] rounded-r bg-dim-deep"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[2.5px] rounded-r bg-[#EFC07B]"
                           aria-hidden="true"
                         />
                       )}
@@ -84,7 +84,7 @@ export function SecurityDetails() {
 
           {/* Right Column: Pop-up Information Panel */}
           <div className="lg:col-span-8">
-            <div className="relative min-h-[360px] rounded-xl border border-vx-400/50 bg-vx-100/50 p-6 sm:p-8 shadow-xs">
+            <div className="relative min-h-[360px] rounded-xl border border-[#0F3460] bg-[#16213E] p-6 sm:p-8 shadow-2xl">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
@@ -93,16 +93,16 @@ export function SecurityDetails() {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.18, ease: "easeOut" }}
                 >
-                  <div className="mb-6 flex items-center justify-between border-b border-vx-400/40 pb-4">
+                  <div className="mb-6 flex items-center justify-between border-b border-[#0F3460] pb-4">
                     <div className="flex items-center gap-3">
-                      <span className="mono text-micro font-semibold text-dim-deep">
+                      <span className="mono text-micro font-semibold text-[#EFC07B]">
                         {SECTIONS[activeIndex].num}
                       </span>
-                      <h2 className="text-h3 font-heading font-medium text-vx-900">
+                      <h2 className="text-h3 font-heading font-medium text-vx-100">
                         {SECTIONS[activeIndex].title}
                       </h2>
                     </div>
-                    <span className="mono text-micro rounded bg-vx-200 px-2 py-0.5 text-vx-600">
+                    <span className="mono text-micro rounded-xs border border-[#0F3460] bg-[#1A1A2E] px-2 py-0.5 text-[#EFC07B] font-medium">
                       {SECTIONS[activeIndex].badge}
                     </span>
                   </div>
@@ -131,16 +131,16 @@ export function SecurityDetails() {
                   )}
 
                   {activeIndex === 2 && (
-                    <dl className="divide-y divide-vx-400 border-y border-vx-400">
+                    <dl className="divide-y divide-[#0F3460] border-y border-[#0F3460]">
                       <div className="grid gap-2 py-4 sm:grid-cols-[8rem_1fr]">
-                        <dt className="text-small font-medium text-vx-600">Cloud</dt>
-                        <dd className="max-w-[60ch] text-body text-vx-900">
+                        <dt className="text-small font-semibold text-[#EFC07B]">Cloud</dt>
+                        <dd className="max-w-[60ch] text-body text-vx-200">
                           The drawings in your tenant, to run the product for you. Nothing is used for anything else.
                         </dd>
                       </div>
                       <div className="grid gap-2 py-4 sm:grid-cols-[8rem_1fr]">
-                        <dt className="text-small font-medium text-vx-600">On-prem</dt>
-                        <dd className="max-w-[60ch] text-body text-vx-900">
+                        <dt className="text-small font-semibold text-[#EFC07B]">On-prem</dt>
+                        <dd className="max-w-[60ch] text-body text-vx-200">
                           Nothing. There is no way in, by design.
                         </dd>
                       </div>

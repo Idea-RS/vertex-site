@@ -77,12 +77,12 @@ export function HowItWorksSequence() {
             style={isStatic ? undefined : { top: 96, height: "calc(100svh - 120px)" }}
           >
             <div className={isStatic ? "" : "flex h-full flex-col justify-center py-6"}>
-              <div className="my-auto w-full rounded-xl border border-vx-600/70 bg-vx-900 p-4 sm:p-6 shadow-2xl relative overflow-hidden min-h-[380px] sm:min-h-[460px] flex flex-col justify-between">
+              <div className="my-auto w-full rounded-xl border border-[#0F3460] bg-[#16213E] p-4 sm:p-6 shadow-2xl relative overflow-hidden min-h-[380px] sm:min-h-[460px] flex flex-col justify-between">
                 {/* Header readout bar on dark viewport */}
-                <div className="flex items-center justify-between border-b border-vx-600/50 pb-3 mb-4 text-micro mono">
+                <div className="flex items-center justify-between border-b border-[#0F3460] pb-3 mb-4 text-micro mono">
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-dim animate-pulse" />
-                    <span className="text-dim uppercase tracking-wider font-semibold">
+                    <span className="h-2 w-2 rounded-full bg-[#EFC07B] animate-pulse" />
+                    <span className="text-[#EFC07B] uppercase tracking-wider font-semibold">
                       ENGINE PIPELINE · STAGE {active.slice(0, 2)}
                     </span>
                   </div>
@@ -90,7 +90,7 @@ export function HowItWorksSequence() {
                 </div>
 
                 {/* Stage Visual Container */}
-                <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden rounded-lg bg-vx-950 p-2">
+                <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden rounded-lg bg-[#1A1A2E] p-2">
                   {/* STAGE 01: Read (2D Vector linework drawing itself with highlighted views) */}
                   <div
                     className={`absolute inset-0 transition-all duration-500 flex items-center justify-center p-4 ${
@@ -108,13 +108,13 @@ export function HowItWorksSequence() {
                         sizes="(max-width: 1024px) 100vw, 60vw"
                       />
                       {/* Floating View Badges */}
-                      <div className="absolute top-6 left-6 rounded-2xs border border-dim/60 bg-vx-900/90 px-2 py-1 mono text-[10px] text-dim shadow-sm">
+                      <div className="absolute top-6 left-6 rounded-2xs border border-[#EFC07B]/60 bg-[#1A1A2E]/95 px-2 py-1 mono text-[10px] text-[#EFC07B] shadow-sm">
                         VIEW A: FRONT [ORTHO]
                       </div>
-                      <div className="absolute top-6 right-6 rounded-2xs border border-dim/60 bg-vx-900/90 px-2 py-1 mono text-[10px] text-dim shadow-sm">
+                      <div className="absolute top-6 right-6 rounded-2xs border border-[#EFC07B]/60 bg-[#1A1A2E]/95 px-2 py-1 mono text-[10px] text-[#EFC07B] shadow-sm">
                         SECTION B-B [CUT PLANE]
                       </div>
-                      <div className="absolute bottom-6 left-6 rounded-2xs border border-vx-400 bg-vx-900/90 px-2 py-1 mono text-[10px] text-vx-200 shadow-sm">
+                      <div className="absolute bottom-6 left-6 rounded-2xs border border-[#0F3460] bg-[#1A1A2E]/95 px-2 py-1 mono text-[10px] text-vx-200 shadow-sm">
                         VIEW C: TOP [PROJECTION]
                       </div>
                     </div>
@@ -145,7 +145,7 @@ export function HowItWorksSequence() {
                     {/* 3D solid rising out */}
                     <div className="relative h-full w-full z-10">
                       <ModelViewer modelUrl="/models/part-a.glb" interactive={true} autoRotate={true} />
-                      <div className="pointer-events-none absolute bottom-4 left-4 rounded-2xs bg-vx-900/90 border border-dim/40 px-2.5 py-1 mono text-[11px] text-dim">
+                      <div className="pointer-events-none absolute bottom-4 left-4 rounded-2xs bg-[#1A1A2E]/95 border border-[#EFC07B]/40 px-2.5 py-1 mono text-[11px] text-[#EFC07B]">
                         ↑ SOLID EXTRUDED FROM PROJECTION
                       </div>
                     </div>
@@ -176,13 +176,13 @@ export function HowItWorksSequence() {
                             className={`flex items-center justify-between rounded-sm border px-3.5 py-2.5 transition-all duration-300 ${
                               verified
                                 ? "border-emerald-500/50 bg-emerald-950/30 text-emerald-200"
-                                : "border-vx-700 bg-vx-900/60 text-vx-400"
+                                : "border-[#0F3460] bg-[#1A1A2E]/60 text-vx-400"
                             }`}
                           >
                             <div className="flex items-center gap-2.5">
                               <span
                                 className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold ${
-                                  verified ? "bg-emerald-500 text-vx-950" : "bg-vx-700 text-vx-400"
+                                  verified ? "bg-emerald-500 text-[#1A1A2E]" : "bg-[#0F3460] text-vx-300"
                                 }`}
                               >
                                 {verified ? "✓" : idx + 1}
@@ -209,12 +209,12 @@ export function HowItWorksSequence() {
                         : "opacity-0 scale-95 pointer-events-none"
                     }`}
                   >
-                    <div className="mono text-xs text-dim uppercase tracking-wider mb-3">
+                    <div className="mono text-xs text-[#EFC07B] uppercase tracking-wider mb-3 font-semibold">
                       Named Choices (Zero Guesses Hidden)
                     </div>
                     <div className="space-y-3">
-                      <div className="rounded-sm border border-amber-500/40 bg-vx-900/90 p-3.5 shadow-sm">
-                        <div className="flex items-center gap-2 text-micro mono text-amber-400 font-semibold">
+                      <div className="rounded-sm border border-[#EFC07B]/40 bg-[#1A1A2E]/95 p-3.5 shadow-sm">
+                        <div className="flex items-center gap-2 text-micro mono text-[#EFC07B] font-semibold">
                           <span>CHOICE 01 · SECTION B-B</span>
                         </div>
                         <p className="mt-1 text-xs text-vx-200 leading-relaxed">
@@ -222,8 +222,8 @@ export function HowItWorksSequence() {
                         </p>
                       </div>
 
-                      <div className="rounded-sm border border-amber-500/40 bg-vx-900/90 p-3.5 shadow-sm">
-                        <div className="flex items-center gap-2 text-micro mono text-amber-400 font-semibold">
+                      <div className="rounded-sm border border-[#EFC07B]/40 bg-[#1A1A2E]/95 p-3.5 shadow-sm">
+                        <div className="flex items-center gap-2 text-micro mono text-[#EFC07B] font-semibold">
                           <span>CHOICE 02 · HEX FLANGE</span>
                         </div>
                         <p className="mt-1 text-xs text-vx-200 leading-relaxed">
@@ -231,8 +231,8 @@ export function HowItWorksSequence() {
                         </p>
                       </div>
 
-                      <div className="rounded-sm border border-amber-500/40 bg-vx-900/90 p-3.5 shadow-sm">
-                        <div className="flex items-center gap-2 text-micro mono text-amber-400 font-semibold">
+                      <div className="rounded-sm border border-[#EFC07B]/40 bg-[#1A1A2E]/95 p-3.5 shadow-sm">
+                        <div className="flex items-center gap-2 text-micro mono text-[#EFC07B] font-semibold">
                           <span>CHOICE 03 · BLIND DRILL</span>
                         </div>
                         <p className="mt-1 text-xs text-vx-200 leading-relaxed">
@@ -250,8 +250,8 @@ export function HowItWorksSequence() {
                         : "opacity-0 scale-95 pointer-events-none"
                     }`}
                   >
-                    <div className="w-full max-w-sm rounded-lg border border-vx-600 bg-vx-900/90 p-6 shadow-xl">
-                      <div className="flex items-center justify-between border-b border-vx-700 pb-3 mb-4">
+                    <div className="w-full max-w-sm rounded-lg border border-[#0F3460] bg-[#1A1A2E]/95 p-6 shadow-xl">
+                      <div className="flex items-center justify-between border-b border-[#0F3460] pb-3 mb-4">
                         <div className="mono text-xs text-vx-400">OUTPUT PACKAGE</div>
                         <span className="rounded-xs bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 mono text-[10px] text-emerald-300 font-semibold">
                           VERIFIED
@@ -259,7 +259,7 @@ export function HowItWorksSequence() {
                       </div>
 
                       <div className="flex items-center gap-3 py-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-vx-800 border border-vx-600 mono text-xs font-bold text-dim">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#16213E] border border-[#0F3460] mono text-xs font-bold text-[#EFC07B]">
                           STEP
                         </div>
                         <div>
@@ -268,14 +268,14 @@ export function HowItWorksSequence() {
                         </div>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-vx-700/60 space-y-1.5 text-micro mono text-vx-300">
+                      <div className="mt-4 pt-3 border-t border-[#0F3460] space-y-1.5 text-micro mono text-vx-300">
                         <div className="flex justify-between">
                           <span className="text-vx-500">Dimensions Checked:</span>
-                          <span className="text-emerald-400">14 / 14 Verified</span>
+                          <span className="text-emerald-400 font-semibold">14 / 14 Verified</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-vx-500">Named Choices:</span>
-                          <span className="text-amber-300">3 Documented</span>
+                          <span className="text-[#EFC07B] font-semibold">3 Documented</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-vx-500">Generation Time:</span>
@@ -289,7 +289,7 @@ export function HowItWorksSequence() {
                 {/* Footer status readout */}
                 <div className="mt-3 flex items-center justify-between text-[11px] mono text-vx-500">
                   <span>SCROLL TO ADVANCE PIPELINE</span>
-                  <span className="text-dim">ISO 10303 / ASME Y14.5</span>
+                  <span className="text-[#EFC07B]">ISO 10303 / ASME Y14.5</span>
                 </div>
               </div>
             </div>
@@ -299,13 +299,13 @@ export function HowItWorksSequence() {
         {/* Stepping Text Column (Right ~42%) */}
         <div className="lg:col-span-5">
           <div className={`max-w-[44ch] pb-10 pt-12 ${isStatic ? "" : "lg:pb-[16svh] lg:pt-10"}`}>
-            <div className="mono text-micro uppercase tracking-wider text-vx-600 mb-2">
+            <div className="mono text-micro uppercase tracking-wider text-[#EFC07B] font-semibold mb-2">
               The Engine
             </div>
-            <h2 className="text-h2 font-heading text-vx-900 leading-[1.08] tracking-[-0.02em]">
+            <h2 className="text-h2 font-heading text-vx-100 leading-[1.08] tracking-[-0.02em]">
               From drawing to checked solid.
             </h2>
-            <p className="mt-4 text-body text-vx-600 leading-relaxed">
+            <p className="mt-4 text-body text-vx-400 leading-relaxed">
               How FLIP turns 2D sheets into fully verified 3D models with named choices and mathematical dimension checks.
             </p>
           </div>
@@ -317,7 +317,7 @@ export function HowItWorksSequence() {
                 <li
                   key={s.key}
                   data-step={s.key}
-                  className={`step border-t border-vx-400 py-8 ${
+                  className={`step border-t border-[#0F3460] py-8 ${
                     isStatic ? "" : "lg:flex lg:min-h-[65svh] lg:items-center lg:border-0 lg:py-0"
                   }`}
                   data-lit={lit ? "true" : undefined}
@@ -328,14 +328,14 @@ export function HowItWorksSequence() {
                     }`}
                   >
                     <div className="flex items-baseline gap-3 mb-2">
-                      <span className="mono text-micro font-semibold text-dim-deep">
+                      <span className="mono text-micro font-semibold text-[#EFC07B]">
                         0{i + 1}
                       </span>
-                      <h3 className="text-h3 font-heading text-vx-900">{s.title}</h3>
+                      <h3 className="text-h3 font-heading text-vx-100">{s.title}</h3>
                     </div>
-                    <p className="text-body text-vx-900 leading-relaxed">{s.what}</p>
+                    <p className="text-body text-vx-200 leading-relaxed">{s.what}</p>
                     {s.vertex && (
-                      <p className="mt-2 text-small text-vx-600 leading-relaxed font-sans">
+                      <p className="mt-2 text-small text-vx-400 leading-relaxed font-sans">
                         {s.vertex}
                       </p>
                     )}

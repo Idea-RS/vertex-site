@@ -174,9 +174,9 @@ export function WaitlistForm({ className = "" }: { className?: string }) {
   };
 
   return (
-    <div id="join" className={`rounded-xl border border-vx-600/70 bg-vx-800 p-6 sm:p-10 text-vx-100 shadow-xl scroll-mt-28 ${className}`}>
+    <div id="join" className={`rounded-xl border border-[#0F3460] bg-[#16213E] p-6 sm:p-10 text-vx-100 shadow-2xl scroll-mt-28 ${className}`}>
       <div className="max-w-[56ch]">
-        <div className="inline-flex items-center gap-2 rounded-xs bg-dim/10 border border-dim/30 px-2.5 py-1 text-micro mono text-dim font-medium mb-3">
+        <div className="inline-flex items-center gap-2 rounded-xs bg-[#EFC07B]/10 border border-[#EFC07B]/30 px-2.5 py-1 text-micro mono text-[#EFC07B] font-medium mb-3">
           Early Access
         </div>
         <h2 className="text-h2 font-heading text-vx-100 leading-[1.1] tracking-[-0.02em]">
@@ -228,7 +228,7 @@ export function WaitlistForm({ className = "" }: { className?: string }) {
           {/* Email Input */}
           <div>
             <label htmlFor="waitlist-email" className="block text-micro mono uppercase tracking-wider text-vx-400 mb-2">
-              Work Email <span className="text-dim">*</span>
+              Work Email <span className="text-[#EFC07B]">*</span>
             </label>
             <input
               id="waitlist-email"
@@ -238,7 +238,7 @@ export function WaitlistForm({ className = "" }: { className?: string }) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="engineer@company.com"
               disabled={status === "loading"}
-              className="w-full rounded-sm border border-vx-600 bg-vx-900/90 px-4 py-3 text-small text-vx-100 placeholder:text-vx-600 focus:border-dim focus:outline-none transition-colors"
+              className="w-full rounded-sm border border-[#0F3460] bg-[#1A1A2E] px-4 py-3 text-small text-vx-100 placeholder:text-vx-500 focus:border-[#EFC07B] focus:ring-1 focus:ring-[#EFC07B] focus:outline-none transition-colors"
             />
           </div>
 
@@ -257,8 +257,8 @@ export function WaitlistForm({ className = "" }: { className?: string }) {
                     onClick={() => setSelectedRole(isSelected ? null : r.id)}
                     className={`rounded-xs px-3.5 py-1.5 mono text-xs transition-all ${
                       isSelected
-                        ? "bg-dim text-vx-900 font-semibold border border-dim shadow-xs"
-                        : "bg-vx-900/80 text-vx-300 border border-vx-600/70 hover:border-vx-400 hover:text-vx-100"
+                        ? "bg-[#EFC07B] text-[#1A1A2E] font-semibold border border-[#EFC07B] shadow-sm"
+                        : "bg-[#1A1A2E] text-vx-300 border border-[#0F3460] hover:border-[#EFC07B]/60 hover:text-white"
                     }`}
                   >
                     {r.label}
@@ -276,11 +276,11 @@ export function WaitlistForm({ className = "" }: { className?: string }) {
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
               disabled={status === "loading"}
-              className="mt-1 h-4 w-4 rounded-2xs border-vx-600 bg-vx-900 text-dim focus:ring-0 focus:ring-offset-0 cursor-pointer"
+              className="mt-1 h-4 w-4 rounded-2xs border-[#0F3460] bg-[#1A1A2E] text-[#EFC07B] focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[#EFC07B]"
             />
             <label htmlFor="waitlist-consent" className="text-xs text-vx-300 leading-relaxed cursor-pointer select-none">
               Email me about FLIP&apos;s launch. Unsubscribe anytime.{" "}
-              <Link href="/privacy" className="text-dim underline hover:text-dim/80">
+              <Link href="/privacy" className="text-[#EFC07B] underline hover:text-[#EFC07B]/80">
                 Privacy Policy
               </Link>
               .
@@ -302,7 +302,7 @@ export function WaitlistForm({ className = "" }: { className?: string }) {
             <button
               type="submit"
               disabled={status === "loading"}
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-sm bg-dim px-8 py-3 font-heading text-small font-semibold text-vx-900 transition-all hover:bg-dim/90 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-sm bg-[#EFC07B] px-8 py-3 font-heading text-small font-semibold text-[#1A1A2E] transition-all hover:bg-[#EFC07B]/90 hover:shadow-lg hover:shadow-[#EFC07B]/10 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {status === "loading" ? "Securing spot…" : "Join the waitlist"}
             </button>

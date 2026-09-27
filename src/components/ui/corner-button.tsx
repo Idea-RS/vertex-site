@@ -64,7 +64,7 @@ export function CornerButton({
   href,
   icon,
   showIcon = true,
-  accentColor = "#e5ff00",
+  accentColor = "#0f3460",
   textColor,
   className,
   wrapperClassName,
@@ -85,7 +85,7 @@ export function CornerButton({
   );
 
   const isDark = textColor
-    ? textColor === "#fff" || textColor.toLowerCase().includes("white") || textColor.includes("vx-100")
+    ? textColor === "#fff" || textColor.toLowerCase().includes("white") || textColor.includes("vx-100") || textColor.includes("efc07b")
     : accentColor.startsWith("#0") ||
       accentColor.startsWith("#1") ||
       accentColor.startsWith("#2") ||
@@ -94,11 +94,11 @@ export function CornerButton({
       accentColor.includes("vx-800") ||
       accentColor.includes("vx-900");
 
-  const resolvedTextColor = textColor ?? (isDark ? "#f7f6f6" : "#0008");
-  const resolvedDotColor = isDark ? "#415a77" : "#666";
-  const resolvedLineColor = isDark ? "#778da9" : "#999";
-  const resolvedHoverBg = isDark ? "#0d1b2a" : "#ffffff";
-  const resolvedHoverTextColor = isDark ? "#ffffff" : "#0008";
+  const resolvedTextColor = textColor ?? (isDark ? "#efc07b" : "#1a1a2e");
+  const resolvedDotColor = isDark ? "#0f3460" : "#666";
+  const resolvedLineColor = isDark ? "#0f3460" : "#999";
+  const resolvedHoverBg = isDark ? "#16213e" : "#ffffff";
+  const resolvedHoverTextColor = isDark ? "#efc07b" : "#1a1a2e";
 
   return (
     <div
