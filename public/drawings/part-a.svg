@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <style>
+      .border { stroke: #778DA9; stroke-width: 1.5; fill: none; }
+      .grid { stroke: #415A77; stroke-width: 0.5; stroke-dasharray: 4 4; opacity: 0.4; }
+      .solid-geom { stroke: #E0E1DD; stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .hidden-geom { stroke: #778DA9; stroke-width: 1; stroke-dasharray: 4 2; fill: none; }
+      .centerline { stroke: #415A77; stroke-width: 0.8; stroke-dasharray: 12 3 3 3; }
+      .dim-line { stroke: #F0A868; stroke-width: 1; fill: none; }
+      .dim-text { font-family: monospace; font-size: 11px; fill: #F0A868; text-anchor: middle; }
+      .label-text { font-family: sans-serif; font-size: 12px; fill: #778DA9; letter-spacing: 0.05em; font-weight: 500; }
+      .redaction-bar { fill: #1B263B; stroke: #415A77; stroke-width: 1; }
+      .hatch { stroke: #415A77; stroke-width: 0.75; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 2 L 8 5 L 0 8 z" fill="#F0A868" />
+    </marker>
+  </defs>
+
+  <!-- Sheet Background -->
+  <rect width="800" height="600" fill="#0D1B2A" />
+
+  <!-- Sheet Border -->
+  <rect x="20" y="20" width="760" height="560" class="border" />
+  <rect x="25" y="25" width="750" height="550" class="border" stroke-width="0.75" />
+
+  <!-- Front View -->
+  <g id="front-view" transform="translate(60, 80)">
+    <text x="120" y="20" class="label-text">VIEW A — FRONT</text>
+    <!-- Outer Profile -->
+    <path class="solid-geom" d="M 40,50 L 200,50 L 200,90 L 220,90 L 220,170 L 200,170 L 200,210 L 40,210 L 40,170 L 20,170 L 20,90 L 40,90 Z" />
+    <!-- Hex / Bore Features -->
+    <circle cx="120" cy="130" r="45" class="solid-geom" />
+    <polygon points="120,95 150,112.5 150,147.5 120,165 90,147.5 90,112.5" class="solid-geom" />
+    <circle cx="120" cy="130" r="18" class="solid-geom" />
+    <!-- Centerlines -->
+    <line x1="10" y1="130" x2="230" y2="130" class="centerline" />
+    <line x1="120" y1="40" x2="120" y2="220" class="centerline" />
+    <!-- Dimensions -->
+    <line x1="40" y1="225" x2="40" y2="245" class="dim-line" />
+    <line x1="200" y1="225" x2="200" y2="245" class="dim-line" />
+    <line x1="40" y1="235" x2="200" y2="235" class="dim-line" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+    <text x="120" y="250" class="dim-text">160.00 mm</text>
+  </g>
+
+  <!-- Section View B-B -->
+  <g id="section-view" transform="translate(340, 80)">
+    <text x="140" y="20" class="label-text">SECTION B-B</text>
+    <!-- Section Hatching and Cut Geometry -->
+    <path class="solid-geom" d="M 40,60 L 240,60 L 240,100 L 210,100 L 210,160 L 240,160 L 240,200 L 40,200 L 40,160 L 70,160 L 70,100 L 40,100 Z" />
+    <!-- Internal stepped bore -->
+    <rect x="90" y="90" width="100" height="80" class="solid-geom" fill="#1B263B" fill-opacity="0.5" />
+    <line x1="40" y1="130" x2="240" y2="130" class="centerline" />
+    <!-- Hatching lines -->
+    <line x1="45" y1="65" x2="65" y2="85" class="hatch" />
+    <line x1="55" y1="65" x2="75" y2="85" class="hatch" />
+    <line x1="65" y1="65" x2="85" y2="85" class="hatch" />
+    <line x1="195" y1="65" x2="215" y2="85" class="hatch" />
+    <line x1="205" y1="65" x2="225" y2="85" class="hatch" />
+    <line x1="215" y1="65" x2="235" y2="85" class="hatch" />
+    <!-- Dimension -->
+    <line x1="250" y1="60" x2="270" y2="60" class="dim-line" />
+    <line x1="250" y1="200" x2="270" y2="200" class="dim-line" />
+    <line x1="260" y1="60" x2="260" y2="200" class="dim-line" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+    <text x="260" y="134" class="dim-text" transform="rotate(90, 260, 134)">140.00 mm</text>
+  </g>
+
+  <!-- Top View -->
+  <g id="top-view" transform="translate(140, 340)">
+    <text x="120" y="15" class="label-text">VIEW C — TOP</text>
+    <rect x="40" y="30" width="160" height="90" class="solid-geom" rx="6" />
+    <line x1="40" y1="75" x2="200" y2="75" class="centerline" />
+    <line x1="120" y1="20" x2="120" y2="130" class="centerline" />
+    <circle cx="120" cy="75" r="22" class="solid-geom" />
+    <circle cx="70" cy="75" r="6" class="solid-geom" />
+    <circle cx="170" cy="75" r="6" class="solid-geom" />
+  </g>
+
+  <!-- Title Block with Solid Redaction Bars -->
+  <g id="title-block" transform="translate(480, 440)">
+    <rect x="0" y="0" width="295" height="135" class="border" fill="#0D1B2A" />
+    <line x1="0" y1="45" x2="295" y2="45" class="border" />
+    <line x1="0" y1="90" x2="295" y2="90" class="border" />
+    <line x1="150" y1="45" x2="150" y2="135" class="border" />
+    
+    <!-- Redaction Bars covering customer, part number, and proprietary marks -->
+    <rect x="15" y="12" width="265" height="22" class="redaction-bar" rx="3" />
+    <rect x="15" y="55" width="120" height="18" class="redaction-bar" rx="3" />
+    <rect x="165" y="55" width="115" height="18" class="redaction-bar" rx="3" />
+    <rect x="15" y="100" width="120" height="18" class="redaction-bar" rx="3" />
+
+    <!-- Unredacted CAD Metadata -->
+    <text x="165" y="105" font-family="monospace" font-size="10" fill="#778DA9">SCALE 1:1</text>
+    <text x="165" y="120" font-family="monospace" font-size="10" fill="#778DA9">SHEET 1 OF 1</text>
+    <text x="235" y="120" font-family="monospace" font-size="10" fill="#F0A868">PART A</text>
+  </g>
+</svg>

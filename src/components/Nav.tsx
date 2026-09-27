@@ -16,9 +16,8 @@ export default function Nav() {
   const close = () => setOpen(false);
 
   const isActive = (href: string) => {
-    if (href === "/product/") return pathname.startsWith("/product");
-    if (href === "/flip/") return pathname.startsWith("/flip");
-    return pathname.startsWith(href);
+    if (href === "/flip") return pathname === "/flip" || pathname.startsWith("/flip");
+    return pathname === href;
   };
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function Nav() {
           <ul className="hidden items-center gap-8 lg:flex">
             {nav.map((item) => {
               const active = isActive(item.href);
-              const isFlip = item.href === "/flip/";
+              const isFlip = item.href === "/flip";
 
               return (
                 <li key={item.href}>
@@ -81,7 +80,7 @@ export default function Nav() {
             })}
             <li className="flex items-center">
               <CornerButton
-                href="/login/"
+                href="/flip#join"
                 icon={<ArrowNEIcon className="corner-btn-svg" />}
                 accentColor="#1b263b"
                 wrapperClassName="[--cb-padding:0.35rem_0.5rem] [--cb-btn-padding:0.4rem_0.85rem] [--cb-font-size:0.925rem] [--cb-icon-size:16px]"
@@ -131,7 +130,7 @@ export default function Nav() {
             >
               {nav.map((item) => {
                 const active = isActive(item.href);
-                const isFlip = item.href === "/flip/";
+                const isFlip = item.href === "/flip";
 
                 return (
                   <li key={item.href} className="border-b border-vx-400/50 last:border-0">
@@ -156,7 +155,7 @@ export default function Nav() {
               })}
               <li className="py-4">
                 <CornerButton
-                  href="/login/"
+                  href="/flip#join"
                   onClick={close}
                   icon={<ArrowNEIcon className="corner-btn-svg" />}
                   accentColor="#1b263b"

@@ -1,50 +1,39 @@
 import type { Metadata } from "next";
-import { Block, PageHeader } from "@/components/PageHeader";
-import { CTA } from "@/components/CTA";
-import { designPartner, founders } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Two founders and a design partner. Vertex is built against one real archive with the people who use it.",
+  description:
+    "Vertex builds tools that turn engineering drawings into verified models. FLIP is our first product.",
 };
 
 export default function AboutPage() {
   return (
-    <>
-      <PageHeader
-        title="Two founders and a design partner."
-        lede="Vertex is built against one real archive, with the draughtsmen and engineering managers who use it every day. Every number on this site was measured there."
-      />
-
-      <section>
-        <div className="container grid gap-10 py-12 md:grid-cols-2 lg:py-20">
-          {founders.map((f, i) => (
-            <div key={i} className="border-t border-vx-400 pt-6">
-              <h2 className="text-h3 text-vx-900">{f.name}</h2>
-              <p className="mt-1 text-small text-vx-600">{f.role}</p>
-              <p className="mt-4 max-w-[44ch] text-body text-vx-900">{f.bio}</p>
-            </div>
-          ))}
+    <div className="container py-16 lg:py-28">
+      <div className="max-w-[68ch]">
+        <div className="mono text-micro font-medium uppercase tracking-wider text-vx-600 mb-4">
+          About Vertex
         </div>
-      </section>
-
-      <Block title="The design partner">
-        <p className="max-w-[60ch] text-body text-vx-900">{designPartner.description}</p>
-        <p className="mt-4 max-w-[60ch] text-body text-vx-600">
-          Their drawings appear across this site with the title blocks anonymised: company name and address redacted,
-          drawing numbers, dates and initials replaced with placeholders. The linework is theirs.
+        <h1 className="text-h2 font-heading text-vx-900 leading-[1.12] tracking-[-0.02em]">
+          Vertex builds tools that turn engineering drawings into verified models.
+        </h1>
+        <p className="mt-6 text-body text-vx-900 leading-relaxed">
+          FLIP is our first product. It reads 2D drawings, builds the solid 3D geometry, and verifies every dimension against the sheet before delivery.
         </p>
-      </Block>
-
-      <Block title="Why drawings">
-        <p className="max-w-[60ch] text-body text-vx-900">
-          A manufacturer&apos;s knowledge lives in its drawing archive, and most archives can&apos;t be asked a question.
-          We think the archive already knows the answer to most of what a plant asks every day, and that reading it
-          exactly, and saying honestly what couldn&apos;t be read, is worth a company.
+        <p className="mt-4 text-small text-vx-600 leading-relaxed">
+          Every result gets an honest verdict and names any unstated dimension as a choice. Built for manufacturers, job shops, and drafting offices.
         </p>
-      </Block>
 
-      <CTA />
-    </>
+        {/* Marked placeholder for founders */}
+        <div className="mt-14 border-t border-vx-400/40 pt-8">
+          <div className="mono text-micro uppercase tracking-wider text-vx-500 mb-2">
+            Leadership
+          </div>
+          <div className="rounded-sm border border-dashed border-vx-400/60 bg-vx-100/50 p-6 text-small text-vx-600">
+            {/* FOUNDERS: Add founder names and credentials here */}
+            Founders — to be announced.
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

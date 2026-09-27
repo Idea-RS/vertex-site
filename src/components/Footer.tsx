@@ -1,19 +1,22 @@
 import Link from "next/link";
-import { productNav, site } from "@/content/site";
+import { site } from "@/content/site";
 import { Wordmark } from "./Wordmark";
 
 const columns = [
   {
     title: "Product",
-    links: productNav.map((p) => ({ href: p.href, label: p.label })),
+    links: [
+      { href: "/flip", label: "FLIP" },
+      { href: "/flip#workflow", label: "Workflow" },
+      { href: "/flip#join", label: "Waitlist" },
+    ],
   },
   {
     title: "Company",
     links: [
-      { href: "/how-it-works/", label: "How it works" },
-      { href: "/security/", label: "Security" },
-      { href: "/diagnostic/", label: "Diagnostic" },
-      { href: "/about/", label: "About" },
+      { href: "/security", label: "Security" },
+      { href: "/about", label: "About" },
+      { href: "/privacy", label: "Privacy" },
     ],
   },
 ];
@@ -26,8 +29,7 @@ export default function Footer() {
           <div className="lg:col-span-5">
             <Wordmark className="text-white drop-shadow-sm" />
             <p className="mt-4 max-w-[38ch] text-small text-dim leading-relaxed font-normal">
-              Drawing intelligence for manufacturers. Runs in the cloud or fully offline behind
-              your firewall.
+              FLIP turns 2D engineering drawings into checked 3D solid models with named choices and verified dimensions.
             </p>
           </div>
           {columns.map((col) => (
