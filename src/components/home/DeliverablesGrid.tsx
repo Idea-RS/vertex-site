@@ -66,15 +66,15 @@ export function DeliverablesGrid() {
           {DELIVERABLES.map((item, idx) => (
             <div
               key={item.id}
-              className={`rounded-xl border border-[#0F3460] bg-[#16213E] p-6 shadow-xl transition-all hover:border-[#EFC07B]/70 ${
+              className={`rounded-xl border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 p-6 shadow-[0_24px_64px_-16px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-all hover:border-[#EFC07B]/70 ${
                 idx === 4 ? "sm:col-span-2 lg:col-span-1" : ""
               }`}
             >
-              <div className="flex items-center justify-between border-b border-[#0F3460] pb-3 mb-4">
+              <div className="flex items-center justify-between border-b border-[rgba(45,78,120,0.35)] pb-3 mb-4">
                 <span className="mono text-micro text-[#EFC07B] font-semibold">
                   {item.tag}
                 </span>
-                <span className="mono text-[11px] rounded-xs bg-[#1A1A2E] border border-[#0F3460] px-2 py-0.5 text-vx-300 font-medium">
+                <span className="mono text-[11px] rounded-xs bg-[#05080E] border border-[rgba(45,78,120,0.45)] px-2 py-0.5 text-vx-300 font-medium">
                   {item.metric}
                 </span>
               </div>

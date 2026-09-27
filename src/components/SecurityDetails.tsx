@@ -47,8 +47,8 @@ export function SecurityDetails() {
                       aria-current={isActive ? "true" : undefined}
                       className={`group relative flex w-full items-center justify-between rounded-lg px-4 py-3.5 text-left transition-all duration-150 ${
                         isActive
-                          ? "bg-[#16213E] text-white border border-[#0F3460] shadow-md"
-                          : "text-vx-400 hover:bg-[#16213E]/50 hover:text-vx-100"
+                          ? "bg-[#0F1726] text-white border border-[rgba(45,78,120,0.5)] shadow-md"
+                          : "text-vx-400 hover:bg-[#0F1726]/50 hover:text-vx-100"
                       }`}
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
@@ -84,7 +84,7 @@ export function SecurityDetails() {
 
           {/* Right Column: Pop-up Information Panel */}
           <div className="lg:col-span-8">
-            <div className="relative min-h-[360px] rounded-xl border border-[#0F3460] bg-[#16213E] p-6 sm:p-8 shadow-2xl">
+            <div className="relative min-h-[360px] rounded-xl border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 p-6 sm:p-8 shadow-[0_24px_64px_-16px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
@@ -93,7 +93,7 @@ export function SecurityDetails() {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.18, ease: "easeOut" }}
                 >
-                  <div className="mb-6 flex items-center justify-between border-b border-[#0F3460] pb-4">
+                  <div className="mb-6 flex items-center justify-between border-b border-[rgba(45,78,120,0.35)] pb-4">
                     <div className="flex items-center gap-3">
                       <span className="mono text-micro font-semibold text-[#EFC07B]">
                         {SECTIONS[activeIndex].num}
@@ -102,7 +102,7 @@ export function SecurityDetails() {
                         {SECTIONS[activeIndex].title}
                       </h2>
                     </div>
-                    <span className="mono text-micro rounded-xs border border-[#0F3460] bg-[#1A1A2E] px-2 py-0.5 text-[#EFC07B] font-medium">
+                    <span className="mono text-micro rounded-xs border border-[rgba(45,78,120,0.45)] bg-[#05080E] px-2 py-0.5 text-[#EFC07B] font-medium">
                       {SECTIONS[activeIndex].badge}
                     </span>
                   </div>
@@ -131,7 +131,7 @@ export function SecurityDetails() {
                   )}
 
                   {activeIndex === 2 && (
-                    <dl className="divide-y divide-[#0F3460] border-y border-[#0F3460]">
+                    <dl className="divide-y divide-[rgba(45,78,120,0.35)] border-y border-[rgba(45,78,120,0.35)]">
                       <div className="grid gap-2 py-4 sm:grid-cols-[8rem_1fr]">
                         <dt className="text-small font-semibold text-[#EFC07B]">Cloud</dt>
                         <dd className="max-w-[60ch] text-body text-vx-200">

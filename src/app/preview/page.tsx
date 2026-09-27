@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function PreviewPage() {
   return (
     <>
-      <div className="bg-[#16213E] text-vx-300 text-micro mono py-2.5 px-4 text-center border-b border-[#0F3460]">
+      <div className="bg-[#111927] text-vx-300 text-micro mono py-2.5 px-4 text-center border-b border-[rgba(30,58,95,0.5)]">
         INTERNAL PREVIEW MODE · FULL SITE ACTIVE AT <span className="text-[#EFC07B] font-semibold">/preview</span>
       </div>
       <FlipHero />

@@ -23,7 +23,7 @@ const useReducedMotion = () =>
  * Can animate smoothly from 0 to the target dimension when scrolled into view.
  *
  * Precision architectural dimensions drawn in Pastel Amber (#EFC07B)
- * with Prussian Blue hairlines (#0F3460).
+ * with Calibrated Aerospace hairlines (rgba(45, 78, 120, 0.45)).
  */
 export function Dim({
   axis = "x",
@@ -169,7 +169,7 @@ export function Dim({
         : { width: T, height: "100%" };
 
   const orange = "#EFC07B"; // Pastel Amber
-  const rule = "#0F3460";   // Prussian Blue
+  const rule = "rgba(45, 78, 120, 0.45)";   // Calibrated Prussian Steel
   const textStyle = { fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" as const };
 
   // Tick progression: ticks drop down / extend as dimension approaches ends

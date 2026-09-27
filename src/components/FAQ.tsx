@@ -9,7 +9,7 @@ export function FAQ({ items = faq }: { items?: { q: string; a: string }[] }) {
   const [open, setOpen] = useState<number | null>(0);
   const base = useId();
   return (
-    <ul className="divide-y divide-[#0F3460] border-y border-[#0F3460]">
+    <ul className="divide-y divide-[rgba(45,78,120,0.35)] border-y border-[rgba(45,78,120,0.35)]">
       {items.map((item, i) => {
         const isOpen = open === i;
         const panel = `${base}-panel-${i}`;

@@ -26,7 +26,7 @@ export function Block({ title, children, className = "" }: { title: ReactNode; c
 
 export function RuledList({ items }: { items: ReactNode[] }) {
   return (
-    <ul className="divide-y divide-[#0F3460] border-y border-[#0F3460]">
+    <ul className="divide-y divide-[rgba(45,78,120,0.35)] border-y border-[rgba(45,78,120,0.35)]">
       {items.map((it, i) => (
         <li key={i} className="max-w-[64ch] py-4 text-body text-vx-200">
           {it}
@@ -38,9 +38,9 @@ export function RuledList({ items }: { items: ReactNode[] }) {
 
 export function Facts({ items }: { items: { value: string; label: string }[] }) {
   return (
-    <div className="grid gap-8 border-t border-[#0F3460] pt-8 sm:grid-cols-3">
+    <div className="grid gap-8 border-t border-[rgba(45,78,120,0.35)] pt-8 sm:grid-cols-3">
       {items.map((f) => (
-        <div key={f.label} className="border-l border-[#0F3460] pl-5">
+        <div key={f.label} className="border-l border-[rgba(45,78,120,0.35)] pl-5">
           <div className="mono text-[clamp(2rem,3.4vw,2.75rem)] leading-none text-vx-100">{f.value}</div>
           <p className="mt-3 max-w-[22ch] text-small text-vx-400">{f.label}</p>
         </div>

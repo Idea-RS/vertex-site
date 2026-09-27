@@ -61,7 +61,7 @@ export function CountdownChip({ className = "" }: { className?: string }) {
 
   if (!mounted) {
     return (
-      <div className={`inline-flex items-center gap-2 rounded-xs border border-[#0F3460] bg-[#16213E]/90 px-3 py-1 text-micro mono text-vx-400 ${className}`}>
+      <div className={`inline-flex items-center gap-2 rounded-xs border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 px-3 py-1 text-micro mono text-vx-400 ${className}`}>
         <span className="text-[#EFC07B]">|←</span>
         <span>--d --h --m --s</span>
         <span className="text-[#EFC07B]">→|</span>
@@ -82,7 +82,7 @@ export function CountdownChip({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`group relative inline-flex items-center gap-1.5 rounded-xs border border-[#0F3460] bg-[#16213E]/90 px-3 py-1 text-micro mono text-vx-100 shadow-sm backdrop-blur-xs select-none transition-colors hover:border-[#EFC07B] ${className}`}
+      className={`group relative inline-flex items-center gap-1.5 rounded-xs border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 px-3 py-1 text-micro mono text-vx-100 shadow-sm backdrop-blur-xs select-none transition-colors hover:border-[#EFC07B] ${className}`}
       title="Time until FLIP launch"
     >
       <span className="text-[#EFC07B] font-semibold">|←</span>
@@ -123,7 +123,7 @@ function UnitBlock({ val, unit, label, tolerance, isSecond }: UnitBlockProps) {
       <div
         className={`pointer-events-none absolute -top-7 transition-all duration-150 mono text-[11px] px-1.5 py-0.5 rounded-2xs border ${
           hovered
-            ? "opacity-100 translate-y-0 bg-[#16213E] text-[#EFC07B] border-[#0F3460] shadow-md"
+            ? "opacity-100 translate-y-0 bg-[#0F1726] text-[#EFC07B] border-[rgba(45,78,120,0.6)] shadow-md"
             : "opacity-0 translate-y-1 bg-transparent text-transparent border-transparent"
         }`}
       >
@@ -131,10 +131,10 @@ function UnitBlock({ val, unit, label, tolerance, isSecond }: UnitBlockProps) {
       </div>
 
       {/* Main Dimension Block: |← [digits] unit →| */}
-      <div className="flex items-center gap-1 sm:gap-2 px-2.5 py-1.5 rounded-sm bg-[#1A1A2E] border border-[#0F3460] shadow-inner">
+      <div className="flex items-center gap-1 sm:gap-2 px-2.5 py-1.5 rounded-sm bg-[#05080E] border border-[rgba(45,78,120,0.45)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
         {/* Left extension line & arrowhead */}
         <div className="flex items-center text-[#EFC07B] select-none">
-          <span className="text-[#0F3460] font-light">|</span>
+          <span className="text-[rgba(45,78,120,0.7)] font-light">|</span>
           <span className="text-xs sm:text-sm -ml-0.5 font-bold">←</span>
         </div>
 
@@ -151,7 +151,7 @@ function UnitBlock({ val, unit, label, tolerance, isSecond }: UnitBlockProps) {
         {/* Right arrowhead & extension line */}
         <div className="flex items-center text-[#EFC07B] select-none">
           <span className="text-xs sm:text-sm -mr-0.5 font-bold">→</span>
-          <span className="text-[#0F3460] font-light">|</span>
+          <span className="text-[rgba(45,78,120,0.7)] font-light">|</span>
         </div>
       </div>
 
@@ -161,7 +161,7 @@ function UnitBlock({ val, unit, label, tolerance, isSecond }: UnitBlockProps) {
           {label}
         </span>
         {isSecond && (
-          <div className="w-full h-1 bg-[#1A1A2E] rounded-full overflow-hidden mt-0.5 border border-[#0F3460]">
+          <div className="w-full h-1 bg-[#05080E] rounded-full overflow-hidden mt-0.5 border border-[rgba(45,78,120,0.35)]">
             <div
               key={val}
               className="h-full bg-[#EFC07B] rounded-full transition-all duration-1000 ease-linear motion-reduce:transition-none"
@@ -182,7 +182,7 @@ export function EngineeringCountdown({ className = "" }: { className?: string })
 
   if (!mounted) {
     return (
-      <div className={`rounded-xl border border-[#0F3460] bg-[#16213E] p-8 sm:p-10 text-center shadow-xl ${className}`}>
+      <div className={`rounded-xl border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 p-8 sm:p-10 text-center shadow-xl ${className}`}>
         <div className="mono text-xs text-vx-400 tracking-wider uppercase mb-4">
           ENGINEERING READOUT · T-MINUS TO LAUNCH
         </div>
@@ -193,7 +193,7 @@ export function EngineeringCountdown({ className = "" }: { className?: string })
 
   if (isLive) {
     return (
-      <div className={`rounded-xl border border-emerald-500/50 bg-[#16213E] p-8 sm:p-10 text-center shadow-2xl ${className}`}>
+      <div className={`rounded-xl border border-emerald-500/50 bg-[#0F1726] p-8 sm:p-10 text-center shadow-2xl ${className}`}>
         <div className="inline-flex items-center gap-2 rounded-xs bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 mono text-xs text-emerald-400 uppercase tracking-widest font-semibold mb-4">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
           SYSTEM STATUS: ONLINE
@@ -205,7 +205,7 @@ export function EngineeringCountdown({ className = "" }: { className?: string })
         <div className="mt-6 flex justify-center gap-4">
           <a
             href="#join"
-            className="rounded-sm bg-[#EFC07B] text-[#1A1A2E] px-6 py-2.5 font-heading text-small font-semibold hover:bg-[#EFC07B]/90 transition-colors shadow-md"
+            className="rounded-sm bg-[#EFC07B] text-[#080C14] px-6 py-2.5 font-heading text-small font-semibold hover:bg-[#EFC07B]/90 transition-colors shadow-md"
           >
             Launch FLIP
           </a>
@@ -215,12 +215,12 @@ export function EngineeringCountdown({ className = "" }: { className?: string })
   }
 
   return (
-    <div className={`relative rounded-xl border border-[#0F3460] bg-[#16213E] p-6 sm:p-10 text-vx-100 shadow-2xl overflow-hidden ${className}`}>
+    <div className={`relative rounded-xl border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 p-6 sm:p-10 text-vx-100 shadow-[0_24px_64px_-16px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden backdrop-blur-md ${className}`}>
       {/* CAD Grid Background Accents */}
-      <div className="pointer-events-none absolute inset-0 opacity-20 bg-[radial-gradient(#0f3460_1px,transparent_1px)] [background-size:16px_16px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-15 bg-[radial-gradient(rgba(45,78,120,0.35)_1px,transparent_1px)] [background-size:16px_16px]" />
 
       {/* Header Readout Bar */}
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-[#0F3460] pb-4 mb-8">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-[rgba(45,78,120,0.35)] pb-4 mb-8">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-[#EFC07B] animate-pulse motion-reduce:animate-none" />
           <span className="mono text-micro font-semibold uppercase tracking-widest text-[#EFC07B]">
@@ -241,7 +241,7 @@ export function EngineeringCountdown({ className = "" }: { className?: string })
       </div>
 
       {/* Footer Dimension Note */}
-      <div className="relative z-10 mt-8 pt-4 border-t border-[#0F3460] flex flex-wrap items-center justify-between text-micro mono text-vx-400">
+      <div className="relative z-10 mt-8 pt-4 border-t border-[rgba(45,78,120,0.35)] flex flex-wrap items-center justify-between text-micro mono text-vx-400">
         <span>TARGET SPEC: {LAUNCH_AT}</span>
         <span className="text-[#EFC07B]">HOVER FOR TOLERANCES</span>
       </div>

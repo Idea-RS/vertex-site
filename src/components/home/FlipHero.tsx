@@ -15,7 +15,7 @@ export function FlipHero() {
             <span className="mono text-micro uppercase tracking-wider font-semibold text-vx-400">
               FLIP BY VERTEX
             </span>
-            <span className="text-[#0F3460]">·</span>
+            <span className="text-[rgba(30,58,95,0.8)]">·</span>
             <CountdownChip />
           </div>
 
@@ -32,42 +32,42 @@ export function FlipHero() {
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
               href="#join"
-              className="inline-flex items-center justify-center rounded-sm bg-[#EFC07B] px-6 py-3 font-heading text-small font-semibold text-[#1A1A2E] transition-all hover:bg-[#EFC07B]/90 shadow-md"
+              className="inline-flex items-center justify-center rounded-sm bg-[#EFC07B] px-6 py-3 font-heading text-small font-semibold text-[#080C14] transition-all hover:bg-[#EFC07B]/90 hover:shadow-lg hover:shadow-[#EFC07B]/10 active:scale-[0.99] shadow-md"
             >
               Join the waitlist
             </Link>
             <Link
               href="#workflow"
-              className="inline-flex items-center justify-center rounded-sm border border-[#0F3460] bg-[#16213E] px-5 py-3 font-heading text-small font-medium text-vx-100 transition-colors hover:border-[#EFC07B] hover:text-[#EFC07B]"
+              className="inline-flex items-center justify-center rounded-sm border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 px-5 py-3 font-heading text-small font-medium text-vx-100 transition-colors hover:border-[#EFC07B] hover:text-[#EFC07B]"
             >
               See how it works ↓
             </Link>
           </div>
 
           {/* Minimal CAD standard badge */}
-          <div className="mt-10 flex items-center gap-4 border-t border-[#0F3460] pt-4 mono text-micro text-vx-400">
+          <div className="mt-10 flex items-center gap-4 border-t border-[rgba(45,78,120,0.35)] pt-4 mono text-micro text-vx-400">
             <span>INPUT: DXF · DWG · PDF · IMAGE</span>
-            <span aria-hidden="true" className="text-[#0F3460]">·</span>
+            <span aria-hidden="true" className="text-[rgba(45,78,120,0.7)]">·</span>
             <span>OUTPUT: STEP B-REP</span>
           </div>
         </div>
 
         {/* Right Column: Rotating 3D Model (Part A) in Dark Viewport */}
         <div className="lg:col-span-6">
-          <div className="relative aspect-[4/3] w-full rounded-2xl border border-[#0F3460] bg-[#16213E] p-2 sm:p-3 shadow-2xl overflow-hidden">
+          <div className="relative aspect-[4/3] w-full rounded-2xl border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 p-2 sm:p-3 shadow-[0_24px_64px_-16px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden backdrop-blur-md">
             {/* Dark Viewport Top Bar */}
             <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between text-micro mono text-vx-400 pointer-events-none">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-[#EFC07B] animate-pulse" />
-                <span className="text-[#EFC07B] font-medium">PART A · LIVE ROTATION</span>
+                <span className="text-[#EFC07B] font-semibold tracking-wider">PART A · LIVE ROTATION</span>
               </div>
-              <span className="rounded-2xs border border-[#0F3460] bg-[#1A1A2E]/80 px-2 py-0.5 text-vx-300">
+              <span className="rounded-2xs border border-[rgba(45,78,120,0.5)] bg-[#080C14]/90 px-2 py-0.5 text-vx-300">
                 DRAG TO ORBIT
               </span>
             </div>
 
             {/* Three.js 3D Viewer */}
-            <div className="h-full w-full rounded-xl overflow-hidden bg-[#1A1A2E]">
+            <div className="h-full w-full rounded-xl overflow-hidden bg-[#05080E] border border-[rgba(45,78,120,0.35)]">
               <ModelViewer
                 modelUrl="/models/part-a.glb"
                 autoRotate={true}

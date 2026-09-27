@@ -64,7 +64,7 @@ export function CornerButton({
   href,
   icon,
   showIcon = true,
-  accentColor = "#0f3460",
+  accentColor = "#1e3a5f",
   textColor,
   className,
   wrapperClassName,
@@ -94,11 +94,11 @@ export function CornerButton({
       accentColor.includes("vx-800") ||
       accentColor.includes("vx-900");
 
-  const resolvedTextColor = textColor ?? (isDark ? "#efc07b" : "#1a1a2e");
-  const resolvedDotColor = isDark ? "#0f3460" : "#666";
-  const resolvedLineColor = isDark ? "#0f3460" : "#999";
-  const resolvedHoverBg = isDark ? "#16213e" : "#ffffff";
-  const resolvedHoverTextColor = isDark ? "#efc07b" : "#1a1a2e";
+  const resolvedTextColor = textColor ?? (isDark ? "#efc07b" : "#080c14");
+  const resolvedDotColor = isDark ? "#2b4c73" : "#666";
+  const resolvedLineColor = isDark ? "#2b4c73" : "#999";
+  const resolvedHoverBg = isDark ? "#0f1726" : "#ffffff";
+  const resolvedHoverTextColor = isDark ? "#efc07b" : "#080c14";
 
   return (
     <div

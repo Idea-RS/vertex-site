@@ -8,8 +8,8 @@ type Variant = "primary" | "outline";
  * material. Outline buttons are vx-600 hairline, vx-900 text. No orange on light.
  */
 const styles: Record<Variant, string> = {
-  primary: "bg-[#EFC07B] text-[#1A1A2E] hover:bg-[#EFC07B]/90 font-semibold shadow-md",
-  outline: "border border-[#0F3460] bg-[#16213E]/80 text-[#F8FAFC] hover:border-[#EFC07B] hover:text-[#EFC07B] transition-colors",
+  primary: "bg-[#EFC07B] text-[#080C14] hover:bg-[#EFC07B]/90 font-semibold shadow-md",
+  outline: "border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/80 text-[#F8FAFC] hover:border-[#EFC07B] hover:text-[#EFC07B] transition-colors",
 };
 
 export function Button({

@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   Vertex Design System — Precision Industrial Palette
-   Midnight Blue (#1A1A2E) · Dark Navy Blue (#16213E) · Prussian Blue (#0F3460) · Pastel Amber (#EFC07B)
+   Vertex Design System — Aerospace Precision Industrial Palette
+   Obsidian Navy (#0B0F17) · Matte Slate Navy (#111927) · Prussian Steel (#1E3A5F) · Pastel Amber (#EFC07B)
 ------------------------------------------------------------------- */
 @theme {
   --color-*: initial;
 
-  /* The 4-Color Architectural Palette */
-  --color-midnight: #1a1a2e; /* Deep canvas & background base */
-  --color-navy: #16213e;     /* Elevated surfaces, cards, viewports */
-  --color-prussian: #0f3460; /* Structural borders, active CAD states */
-  --color-amber: #efc07b;    /* Signature accent, dimension lines, focal CTAs */
+  /* The 4-Color Aerospace Architectural Palette */
+  --color-midnight: #080c14; /* Ultra-deep obsidian void & base */
+  --color-navy: #0f1726;     /* Elevated matte slate surfaces & panels */
+  --color-prussian: #1e3a5f; /* Precision CAD hairlines & frames */
+  --color-amber: #efc07b;    /* Signature champagne-amber accent */
 
   /* Structural Token Mapping */
-  --color-vx-950: #121221;   /* Inset well / darkest viewport background */
-  --color-vx-900: #1a1a2e;   /* Midnight Blue: page canvas & primary backdrop */
-  --color-vx-800: #16213e;   /* Dark Navy Blue: cards, panels, viewports */
-  --color-vx-700: #0f3460;   /* Prussian Blue: borders, interactive buttons */
-  --color-vx-600: #1f3454;   /* Secondary hairline borders */
+  --color-vx-950: #05080e;   /* Sunken well / deepest readout well */
+  --color-vx-900: #080c14;   /* Obsidian Navy: page canvas & primary backdrop */
+  --color-vx-800: #0f1726;   /* Matte Slate Navy: cards, panels, viewports */
+  --color-vx-700: #1e3a5f;   /* Prussian Steel: hairlines, interactive frames */
+  --color-vx-600: #2b4c73;   /* Secondary hairline borders */
   --color-vx-500: #64748b;   /* Muted metadata labels */
   --color-vx-400: #94a3b8;   /* Secondary slate text & rules */
   --color-vx-300: #cbd5e1;   /* Medium light text */
@@ -88,7 +88,7 @@
 :root {
   --inset: 10px;
   --content-max: 1280px;
-  --frame-line: rgba(15, 52, 96, 0.65);
+  --frame-line: rgba(30, 58, 95, 0.5);
   color-scheme: dark;
 }
 
@@ -102,7 +102,7 @@
    Base
 ------------------------------------------------------------------- */
 html {
-  background: #1a1a2e;
+  background: #080c14;
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
 }
@@ -122,7 +122,7 @@ html.lenis body {
 }
 
 body {
-  background: #1a1a2e;
+  background: #080c14;
   color: #f8fafc;
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -134,7 +134,7 @@ body {
 }
 
 ::selection {
-  background: #0f3460;
+  background: #1e3a5f;
   color: #efc07b;
 }
 
@@ -191,9 +191,9 @@ p {
 
 /* Popped-out floating navbar on scroll */
 .nav-popped {
-  border: 1px solid rgba(15, 52, 96, 0.85);
-  background: rgba(22, 33, 62, 0.92);
-  box-shadow: 0 16px 36px -8px rgba(10, 10, 25, 0.7), 0 0 20px -5px rgba(239, 192, 123, 0.1);
+  border: 1px solid rgba(45, 78, 120, 0.45);
+  background: rgba(15, 23, 38, 0.94);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* Text links: Pastel Amber underline, brightens on hover */
@@ -210,18 +210,18 @@ p {
   text-decoration-color: #efc07b;
 }
 
-/* In-flow sheet wrapper on Midnight Blue canvas */
+/* In-flow sheet wrapper on Obsidian Navy canvas */
 .sheet {
   margin: var(--inset);
   margin-bottom: clamp(3rem, 7vw, 6rem);
-  background: #1a1a2e;
-  border: 1px solid rgba(15, 52, 96, 0.65);
+  background: #080c14;
+  border: 1px solid rgba(45, 78, 120, 0.35);
   border-radius: var(--radius-lg);
   min-height: calc(100svh - 2 * var(--inset));
   position: relative;
   z-index: 10;
   overflow: clip;
-  box-shadow: 0 24px 64px -16px rgba(10, 10, 25, 0.85), 0 0 0 1px rgba(15, 52, 96, 0.5);
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .container {
@@ -232,7 +232,7 @@ p {
 }
 
 .rule {
-  border-top: 1px solid rgba(15, 52, 96, 0.6);
+  border-top: 1px solid rgba(45, 78, 120, 0.35);
 }
 
 /* Section rhythm */

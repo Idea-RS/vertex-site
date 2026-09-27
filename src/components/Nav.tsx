@@ -34,7 +34,7 @@ export default function Nav() {
       className={`sticky z-40 transition-all duration-300 ease-out ${
         scrolled
           ? "bg-transparent pointer-events-none pt-2 sm:pt-3"
-          : "bg-[#1A1A2E] pointer-events-auto pt-8 sm:pt-10"
+          : "bg-transparent pointer-events-auto pt-8 sm:pt-10"
       }`}
       style={{
         top: scrolled ? "calc(var(--inset) + 10px)" : "var(--inset)",
@@ -45,7 +45,7 @@ export default function Nav() {
           aria-label="Primary"
           className={`flex items-center justify-between font-heading transition-all duration-300 ease-out ${
             scrolled
-              ? "h-14 px-6 sm:px-8 rounded-full bg-[#16213E]/92 border border-[#0F3460] backdrop-blur-md nav-popped"
+              ? "h-14 px-6 sm:px-8 rounded-full bg-[#0F1726]/92 border border-[rgba(45,78,120,0.45)] backdrop-blur-md nav-popped"
               : "h-16 px-0 rounded-none bg-transparent border-transparent"
           }`}
         >
@@ -90,7 +90,7 @@ export default function Nav() {
                   <CornerButton
                     href="/flip#join"
                     icon={<ArrowNEIcon className="corner-btn-svg text-dim" />}
-                    accentColor="#0f3460"
+                    accentColor="#1e3a5f"
                     textColor="#efc07b"
                     wrapperClassName="[--cb-padding:0.35rem_0.5rem] [--cb-btn-padding:0.4rem_0.85rem] [--cb-font-size:0.925rem] [--cb-icon-size:16px]"
                   >
@@ -128,14 +128,14 @@ export default function Nav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className={`pointer-events-auto bg-[#1A1A2E] lg:hidden ${
-              scrolled ? "container mt-2" : "border-t border-[#0F3460]"
+            className={`pointer-events-auto bg-[#080C14] lg:hidden ${
+              scrolled ? "container mt-2" : "border-t border-[rgba(45,78,120,0.35)]"
             }`}
           >
             <ul
               className={`flex flex-col py-2 font-heading ${
                 scrolled
-                  ? "rounded-2xl nav-popped bg-[#16213E]/95 border border-[#0F3460] backdrop-blur-md p-4 shadow-xl"
+                  ? "rounded-2xl nav-popped bg-[#0F1726]/95 border border-[rgba(45,78,120,0.45)] backdrop-blur-md p-4 shadow-xl"
                   : "container"
               }`}
             >
@@ -144,7 +144,7 @@ export default function Nav() {
                 const isFlip = item.href === "/flip";
 
                 return (
-                  <li key={item.href} className="border-b border-[#0F3460] last:border-0">
+                  <li key={item.href} className="border-b border-[rgba(45,78,120,0.35)] last:border-0">
                     <Link
                       href={item.href}
                       onClick={close}
@@ -169,7 +169,7 @@ export default function Nav() {
                   href="/flip#join"
                   onClick={close}
                   icon={<ArrowNEIcon className="corner-btn-svg text-dim" />}
-                  accentColor="#0f3460"
+                  accentColor="#1e3a5f"
                   textColor="#efc07b"
                 >
                   Login

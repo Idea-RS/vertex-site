@@ -32,7 +32,7 @@ export default function Footer() {
   if (pathname === "/") {
     return (
       <footer className="relative z-10 w-full text-vx-100">
-        <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-micro mono text-vx-400 border-t border-[#0F3460]">
+        <div className="container py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-micro mono text-vx-400 border-t border-[rgba(45,78,120,0.35)]">
           <span>© {new Date().getFullYear()} Vertex Intelligence. All rights reserved.</span>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="underline hover:text-[#EFC07B] transition-colors">
@@ -48,7 +48,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="relative z-10 w-full text-vx-100 [text-shadow:0_0_8px_#1a1a2e,0_0_16px_#1a1a2e]">
+    <footer className="relative z-10 w-full text-vx-100">
       <div className="container pb-16 pt-8 lg:pb-20 lg:pt-12">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
@@ -81,7 +81,7 @@ export default function Footer() {
             </p>
           </div>
         </div>
-        <div className="mt-14 flex flex-col gap-3 border-t border-[#0F3460] pt-6 text-micro text-vx-400 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-3 border-t border-[rgba(45,78,120,0.35)] pt-6 text-micro text-vx-400 sm:flex-row sm:items-center sm:justify-between">
           <p className="mono">© {new Date().getFullYear()} Vertex Intelligence. All rights reserved.</p>
           <div className="mono flex items-center gap-4 text-micro text-[#EFC07B]">
             <span>ASME Y14.5 / ISO 1101</span>

@@ -44,7 +44,7 @@ export function AudienceTiles() {
           {AUDIENCES.map((item, idx) => (
             <div
               key={idx}
-              className="flex flex-col justify-between rounded-xl border border-[#0F3460] bg-[#16213E] p-6 sm:p-7 shadow-xl transition-all hover:border-[#EFC07B]/70"
+              className="flex flex-col justify-between rounded-xl border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/90 p-6 sm:p-7 shadow-[0_24px_64px_-16px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-all hover:border-[#EFC07B]/70"
             >
               <div>
                 <div className="mono text-micro text-[#EFC07B] font-semibold uppercase tracking-wider mb-2">

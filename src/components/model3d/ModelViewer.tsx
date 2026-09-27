@@ -84,21 +84,26 @@ export function ModelViewer({
       controls.minPolarAngle = Math.PI / 6;
     }
 
-    // Soft Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    // Calibrated Aerospace Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfff5ea, 2.0);
-    keyLight.position.set(4, 6, 5);
+    const keyLight = new THREE.DirectionalLight(0xf4f7fb, 2.6);
+    keyLight.position.set(5, 7, 4);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xdbe7f5, 1.2);
-    fillLight.position.set(-4, 2, -3);
+    const fillLight = new THREE.DirectionalLight(0x5a83b5, 1.0);
+    fillLight.position.set(-5, 2, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xefc07b, 0.9); // Pastel Amber accent rim
-    rimLight.position.set(0, -3, -4);
+    // Warm Pastel Amber rim lights to catch precision chamfers
+    const rimLight = new THREE.DirectionalLight(0xefc07b, 2.0);
+    rimLight.position.set(-2, -4, -5);
     scene.add(rimLight);
+
+    const topRimLight = new THREE.DirectionalLight(0xefc07b, 1.0);
+    topRimLight.position.set(0, 8, -2);
+    scene.add(topRimLight);
 
     // Model root group
     const modelGroup = new THREE.Group();
@@ -115,7 +120,7 @@ export function ModelViewer({
 
         const model = gltf.scene;
 
-        // Apply clean engineering CAD material & subtle wireframe edges
+        // Apply bead-blasted anodized titanium aerospace finish & subtle laser wireframe
         model.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
@@ -124,18 +129,18 @@ export function ModelViewer({
 
             if (mesh.material) {
               const stdMat = mesh.material as THREE.MeshStandardMaterial;
-              stdMat.color = new THREE.Color(0x223a5e); // Deep Prussian Blue CAD steel
-              stdMat.metalness = 0.4;
-              stdMat.roughness = 0.4;
+              stdMat.color = new THREE.Color(0x1e2736); // Machined aerospace titanium gunmetal
+              stdMat.metalness = 0.85; // High metallic reflection
+              stdMat.roughness = 0.25; // Precision satin bead-blasted sheen
             }
 
-            // Add subtle wireframe edges
+            // Add subtle precision laser wireframe edges
             try {
               const edgesGeom = new THREE.EdgesGeometry(mesh.geometry, 25);
               const edgesMat = new THREE.LineBasicMaterial({
-                color: 0x0f3460, // Prussian Blue structural wireframe
+                color: 0x4a7aab, // Prussian steel inspection line
                 transparent: true,
-                opacity: 0.8,
+                opacity: 0.35,
               });
               const line = new THREE.LineSegments(edgesGeom, edgesMat);
               mesh.add(line);
@@ -210,15 +215,15 @@ export function ModelViewer({
       aria-label="Interactive 3D model viewport"
     >
       {/* Subtle CAD grid overlay */}
-      <div className="pointer-events-none absolute inset-0 opacity-20 bg-[radial-gradient(#0f3460_1px,transparent_1px)] [background-size:20px_20px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-15 bg-[radial-gradient(rgba(45,78,120,0.3)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* Canvas */}
       <canvas ref={canvasRef} className="h-full w-full cursor-grab active:cursor-grabbing block" />
 
       {/* Loading state indicator */}
       {loading && inView && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#1A1A2E]/60 backdrop-blur-2xs">
-          <div className="flex items-center gap-2 rounded-xs border border-[#0F3460] bg-[#16213E]/95 px-3 py-1.5 mono text-micro text-[#EFC07B]">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#080C14]/70 backdrop-blur-xs">
+          <div className="flex items-center gap-2 rounded-xs border border-[rgba(45,78,120,0.5)] bg-[#0F1726]/95 px-3 py-1.5 mono text-micro text-[#EFC07B] shadow-lg">
             <span className="h-1.5 w-1.5 rounded-full bg-[#EFC07B] animate-ping" />
             <span>MOUNTING SOLID...</span>
           </div>
