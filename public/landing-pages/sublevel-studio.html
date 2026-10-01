@@ -857,11 +857,13 @@ body.waitlist-mode #waitlist [data-ps] {
   try {
     const params = new URLSearchParams(window.location.search);
     const parentParams = window.parent !== window ? new URLSearchParams(window.parent.location.search) : null;
-    if (params.get('preview') === 'full' || (parentParams && parentParams.get('preview') === 'full')) {
+    const isPreview = (p) => p && (p.get('preview') === 'full' || p.get('preview') === 'true' || p.get('preview') === '1');
+    if (isPreview(params) || isPreview(parentParams)) {
       document.body.classList.remove('waitlist-mode');
     }
   } catch (e) {
-    if (new URLSearchParams(window.location.search).get('preview') === 'full') {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('preview') === 'full' || p.get('preview') === 'true' || p.get('preview') === '1') {
       document.body.classList.remove('waitlist-mode');
     }
   }
