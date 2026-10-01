@@ -5941,22 +5941,14 @@ window.ThreeUITerrainPlume = { mountTerrainPlume, TERRAIN_PLUME_DEFAULTS, SCENE_
       }
     }
 
-    let sequenceTriggered = false;
-    function onBgDone() {
-      if (sequenceTriggered) return;
-      sequenceTriggered = true;
-      // Wait for 0.5 second (reduced by half) after background left-to-right reveal finishes
-      setTimeout(startSweep, 500);
+    window.__onBgRevealDone = startSweep;
+
+    // Start dither left-to-right sweep immediately as soon as the website loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => requestAnimationFrame(startSweep));
+    } else {
+      requestAnimationFrame(startSweep);
     }
-
-    window.__onBgRevealDone = onBgDone;
-
-    // Safety fallback: trigger if background takes longer than 2.7s or is inactive
-    setTimeout(() => {
-      if (!sequenceTriggered && document.body.classList.contains('waitlist-mode')) {
-        onBgDone();
-      }
-    }, 2700);
   })();
 
   // Featured project 1: animated dotted wave (2D canvas)
