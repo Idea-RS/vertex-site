@@ -709,6 +709,10 @@ body.waitlist-mode #topnav .center a:not([href="#top"]) {
 body.waitlist-mode #topnav .burger {
   display: none !important;
 }
+html:has(body.waitlist-mode),
+body.waitlist-mode {
+  background: #060608 !important;
+}
 body.waitlist-mode #layout {
   margin-top: 0 !important;
   background: transparent !important;
@@ -717,7 +721,7 @@ body.waitlist-mode #layout {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-top: 70px;
+  padding-top: 0 !important;
   padding-bottom: 0 !important;
   position: relative;
   z-index: 10;
@@ -731,15 +735,15 @@ body.waitlist-mode footer {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: calc(100vh - 70px) !important;
-  min-height: calc(100svh - 70px) !important;
+  min-height: 100vh !important;
+  min-height: 100svh !important;
   margin: 0 !important;
   background: #060608 !important;
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   gap: 0;
-  padding: 0 !important;
+  padding: 80px 0 0 !important;
   position: relative;
   z-index: 10;
   overflow: hidden;
