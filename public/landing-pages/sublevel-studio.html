@@ -767,14 +767,16 @@ body.waitlist-mode footer .fcard-wrap {
   visibility: hidden;
   pointer-events: none;
 }
-body.waitlist-mode footer .fcard-wrap.is-revealing {
-  opacity: 1;
-  visibility: visible;
+body.waitlist-mode footer .fcard-wrap.is-revealing,
+body.waitlist-mode footer .fcard.is-revealing {
+  opacity: 1 !important;
+  visibility: visible !important;
   pointer-events: none;
 }
-body.waitlist-mode footer .fcard-wrap.revealed {
-  opacity: 1;
-  visibility: visible;
+body.waitlist-mode footer .fcard-wrap.revealed,
+body.waitlist-mode footer .fcard.revealed {
+  opacity: 1 !important;
+  visibility: visible !important;
   pointer-events: auto;
 }
 body.waitlist-mode footer .fcard > .waitlist-reveal-canvas,
@@ -847,36 +849,6 @@ body.waitlist-mode footer .bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
   z-index: 2;
-}
-body.waitlist-mode #waitlist:not(.is-revealing):not(.revealed),
-body.waitlist-mode #waitlist:not(.is-revealing):not(.revealed) *,
-body.waitlist-mode footer .fcard-wrap:not(.is-revealing):not(.revealed),
-body.waitlist-mode footer .fcard:not(.is-revealing):not(.revealed) {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-body.waitlist-mode #waitlist.is-revealing,
-body.waitlist-mode #waitlist.is-revealing *,
-body.waitlist-mode footer .fcard-wrap.is-revealing,
-body.waitlist-mode footer .fcard-wrap.is-revealing .fcard {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: none;
-}
-body.waitlist-mode #waitlist.revealed,
-body.waitlist-mode #waitlist.revealed *,
-body.waitlist-mode footer .fcard-wrap.revealed,
-body.waitlist-mode footer .fcard-wrap.revealed .fcard {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-body.waitlist-mode #waitlist.is-revealing [data-ps],
-body.waitlist-mode #waitlist.revealed [data-ps] {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: none !important;
 }
 </style>
 </head>
@@ -2468,6 +2440,7 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
         fcard.appendChild(cvCard);
         void cvCard.offsetHeight;
         waitlist.classList.add('is-revealing');
+        fcard.classList.add('is-revealing');
 
         const t0 = performance.now();
         let running = true;
@@ -2492,6 +2465,8 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
             running = false;
             waitlist.classList.remove('is-revealing');
             waitlist.classList.add('revealed');
+            fcard.classList.remove('is-revealing');
+            fcard.classList.add('revealed');
             if (cvCard.parentNode) cvCard.remove();
             return;
           }
@@ -2505,6 +2480,8 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
         console.error('Waitlist reveal error:', err);
         waitlist.classList.remove('is-revealing');
         waitlist.classList.add('revealed');
+        fcard.classList.remove('is-revealing');
+        fcard.classList.add('revealed');
       }
     }
 
