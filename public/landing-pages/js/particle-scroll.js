@@ -252,7 +252,7 @@ function createParticleScroll(elements, options = {}) {
     uploadContent();
     const w = Math.max(output.clientWidth, 1), h = Math.max(output.clientHeight, 1), dpr = output.width / w;
     const isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024));
-    const effectiveDensity = isMobile ? (config.density || 2) * 1.291 : (config.density || 2);
+    const effectiveDensity = isMobile ? (config.density || 2) * 1.5 : (config.density || 2);
     const density = Math.max(Math.max(effectiveDensity, 1), Math.sqrt((w * h) / 800000));
     const scrollTop = content.scrollTop, gridX = Math.ceil(w / density), winStart = Math.floor(scrollTop / density), winLen = Math.ceil(h / density) + 2, stagger = Math.min(Math.max(config.stagger, 0), 0.95);
     updateRows(dt, density, winStart, winLen);

@@ -1550,7 +1550,9 @@ function createDriveTerrain(root, tcv, rcv, options) {
   let dither = null, dCols = 0, dRows = 0, dCell = 7;
 
   function buildDither() {
-    dCell = Math.max(4, Math.round(CELL * DPR));
+    const isMobile = window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
+    const cellBase = isMobile ? 10 : CELL;
+    dCell = Math.max(4, Math.round(cellBase * DPR));
     dCols = Math.ceil(RW / dCell) + 1;
     dRows = Math.ceil(RH / dCell) + 1;
     dither = new Float32Array(dCols * dRows);
@@ -1567,19 +1569,24 @@ function createDriveTerrain(root, tcv, rcv, options) {
   /* the standards and posts are laid out on a fixed world lattice and simply
      slide through the phase offset, so nothing pops as the drive advances */
   function buildScene() {
+    const isMobile = window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
     const rnd = mulberry(20260902);
     poles = []; posts = [];
     const lanes = DRIVE.laneHalf + 0.5;
-    for (let i = 0; i < 26; i += 1) {
+    const numPoles = isMobile ? 14 : 26;
+    for (let i = 0; i < numPoles; i += 1) {
       poles.push({ k: i, side: i % 2 === 0 ? -1 : 1, x: lanes + 0.62 + rnd() * 0.12, h: 0.94 + rnd() * 0.1, arm: 0.46 + rnd() * 0.1 });
     }
-    for (let i = 0; i < 64; i += 1) posts.push({ k: i, side: i % 2 === 0 ? -1 : 1, x: lanes, h: 0.115 + rnd() * 0.03 });
+    const numPosts = isMobile ? 32 : 64;
+    for (let i = 0; i < numPosts; i += 1) posts.push({ k: i, side: i % 2 === 0 ? -1 : 1, x: lanes, h: 0.115 + rnd() * 0.03 });
     /* the sky is fixed to the canvas rather than to the world: at this focal
        length real parallax on a star field is invisible and only costs a redraw */
     gantries = [];
-    for (let i = 0; i < 4; i += 1) gantries.push({ k: i, h: 1.26, sign: 0.3 + rnd() * 0.06 });
+    const numGantries = isMobile ? 2 : 4;
+    for (let i = 0; i < numGantries; i += 1) gantries.push({ k: i, h: 1.26, sign: 0.3 + rnd() * 0.06 });
     stars = [];
-    for (let i = 0; i < DRIVE.stars; i += 1) {
+    const starCount = isMobile ? 55 : DRIVE.stars;
+    for (let i = 0; i < starCount; i += 1) {
       const y = Math.pow(rnd(), 1.6);                      /* denser toward the top */
       stars.push({ x: rnd(), y, a: 0.10 + Math.pow(rnd(), 2.2) * 0.5, tw: rnd() * 6.283 });
     }
@@ -2377,7 +2384,7 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
         const dpr = Math.min(isMobile ? 1.5 : 2, window.devicePixelRatio || 1);
 
         // Building blocks configuration matching createDriveTerrain
-        const CELL = 7;
+        const CELL = isMobile ? 10 : 7;
         const BAND = 0.20;
         const SOFT = 0.055;
         const W_DUR = 1850;
@@ -5035,7 +5042,9 @@ function createParticleScroll(elements, options = {}) {
   function render(dt) {
     uploadContent();
     const w = Math.max(output.clientWidth, 1), h = Math.max(output.clientHeight, 1), dpr = output.width / w;
-    const density = Math.max(Math.max(config.density, 1), Math.sqrt((w * h) / 800000));
+    const isMobile = window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
+    const effectiveDensity = isMobile ? (config.density || 2) * 1.5 : (config.density || 2);
+    const density = Math.max(Math.max(effectiveDensity, 1), Math.sqrt((w * h) / 800000));
     const scrollTop = content.scrollTop, gridX = Math.ceil(w / density), winStart = Math.floor(scrollTop / density), winLen = Math.ceil(h / density) + 2, stagger = Math.min(Math.max(config.stagger, 0), 0.95);
     updateRows(dt, density, winStart, winLen);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, output.width, output.height);
