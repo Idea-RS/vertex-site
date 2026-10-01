@@ -1324,11 +1324,13 @@ INDEX ......... /INDEX.MD</pre>
 <script type="module">
 import * as THREE from 'three';
 
-// Wait (briefly) for the web fonts so canvas-baked text uses Geist instead of a fallback.
-await Promise.race([
-  Promise.all([document.fonts.load('700 60px "Geist"'), document.fonts.load('600 20px "Geist"'), document.fonts.load('700 20px "Geist Mono"'), document.fonts.load('600 16px "Geist Mono"')]).catch(() => {}),
-  new Promise(r => setTimeout(r, 2500))
-]);
+if (!document.body.classList.contains('waitlist-mode')) {
+  // Wait (briefly) for the web fonts so canvas-baked text uses Geist instead of a fallback.
+  await Promise.race([
+    Promise.all([document.fonts.load('700 60px "Geist"'), document.fonts.load('600 20px "Geist"'), document.fonts.load('700 20px "Geist Mono"'), document.fonts.load('600 16px "Geist Mono"')]).catch(() => {}),
+    new Promise(r => setTimeout(r, 2500))
+  ]);
+}
 
 /* ================= helpers ================= */
 const canvas = document.getElementById('gl');
@@ -5941,14 +5943,22 @@ window.ThreeUITerrainPlume = { mountTerrainPlume, TERRAIN_PLUME_DEFAULTS, SCENE_
       }
     }
 
-    window.__onBgRevealDone = startSweep;
-
-    // Start dither left-to-right sweep immediately as soon as the website loads
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => requestAnimationFrame(startSweep));
-    } else {
-      requestAnimationFrame(startSweep);
+    let sequenceTriggered = false;
+    function onBgDone() {
+      if (sequenceTriggered) return;
+      sequenceTriggered = true;
+      // Wait for 1 second after background animation finishes, then trigger waitlist container animation
+      setTimeout(startSweep, 1000);
     }
+
+    window.__onBgRevealDone = onBgDone;
+
+    // Safety fallback: if background doesn't trigger within 3.5s, trigger it
+    setTimeout(() => {
+      if (!sequenceTriggered && document.body.classList.contains('waitlist-mode')) {
+        onBgDone();
+      }
+    }, 3500);
   })();
 
   // Featured project 1: animated dotted wave (2D canvas)
