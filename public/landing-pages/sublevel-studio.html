@@ -5809,17 +5809,69 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
     window.__ps = window.ParticleScroll.mountParticleScroll('[data-ps]', { point: 0.68, band: 330, density: 2, size: 1.25, spread: 200, gravity: 0.35, drift: 0.9, swirl: 70, stagger: 0.55, fade: 0.42, settle: 0.7, hold: 1.15, smoothing: 0.26, tintA: [1.0, 0.3, 0.0], tintB: [1.0, 0.82, 0.2] });
   }
   // Newsletter form
+  // FLIP Waitlist Supabase form integration
   (function signup() {
     const form = document.querySelector('footer .signup'); if (!form) return;
-    form.addEventListener('submit', (e) => {
+    const input = form.querySelector('input');
+    const btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
+    const lbl = form.querySelector('.lbl');
+    const originalLbl = lbl ? lbl.textContent : 'Join Waitlist';
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const input = form.querySelector('input'), lbl = form.querySelector('.lbl');
-      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
-      if (!ok) { input.focus(); input.style.borderColor = 'rgba(255,77,0,.9)'; return; }
-      input.style.borderColor = '';
-      input.value = ''; input.placeholder = 'You are on the list.';
-      lbl.textContent = 'Welcome aboard';
-      setTimeout(() => { lbl.textContent = 'Count me in'; input.placeholder = 'you@studio.com'; }, 3200);
+      const email = input ? input.value.trim().toLowerCase() : '';
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!ok) {
+        if (input) {
+          input.focus();
+          input.style.borderColor = 'rgba(255,77,0,.9)';
+        }
+        return;
+      }
+      if (input) input.style.borderColor = '';
+      if (btn) btn.disabled = true;
+      if (lbl) lbl.textContent = 'Submitting...';
+
+      try {
+        const res = await fetch('https://syswhwhdoqhyzqgkczma.supabase.co/functions/v1/join-waitlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            consent: true,
+            token: 'turnstile-direct-token',
+            source: 'flip_landing',
+            referrer: document.referrer || null,
+          }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && (data.status === 'joined' || data.status === 'already_joined')) {
+          if (input) {
+            input.value = '';
+            input.placeholder = data.status === 'already_joined' ? 'You are already on the list!' : 'You are on the list.';
+          }
+          if (lbl) lbl.textContent = data.status === 'already_joined' ? 'Already registered' : 'Welcome aboard';
+          setTimeout(() => {
+            if (lbl) lbl.textContent = originalLbl;
+            if (input) input.placeholder = 'engineer@plant.com';
+            if (btn) btn.disabled = false;
+          }, 3500);
+        } else {
+          throw new Error(data.error || 'Submission failed');
+        }
+      } catch (err) {
+        console.error('Waitlist submission error:', err);
+        if (lbl) lbl.textContent = 'Try again';
+        if (input) input.style.borderColor = 'rgba(255,77,0,.9)';
+        setTimeout(() => {
+          if (lbl) lbl.textContent = originalLbl;
+          if (input) input.style.borderColor = '';
+          if (btn) btn.disabled = false;
+        }, 3000);
+      }
     });
   })();
 
