@@ -1,35 +1,59 @@
-# Vertex — marketing site
+# Sublevel Studio Landing Page (ThreeUI)
 
-Fully static Next.js (App Router) site. No server, no third-party scripts, no external fonts, no analytics.
+Interactive digital studio and brand workshop landing page component `<SublevelStudioLandingPage />` integrated from ThreeUI using its exact source revision, shaders, motion, and Three.js 0.160 runtime.
 
-Light canvas (vx-100), blue as the material: every drawing viewport and card is vx-800 with vx-100 linework. Radii encode hierarchy (16 / 12 / 8 / 6 px). Contrast table lives in `docs/design-plan.md`.
+## Features
 
-```
+- **Tactile B&W Operating System Interface**: Modular project showcase cells, service diagnostics, team profiles, and terminal-style contact close.
+- **Interactive 3D Loft Environment**: Custom Three.js 0.160 scene with loft architecture, developer & dog, lighting, arcade cabinet, and retro CRT monitors.
+- **3D Card Fold-out Menu**: Paper-bending projective homography transformation that tracks the 3D sheet in real-time.
+- **Top Utility Dock**: Micro-interactions with rAF-throttled flashlight illumination effect on pointer movement.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm
+
+### Installation
+
+```bash
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # writes the static site to out/
-npm run start      # serves out/ locally
 ```
 
-Deploy `out/` to any static host (S3, nginx, Cloudflare Pages, Netlify, GitHub Pages…). `trailingSlash: true` so every route is a folder with an `index.html`.
+### Development
 
-## Where things live
+```bash
+npm run dev
+```
 
-| Path | What |
-|------|------|
-| `docs/design-plan.md` | Tokens, type, wireframes, motion budget, tells check |
-| `src/app/globals.css` | The design tokens (`@theme`) and base styles |
-| `src/content/site.ts` | Every number and claim on the site. **Placeholders marked `TODO(content)`: founder names/bios, contact email.** |
-| `src/components/drawing/Sheet.tsx` | The engineering drawing, in five planes, anonymised title block |
-| `src/components/Dim.tsx` | The dimension-line motif; measures real elements live |
-| `src/components/DemoFrame.tsx` | The 16:10 product viewport; pass `src` when recordings arrive |
-| `src/components/home/*` | Homepage sections; `Hero`, `Find`, `Make`, `Understand` carry the scroll scenes |
-| `src/fonts/` | Inter Tight (variable) and IBM Plex Mono 400/500, self-hosted (OFL) |
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Motion
+### Production Build
 
-Lenis smooths scroll; GSAP ScrollTrigger (`scrub: 1`) drives every scroll scene. Under `prefers-reduced-motion` nothing initialises and each scene renders its final frame. The hero explode runs at ≥1024px only.
+```bash
+npm run build
+```
 
-## Recordings
+## Configured Usage
 
-Each `<DemoFrame label="…">` shows a labelled placeholder until you pass `src="/recordings/find.mp4"` (put files in `public/recordings/`).
+```tsx
+import { SublevelStudioLandingPage } from "@designcodeio/threeui";
+import "@designcodeio/threeui/style.css";
+
+export function Scene() {
+  return (
+    <div className="shader-frame">
+      <SublevelStudioLandingPage />
+    </div>
+  );
+}
+```
+
+## Source References
+
+- Canonical HTML: [`public/landing-pages/sublevel-studio.html`](public/landing-pages/sublevel-studio.html)
+- Frame Component: [`src/shaders/landing-pages/LandingPageFrame.tsx`](src/shaders/landing-pages/LandingPageFrame.tsx)
+- Landing Pages Registry: [`src/shaders/landing-pages/LandingPages.tsx`](src/shaders/landing-pages/LandingPages.tsx)
+- ThreeUI Stylesheet: [`src/shaders/threeui.css`](src/shaders/threeui.css)
