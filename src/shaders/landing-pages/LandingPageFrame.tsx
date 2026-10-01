@@ -146,7 +146,14 @@ export function LandingPageFrame({
       <iframe
         ref={frameRef}
         title={title}
-        {...(srcDoc ? { srcDoc } : { src: sourceUrl })}
+        {...(srcDoc
+          ? { srcDoc }
+          : {
+              src:
+                typeof window !== "undefined" && window.location.search
+                  ? `${sourceUrl}${sourceUrl.includes("?") ? "&" : "?"}${window.location.search.replace(/^\?/, "")}`
+                  : sourceUrl,
+            })}
         sandbox={srcDoc ? SRCDOC_FRAME_SANDBOX : URL_FRAME_SANDBOX}
         loading="eager"
         onLoad={(event) => {
