@@ -764,14 +764,17 @@ body.waitlist-mode footer .fcard-wrap {
   width: 100%;
   max-width: 38rem;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 body.waitlist-mode footer .fcard-wrap.is-revealing {
   opacity: 1;
+  visibility: visible;
   pointer-events: none;
 }
 body.waitlist-mode footer .fcard-wrap.revealed {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 body.waitlist-mode footer .fcard > .waitlist-reveal-canvas,
@@ -845,7 +848,32 @@ body.waitlist-mode footer .bottom {
   position: relative;
   z-index: 2;
 }
-body.waitlist-mode #waitlist [data-ps] {
+body.waitlist-mode #waitlist:not(.is-revealing):not(.revealed),
+body.waitlist-mode #waitlist:not(.is-revealing):not(.revealed) *,
+body.waitlist-mode footer .fcard-wrap:not(.is-revealing):not(.revealed),
+body.waitlist-mode footer .fcard:not(.is-revealing):not(.revealed) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+body.waitlist-mode #waitlist.is-revealing,
+body.waitlist-mode #waitlist.is-revealing *,
+body.waitlist-mode footer .fcard-wrap.is-revealing,
+body.waitlist-mode footer .fcard-wrap.is-revealing .fcard {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+}
+body.waitlist-mode #waitlist.revealed,
+body.waitlist-mode #waitlist.revealed *,
+body.waitlist-mode footer .fcard-wrap.revealed,
+body.waitlist-mode footer .fcard-wrap.revealed .fcard {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+body.waitlist-mode #waitlist.is-revealing [data-ps],
+body.waitlist-mode #waitlist.revealed [data-ps] {
   opacity: 1 !important;
   visibility: visible !important;
   transform: none !important;
@@ -1209,8 +1237,8 @@ body.waitlist-mode #waitlist [data-ps] {
   <div class="grid-layout fcard-wrap" id="waitlist" style="scroll-margin-top: 80px;">
     <div class="fcard framed"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
       <p class="tag">FLIP Early Access &amp; Waitlist</p>
-      <h3 class="f-h2" data-ps>Bring 2D legacy prints into 3D CAD.</h3>
-      <p class="sub f-h4" data-ps>Send any engineering drawing (DWG, DXF, or PDF) and receive a verified 3D STEP solid with honest dimension verification.</p>
+      <h3 class="f-h2">Bring 2D legacy prints into 3D CAD.</h3>
+      <p class="sub f-h4">Send any engineering drawing (DWG, DXF, or PDF) and receive a verified 3D STEP solid with honest dimension verification.</p>
       <form class="signup" novalidate action="mailto:founder@tryvertex.tech" method="GET">
         <input type="email" name="email" placeholder="engineer@plant.com" aria-label="Email address" required autocomplete="email">
         <div class="threeui-page-button-stage threeui-page-button-stage--ember-keycap" data-mode="dark" data-variant="ember-keycap">
@@ -2429,8 +2457,16 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
           rxCard.globalCompositeOperation = 'source-over';
         }
 
+        cvCard.style.position = 'absolute';
+        cvCard.style.inset = '0';
+        cvCard.style.width = '100%';
+        cvCard.style.height = '100%';
+        cvCard.style.zIndex = '60';
+        cvCard.style.pointerEvents = 'none';
+        cvCard.style.display = 'block';
         drawCardReveal(0);
         fcard.appendChild(cvCard);
+        void cvCard.offsetHeight;
         waitlist.classList.add('is-revealing');
 
         const t0 = performance.now();
@@ -2476,18 +2512,18 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
     function onBgDone() {
       if (sequenceTriggered) return;
       sequenceTriggered = true;
-      // Wait for 1 second after background animation finishes, then trigger waitlist container animation
-      setTimeout(startSweep, 1000);
+      // Wait for 0.5 seconds after background animation finishes, then trigger waitlist container animation
+      setTimeout(startSweep, 500);
     }
 
     window.__onBgRevealDone = onBgDone;
 
-    // Safety fallback: if background doesn't trigger within 3.5s, trigger it
+    // Safety fallback: if background doesn't trigger within 2.5s, trigger it
     setTimeout(() => {
       if (!sequenceTriggered && document.body.classList.contains('waitlist-mode')) {
         onBgDone();
       }
-    }, 3500);
+    }, 2500);
   })();
 </script>
 
@@ -5792,7 +5828,7 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
 
   // Canvas UI Particle Scroll over the page content: text and images below the formation line dissolve
   // into orange/yellow grains and reassemble as they scroll up; the live DOM blurs in once a block has landed.
-  if (window.ParticleScroll && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (window.ParticleScroll && !matchMedia('(prefers-reduced-motion: reduce)').matches && !document.body.classList.contains('waitlist-mode')) {
     window.__ps = window.ParticleScroll.mountParticleScroll('[data-ps]', { point: 0.68, band: 330, density: 2, size: 1.25, spread: 200, gravity: 0.35, drift: 0.9, swirl: 70, stagger: 0.55, fade: 0.42, settle: 0.7, hold: 1.15, smoothing: 0.26, tintA: [1.0, 0.3, 0.0], tintB: [1.0, 0.82, 0.2] });
   }
   // Newsletter form
@@ -5811,7 +5847,7 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
   })();
 
   // ThreeUI <TerrainPlumeCanvas variant="sunset-drive" /> behind the footer copy.
-  if (window.ThreeUITerrainPlume) {
+  if (window.ThreeUITerrainPlume && !window.__plume) {
     window.__plume = window.ThreeUITerrainPlume.mountTerrainPlume(document.getElementById('blog'), {
       variant: 'sunset-drive',
       speed: 1.00, size: 1.00, thickness: 1.00, strength: 1.00, softness: 0.00,
