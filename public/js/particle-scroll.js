@@ -192,7 +192,8 @@ function createParticleScroll(elements, options = {}) {
   let units = [];   // [{from, to, anchor}] document row ranges that resolve as one block
   let bg = [0, 0, 0];
   function syncCanvasSize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024));
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
     const width = Math.max(1, Math.round(output.clientWidth * dpr)), height = Math.max(1, Math.round(output.clientHeight * dpr));
     if (output.width !== width || output.height !== height) { output.width = width; output.height = height; }
     contentMaxX = Math.min(1, Math.max(0.05, content.clientWidth / Math.max(output.clientWidth, 1)));
@@ -250,7 +251,9 @@ function createParticleScroll(elements, options = {}) {
   function render(dt) {
     uploadContent();
     const w = Math.max(output.clientWidth, 1), h = Math.max(output.clientHeight, 1), dpr = output.width / w;
-    const density = Math.max(Math.max(config.density, 1), Math.sqrt((w * h) / 800000));
+    const isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024));
+    const effectiveDensity = isMobile ? (config.density || 2) * 1.291 : (config.density || 2);
+    const density = Math.max(Math.max(effectiveDensity, 1), Math.sqrt((w * h) / 800000));
     const scrollTop = content.scrollTop, gridX = Math.ceil(w / density), winStart = Math.floor(scrollTop / density), winLen = Math.ceil(h / density) + 2, stagger = Math.min(Math.max(config.stagger, 0), 0.95);
     updateRows(dt, density, winStart, winLen);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, output.width, output.height);
@@ -269,7 +272,7 @@ function createParticleScroll(elements, options = {}) {
   }
   let raf = 0, lastTime = performance.now(), destroyed = false, running = false, visible = true, lag = 0, lastScrollTop = content.scrollTop;
   function frame(now) {
-    if (destroyed) return; if (!visible) { running = false; return; }
+    if (destroyed) return; if (!visible || document.hidden) { running = false; return; }
     const delta = Math.min((now - lastTime) / 1000, 1 / 30); lastTime = now; time += delta;
     const scrollTop = content.scrollTop; lag += scrollTop - lastScrollTop; lastScrollTop = scrollTop; lag *= Math.exp(-delta / 0.22); lag = Math.min(Math.max(lag, -400), 400); if (reducedMotion || Math.abs(lag) < 0.1) lag = 0;
     if (!introDone) { if (reducedMotion) introDone = true; else if (introReady) { introWait += delta; if (introWait >= 1) introDone = true; } }
@@ -279,19 +282,21 @@ function createParticleScroll(elements, options = {}) {
     if (!contentDirty && scrollSmooth === scrollTop && !rowsAnimating && rowsAssembled && introDone && lag === 0) { running = false; return; }
     raf = requestAnimationFrame(frame);
   }
-  function start() { if (destroyed || running || !visible) return; running = true; lastTime = performance.now(); raf = requestAnimationFrame(frame); }
+  function start() { if (destroyed || running || !visible || document.hidden) return; running = true; lastTime = performance.now(); raf = requestAnimationFrame(frame); }
   wake = start; start();
   function onScroll() { requestPaint(); start(); }
   (scrollTarget || content).addEventListener("scroll", onScroll, { passive: true });
   function onMotionChange() { reducedMotion = motionQuery.matches; start(); }
   motionQuery.addEventListener("change", onMotionChange);
+  function onVisibility() { if (!document.hidden && visible && !destroyed) { lastTime = performance.now(); start(); } else if (document.hidden && running) { running = false; cancelAnimationFrame(raf); } }
+  document.addEventListener("visibilitychange", onVisibility);
   const observer = new ResizeObserver(() => { syncCanvasSize(); start(); }); observer.observe(output);
   return {
     setOptions(next) { if (!Object.entries(next).some(([key, value]) => config[key] !== value)) return; Object.assign(config, next); start(); },
     resize() { syncCanvasSize(); start(); },
     setUnits(next) { units = next || []; start(); },
     repaint() { requestPaint(); start(); },
-    destroy() { destroyed = true; cancelAnimationFrame(raf); (scrollTarget || content).removeEventListener("scroll", onScroll); observer.disconnect(); motionQuery.removeEventListener("change", onMotionChange); gl.deleteTexture(contentTexture); gl.deleteTexture(rowTex); gl.deleteProgram(base.program); gl.deleteProgram(points.program); gl.deleteShader(base.vert); gl.deleteShader(base.frag); gl.deleteShader(points.vert); gl.deleteShader(points.frag); gl.deleteBuffer(quad); gl.deleteVertexArray(quadVao); gl.deleteVertexArray(pointVao); },
+    destroy() { destroyed = true; cancelAnimationFrame(raf); document.removeEventListener("visibilitychange", onVisibility); (scrollTarget || content).removeEventListener("scroll", onScroll); observer.disconnect(); motionQuery.removeEventListener("change", onMotionChange); gl.deleteTexture(contentTexture); gl.deleteTexture(rowTex); gl.deleteProgram(base.program); gl.deleteProgram(points.program); gl.deleteShader(base.vert); gl.deleteShader(base.frag); gl.deleteShader(points.vert); gl.deleteShader(points.frag); gl.deleteBuffer(quad); gl.deleteVertexArray(quadVao); gl.deleteVertexArray(pointVao); },
   };
 }
 

@@ -1586,7 +1586,8 @@ function createDriveTerrain(root, tcv, rcv, options) {
   }
 
   function resize() {
-    DPR = Math.min(2, window.devicePixelRatio || 1);
+    const isMobile = window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
+    DPR = Math.min(isMobile ? 1.5 : 2, window.devicePixelRatio || 1);
     const rootRect = root.getBoundingClientRect();
     CW = Math.max(1, Math.round(rootRect.width));
     CH = Math.max(1, Math.round(rootRect.height));
@@ -2083,6 +2084,10 @@ function createDriveTerrain(root, tcv, rcv, options) {
       }
     }
 
+    if (document.hidden) {
+      rafId = 0;
+      return;
+    }
     rafId = requestAnimationFrame(frame);
   }
 
@@ -2151,9 +2156,18 @@ function createDriveTerrain(root, tcv, rcv, options) {
   boxObserver.observe(root);
   window.addEventListener("resize", onResize);
 
+  const onVisibility = () => {
+    if (!document.hidden && !rafId && (inView || document.body.classList.contains('waitlist-mode'))) {
+      lastTime = performance.now();
+      rafId = requestAnimationFrame(frame);
+    }
+  };
+  document.addEventListener("visibilitychange", onVisibility);
+
   return function destroy() {
     window.clearTimeout(resizeTimer);
     boxObserver.disconnect();
+    document.removeEventListener("visibilitychange", onVisibility);
     window.removeEventListener("resize", onResize);
     window.removeEventListener("pointermove", onPointerMove);
     if (rafId) cancelAnimationFrame(rafId);
@@ -2359,7 +2373,8 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
 
       try {
         const fcard = waitlist.querySelector('.fcard') || waitlist;
-        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const isMobile = window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
+        const dpr = Math.min(isMobile ? 1.5 : 2, window.devicePixelRatio || 1);
 
         // Building blocks configuration matching createDriveTerrain
         const CELL = 7;
@@ -2471,8 +2486,11 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
             return;
           }
 
+          if (document.hidden) {
+            requestAnimationFrame(frame);
+            return;
+          }
           requestAnimationFrame(frame);
-          setTimeout(frame, 16);
         }
 
         frame();
@@ -4147,11 +4165,13 @@ renderer.shadowMap.autoUpdate = false;
 renderer.shadowMap.needsUpdate = true;
 let shadowDirty = 2;
 window.markShadows = () => { shadowDirty = 2; };
+let loopActive = false;
 function loop(now) {
-  if (document.body.classList.contains('waitlist-mode') && !document.body.classList.contains('machine')) {
-    requestAnimationFrame(loop);
+  if (document.hidden || (document.body.classList.contains('waitlist-mode') && !document.body.classList.contains('machine'))) {
+    loopActive = false;
     return;
   }
+  loopActive = true;
   // the lobby is the backdrop for the machine screen now, so it keeps drawing there
   const visible = (window.scrollY || 0) < lastH * 1.05 || document.body.classList.contains('machine');
   if (visible) {
@@ -4161,11 +4181,23 @@ function loop(now) {
   }
   requestAnimationFrame(loop);
 }
+
+function startLoop() {
+  if (!loopActive && !document.hidden && (!document.body.classList.contains('waitlist-mode') || document.body.classList.contains('machine'))) {
+    loopActive = true;
+    requestAnimationFrame(loop);
+  }
+}
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) startLoop();
+});
+window.__startThreeUILoop = startLoop;
+
 state.camFrom.copy(camBase); state.lookFrom.copy(camLook); camera.position.copy(camBase);
 resize();
 render(performance.now());
 loaderEl.classList.add('done');
-requestAnimationFrame(loop);
+startLoop();
 
 window.__slider = slider; window.__pend = () => pendants.map(p => ({ x: +p.ax.toFixed(4), z: +p.az.toFixed(4) }));
 window.__sblvl = { scene, camera, renderer, state, game, ball, TV, characters, bounds() { return characters.map(g => { const b = new THREE.Box3().setFromObject(g); return { min: b.min.toArray().map(v => +v.toFixed(3)), max: b.max.toArray().map(v => +v.toFixed(3)) }; }); }, steps: Array.from({ length: STEPS }, (_, i) => ({ min: [X_BOTTOM - (i + 1) * RUN, 0, Z0], max: [X_BOTTOM - i * RUN, STEP_TOP(i), i < 3 ? Z1 + 0.55 - i * 0.12 : Z1] })), setMode, showTV, throwBall, render: () => render(performance.now()), setMouse(x, y) { mouse.x = mouse.tx = x; mouse.y = mouse.ty = y; }, step(n) { for (let i = 0; i < n; i++) { gameStep(1 / 60); if (state.mode === 'hoop') ballStep(1 / 60); state.transT = Math.min(1, state.transT + 1 / 69); } }, get dpr() { return DPR; }, set dpr(v) { DPR = v; }, rt };
