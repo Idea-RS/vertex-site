@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resources | VERTEX — Drawing Intelligence &amp; FLIP 2D-to-3D CAD</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Technical resources, conversion benchmarks, architecture documentation, and engineering specifications for Vertex and FLIP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --k:#000;--w1:#e6e6e6;--w2:#c4c4c4;--g1:#757575;--g2:#2e2e2e;--o:#ff4d00;
+  --sans:"Geist","Geist Fallback",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Geist Mono","Geist Mono Fallback",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --line:rgba(230,230,230,.085);--line-soft:rgba(230,230,230,.05);
+  --maxw:82.5rem;--gutter:16px;
+}
+@font-face{font-family:"Geist Fallback";src:local(Arial);ascent-override:95.94%;descent-override:28.16%;line-gap-override:0%;size-adjust:104.76%}
+@font-face{font-family:"Geist Mono Fallback";src:local(Arial);ascent-override:74.67%;descent-override:21.92%;line-gap-override:0%;size-adjust:134.59%}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:#000}
+body{background:var(--k);color:#fff;font-family:var(--sans);font-size:16px;line-height:24px;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul{list-style:none}
+img,svg{display:block}
+::selection{background:var(--o);color:#000}
+
+/* ---------- particle scroll (Canvas UI) ---------- */
+#ps-output{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:850}
+.ps-hidden{visibility:hidden}
+@media (prefers-reduced-motion:reduce){.ps-hidden{visibility:visible}}
+
+.f-h0{font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; letter-spacing: -.035em; font-weight: 400;}
+.f-h1{font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.15; letter-spacing: -.03em; font-weight: 400;}
+.f-h2{font-size: 2rem; line-height: 2.25rem; letter-spacing: -.03em; font-weight: 400;}
+.f-h3{font-size: 1.35rem; line-height: 1.6rem; letter-spacing: -.02em; font-weight: 500;}
+.f-h4{font-size: 1.1rem; line-height: 1.5rem; letter-spacing: -.015em; font-weight: 500;}
+.f-p{font-size: .875rem; line-height: 1.35rem; letter-spacing: 0; font-weight: 400;}
+.f-nav{font-size: .75rem; line-height: 1rem; font-weight: 600;}
+
+.grid-layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
+
+/* topnav */
+#topnav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justify-content:center;padding:12px var(--gutter);pointer-events:none}
+#topnav .pillbar{pointer-events:auto;position:relative;display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 8px 0 16px;border-radius:2px;border:1px solid rgba(255,255,255,.14);background:rgba(10,10,12,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 8px 32px rgba(0,0,0,.65);width:min(1080px,calc(100% - 24px))}
+#topnav .logo{display:flex;align-items:center;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff}
+#topnav .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--g1);white-space:nowrap;pointer-events:auto}
+#topnav .center a{padding:6px 14px;border-radius:2px;transition:all .2s ease;color:var(--g1);text-decoration:none}
+#topnav .center a:hover{color:#fff;background:rgba(255,255,255,.08)}
+#topnav .center a.active{color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#topnav .right{display:flex;align-items:center;gap:8px;margin-left:auto}
+#topnav .term{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border-radius:2px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--g1);border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+#topnav .term .led{width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
+#topnav .term .prompt{color:rgba(255,255,255,.4)}
+#topnav .btn-join{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 14px;border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#000;background:#f4f4f2;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 14px rgba(255,255,255,.2);transition:all .2s ease}
+#topnav .btn-join:hover{background:#ffffff;box-shadow:0 0 20px rgba(255,255,255,.5);transform:translateY(-1px)}
+#topnav .icon{display:grid;place-items:center;width:30px;height:30px;border-radius:2px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:var(--w2);transition:all .2s}
+#topnav .icon:hover{color:#fff;background:rgba(255,255,255,.08)}
+#topnav .icon svg{width:14px;height:14px;fill:currentColor}
+
+/* decorative lines & framed elements */
+.vrules{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.vrules i{position:relative;display:block}
+.vrules i::before{content:"";position:absolute;top:0;bottom:0;left:0;width:1px;background:var(--line-soft)}
+.vrules i:last-child::after{content:"";position:absolute;top:0;bottom:0;right:0;width:1px;background:var(--line-soft)}
+
+.rule{border:0;height:1px;width:100%;background:var(--line)}
+.framed{position:relative;border:1px solid var(--line);padding:28px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0))}
+.framed.label{padding:8px 14px;width:max-content}
+.framed .corner{position:absolute;width:5px;height:5px;border:1px solid rgba(230,230,230,.28)}
+.framed .corner.tl{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.framed .corner.tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
+.framed .corner.bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
+.framed .corner.br{bottom:-1px;right:-1px;border-left:0;border-top:0}
+
+/* layout structure */
+#layout{position:relative;z-index:1;background:#000;padding-top:120px;padding-bottom:60px}
+main{display:flex;flex-direction:column;gap:80px}
+.hero-resources{display:flex;flex-direction:column;gap:24px}
+.eyebrow{grid-column:1/-1;display:flex;align-items:center;gap:16px;color:var(--g1);font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.eyebrow .rule{flex:1}
+.resources-header{grid-column:1/-1;display:flex;flex-direction:column;gap:18px}
+.resources-header h1{color:var(--w1);text-wrap:pretty}
+.resources-header .lede{color:var(--w2);max-width:52rem;font-weight:400}
+
+/* cards grid */
+.cards-section{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.res-card{grid-column:span 6;display:flex;flex-direction:column;gap:16px;padding:26px}
+.res-card.full{grid-column:span 12}
+.res-card h3{color:var(--w1)}
+.res-card p{color:var(--w2);line-height:1.6}
+.res-card .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:12px}
+.res-card .tags span{font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.06);padding:3px 8px;border-radius:2px;color:var(--w1);border:1px solid rgba(255,255,255,.08)}
+.res-card .action-link{font-family:var(--mono);font-size:12px;color:var(--o);margin-top:4px;display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.res-card .action-link:hover{text-decoration:underline}
+
+/* contact banner */
+.contact-banner{grid-column:1/-1;padding:36px;display:flex;flex-direction:column;gap:16px}
+.contact-banner h2{color:var(--w1)}
+.contact-banner p{color:var(--w2);max-width:48rem}
+.contact-banner .mail{font-family:var(--mono);font-size: clamp(1.2rem, 3vw, 2rem);font-weight:600;color:var(--w1);margin-top:12px}
+.contact-banner .mail a:hover{color:var(--o);text-decoration:underline}
+
+/* footer */
+footer{position:relative;z-index:1;margin-top:80px;display:flex;flex-direction:column;gap:40px}
+.fcard-wrap{grid-column:1/-1;width:100%;max-width:var(--maxw);margin:0 auto;display:flex;justify-content:center;padding:48px var(--gutter)}
+.fcard{width:100%;max-width:38rem;margin:0 auto;padding:36px;display:flex;flex-direction:column;gap:16px;background:rgba(255,255,255,.02);border:1px solid var(--line)}
+.fcard .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--o)}
+.fcard h3{color:var(--w1)}
+.fcard .sub{color:var(--w2);max-width:44rem}
+.signup{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.signup input{flex:1;min-width:260px;max-width:420px;height:42px;padding:0 16px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:2px;color:#fff;font-family:var(--sans);font-size:14px}
+.signup input:focus{outline:none;border-color:rgba(255,255,255,.3)}
+.signup button{height:42px;padding:0 22px;background:#fff;color:#000;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;transition:all .2s;cursor:pointer}
+.signup button:hover{background:#f0f0f0;box-shadow:0 0 20px rgba(255,255,255,.4)}
+.fcard .fine{font-family:var(--mono);font-size:11px;color:var(--g1)}
+.mark{grid-column:1/-1;overflow:hidden}
+.mark svg{width:100%;height:auto;fill:rgba(255,255,255,.1)}
+.bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;padding:20px var(--gutter);border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--g1)}
+.bottom .links{display:flex;gap:18px;flex-wrap:wrap}
+.bottom .links a:hover{color:#fff}
+.bottom .copy{color:var(--g1)}
+
+@media(max-width:1080px){
+  #topnav .term .prompt{display:none}
+}
+@media(max-width:768px){
+  .res-card{grid-column:span 12}
+  #topnav .center{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav id="topnav" aria-label="Main Navigation">
+  <div class="pillbar">
+    <a class="logo" href="sublevel-studio.html#top" aria-label="VERTEX"><span class="wordmark">VERTEX</span></a>
+    <div class="center">
+      <a href="sublevel-studio.html#top">FLIP</a>
+      <a href="resources.html" class="active">Resources</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="right">
+      <div class="term" title="System Status"><span class="led"></span><span class="prompt">agent@vertex</span><span class="txt">online</span></div>
+      <a class="icon mail" href="mailto:founder@tryvertex.tech" aria-label="Email founders" title="founder@tryvertex.tech"><svg viewBox="0 0 20 20"><path d="M3 4.5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Zm.6 1.5 6.4 4.9L16.4 6H3.6ZM3.5 7.6v7.3h13V7.6L10 12.5 3.5 7.6Z"/></svg></a>
+      <a class="btn-join" href="sublevel-studio.html#waitlist" title="Join FLIP Waitlist">Join</a>
+    </div>
+  </div>
+</nav>
+
+<div class="vrules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+<div id="layout">
+<main>
+  <!-- Hero Section -->
+  <section class="grid-layout hero-resources">
+    <div class="eyebrow">
+      <span data-ps>Vertex — Technical Resources &amp; Specifications</span>
+      <hr class="rule">
+      <span data-ps>Revision 10 · Active</span>
+    </div>
+    <div class="resources-header">
+      <div class="framed label" data-ps><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span style="font-family:var(--mono);font-size:11px;color:var(--o);letter-spacing:.1em;text-transform:uppercase;">Documentation</span></div>
+      <h1 class="f-h0" data-ps>Technical Resources &amp; Specifications</h1>
+      <p class="f-h4 lede" data-ps>Technical specifications, CAD kernel benchmarks, dual-gate verification protocols, and manufacturing standard references for engineers and developers.</p>
+    </div>
+  </section>
+
+  <!-- Resources Template Cards (Details can be added later) -->
+  <section class="grid-layout cards-section">
+    <div class="framed res-card full">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 class="f-h2" data-ps>Working Spec — Revision 10 (September 2026)</h3>
+      <p class="f-p" data-ps>The complete architectural specification defining Drawing Intelligence for Mid-Market Manufacturers. Details the harness-and-verify FLIP pipeline, the four honest verdict states, the key-first verification rule, and Features 1–13 spanning archive geometric retrieval, ASME Y14.5 conformance, change impact analysis, and drawing regeneration.</p>
+      <div class="tags">
+        <span data-ps>Working Spec Rev 10</span>
+        <span data-ps>Harness &amp; Verify</span>
+        <span data-ps>Features 1–13</span>
+        <span data-ps>Architecture Guide</span>
+      </div>
+      <a class="action-link" href="mailto:founder@tryvertex.tech?subject=Request%20Full%20Spec%20Rev%2010" data-ps>Request Full Spec PDF →</a>
+    </div>
+
+    <div class="framed res-card">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 class="f-h3" data-ps>Ground-Truth Verification Benchmarks</h3>
+      <p class="f-p" data-ps>Measured conversion benchmarks against known-good answer keys and professional solids. Evaluates IoU silhouette overlap, axis dimension matching, and torus fillet recognition across real factory prints.</p>
+      <div class="tags">
+        <span data-ps>EEI-3681 (93-98% IoU)</span>
+        <span data-ps>Bracket Photo (16/16 Verified)</span>
+        <span data-ps>Pump Cover (10/10 Matched)</span>
+        <span data-ps>Bit-Identical STEP Cache</span>
+      </div>
+      <a class="action-link" href="mailto:founder@tryvertex.tech?subject=Benchmark%20Data%20Access" data-ps>View Benchmark Data →</a>
+    </div>
+
+    <div class="framed res-card">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 class="f-h3" data-ps>Dual-Gate Referee Architecture</h3>
+      <p class="f-p" data-ps>Deep dive into the referee layer: Size Gate matching stated values along principal axes, and Form Gate projecting silhouettes scored at 0.5 mm/px IoU with symmetric boundary deviation. How unstated features are catalogued.</p>
+      <div class="tags">
+        <span data-ps>Size Gate</span>
+        <span data-ps>Form Gate</span>
+        <span data-ps>Section Gate (Detail C)</span>
+        <span data-ps>Silhouette Scoring</span>
+      </div>
+      <a class="action-link" href="mailto:founder@tryvertex.tech?subject=Referee%20Architecture%20Doc" data-ps>Read Referee Paper →</a>
+    </div>
+
+    <div class="framed res-card">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 class="f-h3" data-ps>Supported Standards &amp; Ingest Formats</h3>
+      <p class="f-p" data-ps>Implementation details for native 2D DWG and DXF vector extraction, multi-page PDF region segmentation, ASME Y14.5 feature control frame syntax, ISO GPS conformance, and downstream CAM STEP AP242 export.</p>
+      <div class="tags">
+        <span data-ps>ASME Y14.5</span>
+        <span data-ps>ISO GPS</span>
+        <span data-ps>DWG / DXF Ingestion</span>
+        <span data-ps>STEP AP242 B-Rep</span>
+      </div>
+      <a class="action-link" href="mailto:founder@tryvertex.tech?subject=Standards%20Guide" data-ps>Standards Reference →</a>
+    </div>
+
+    <div class="framed res-card">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 class="f-h3" data-ps>Air-Gapped 72.7 MB Deployment Bundle</h3>
+      <p class="f-p" data-ps>Technical guide for running Vertex and FLIP completely self-contained on factory networks. No external API dependencies, zero retention of proprietary geometry, and full ITAR-compliant operational isolation.</p>
+      <div class="tags">
+        <span data-ps>Air-Gapped Setup</span>
+        <span data-ps>72.7 MB Bundle (O170)</span>
+        <span data-ps>Zero Network Transit</span>
+        <span data-ps>Docker Container</span>
+      </div>
+      <a class="action-link" href="mailto:founder@tryvertex.tech?subject=Air-Gapped%20Deployment" data-ps>Self-Host Setup Guide →</a>
+    </div>
+  </section>
+
+  <!-- Contact Banner -->
+  <section class="grid-layout">
+    <div class="framed contact-banner">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h2 class="f-h2" data-ps>Need Technical Collaboration?</h2>
+      <p class="f-h4" data-ps>We collaborate with CAD/CAM developers, discrete manufacturing engineers, and machine shops. If you need API specifications or custom integration documentation, contact the engineering team.</p>
+      <div class="mail" data-ps><a href="mailto:founder@tryvertex.tech">founder@tryvertex.tech</a></div>
+      <p class="f-p" style="color:var(--g1);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;">Raahil Desai (Ahmedabad) · Shubh (Atlanta)</p>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer id="blog">
+  <div class="grid-layout"><hr class="rule" style="grid-column:1/-1"></div>
+
+  <div class="grid-layout fcard-wrap" id="waitlist">
+    <div class="fcard framed">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <p class="tag" data-ps>FLIP Early Access &amp; Waitlist</p>
+      <h3 class="f-h2" data-ps>Bring 2D legacy prints into 3D CAD.</h3>
+      <p class="sub f-h4" data-ps>Send any engineering drawing (DWG, DXF, or PDF) and receive a verified 3D STEP solid with honest dimension verification.</p>
+      <form class="signup" action="mailto:founder@tryvertex.tech" method="GET">
+        <input type="email" name="email" placeholder="engineer@plant.com" aria-label="Email address" required autocomplete="email">
+        <button type="submit">Join Waitlist</button>
+      </form>
+      <p class="fine">Zero data retention. Customer prints never train third-party models.</p>
+    </div>
+  </div>
+
+  <div class="grid-layout">
+    <div class="mark"><svg viewBox="0 0 1673 149" xmlns="http://www.w3.org/2000/svg" aria-label="VERTEX"><text x="50%" y="132" text-anchor="middle" font-family="Geist, 'Geist Fallback', Arial, sans-serif" font-weight="600" font-size="168" letter-spacing="40">VERTEX</text></svg></div>
+  </div>
+
+  <div class="grid-layout bottom">
+    <div class="links">
+      <a href="sublevel-studio.html#top">FLIP 2D→3D</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="sublevel-studio.html#showcase">Standards</a>
+      <a href="sublevel-studio.html#work">Features</a>
+      <a href="mailto:founder@tryvertex.tech">Contact</a>
+    </div>
+    <p class="copy">© 2026 Vertex Technologies Inc. (tryvertex.tech) · Drawing Intelligence for Mid-Market Manufacturers</p>
+  </div>
+</footer>
+</div>
+
+<script src="/js/particle-scroll.js"></script>
+<script>
+if (window.ParticleScroll && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  window.__ps = window.ParticleScroll.mountParticleScroll('[data-ps]', {
+    point: 0.68,
+    band: 330,
+    density: 2,
+    size: 1.25,
+    spread: 200,
+    gravity: 0.35,
+    drift: 0.9,
+    swirl: 70,
+    stagger: 0.55,
+    fade: 0.42,
+    settle: 0.7,
+    hold: 1.15,
+    smoothing: 0.26,
+    tintA: [1.0, 0.3, 0.0],
+    tintB: [1.0, 0.82, 0.2]
+  });
+}
+</script>
+</body>
+</html>

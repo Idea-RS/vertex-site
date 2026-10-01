@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About | VERTEX — Drawing Intelligence for Mid-Market Manufacturers</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="About Vertex: Building AI in engineering. Converting 2D drawings into checked 3D STEP solids with honest dimension verification. Founded by Raahil Desai and Shubh.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --k:#000;--w1:#e6e6e6;--w2:#c4c4c4;--g1:#757575;--g2:#2e2e2e;--o:#ff4d00;
+  --sans:"Geist","Geist Fallback",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Geist Mono","Geist Mono Fallback",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --line:rgba(230,230,230,.085);--line-soft:rgba(230,230,230,.05);
+  --maxw:82.5rem;--gutter:16px;
+}
+@font-face{font-family:"Geist Fallback";src:local(Arial);ascent-override:95.94%;descent-override:28.16%;line-gap-override:0%;size-adjust:104.76%}
+@font-face{font-family:"Geist Mono Fallback";src:local(Arial);ascent-override:74.67%;descent-override:21.92%;line-gap-override:0%;size-adjust:134.59%}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:#000}
+body{background:var(--k);color:#fff;font-family:var(--sans);font-size:16px;line-height:24px;font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul{list-style:none}
+img,svg{display:block}
+::selection{background:var(--o);color:#000}
+
+/* ---------- particle scroll (Canvas UI) ---------- */
+#ps-output{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:850}
+.ps-hidden{visibility:hidden}
+@media (prefers-reduced-motion:reduce){.ps-hidden{visibility:visible}}
+
+.f-h0{font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; letter-spacing: -.035em; font-weight: 400;}
+.f-h1{font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.15; letter-spacing: -.03em; font-weight: 400;}
+.f-h2{font-size: 2rem; line-height: 2.25rem; letter-spacing: -.03em; font-weight: 400;}
+.f-h3{font-size: 1.35rem; line-height: 1.6rem; letter-spacing: -.02em; font-weight: 500;}
+.f-h4{font-size: 1.1rem; line-height: 1.5rem; letter-spacing: -.015em; font-weight: 500;}
+.f-p{font-size: .875rem; line-height: 1.35rem; letter-spacing: 0; font-weight: 400;}
+.f-nav{font-size: .75rem; line-height: 1rem; font-weight: 600;}
+
+.grid-layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
+
+/* topnav */
+#topnav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justify-content:center;padding:12px var(--gutter);pointer-events:none}
+#topnav .pillbar{pointer-events:auto;position:relative;display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 8px 0 16px;border-radius:2px;border:1px solid rgba(255,255,255,.14);background:rgba(10,10,12,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 8px 32px rgba(0,0,0,.65);width:min(1080px,calc(100% - 24px))}
+#topnav .logo{display:flex;align-items:center;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff}
+#topnav .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--g1);white-space:nowrap;pointer-events:auto}
+#topnav .center a{padding:6px 14px;border-radius:2px;transition:all .2s ease;color:var(--g1);text-decoration:none}
+#topnav .center a:hover{color:#fff;background:rgba(255,255,255,.08)}
+#topnav .center a.active{color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#topnav .right{display:flex;align-items:center;gap:8px;margin-left:auto}
+#topnav .term{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border-radius:2px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--g1);border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03)}
+#topnav .term .led{width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
+#topnav .term .prompt{color:rgba(255,255,255,.4)}
+#topnav .btn-join{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 14px;border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#000;background:#f4f4f2;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 14px rgba(255,255,255,.2);transition:all .2s ease}
+#topnav .btn-join:hover{background:#ffffff;box-shadow:0 0 20px rgba(255,255,255,.5);transform:translateY(-1px)}
+#topnav .icon{display:grid;place-items:center;width:30px;height:30px;border-radius:2px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:var(--w2);transition:all .2s}
+#topnav .icon:hover{color:#fff;background:rgba(255,255,255,.08)}
+#topnav .icon svg{width:14px;height:14px;fill:currentColor}
+
+/* decorative lines & framed elements */
+.vrules{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.vrules i{position:relative;display:block}
+.vrules i::before{content:"";position:absolute;top:0;bottom:0;left:0;width:1px;background:var(--line-soft)}
+.vrules i:last-child::after{content:"";position:absolute;top:0;bottom:0;right:0;width:1px;background:var(--line-soft)}
+
+.rule{border:0;height:1px;width:100%;background:var(--line)}
+.framed{position:relative;border:1px solid var(--line);padding:28px;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0))}
+.framed.label{padding:8px 14px;width:max-content}
+.framed .corner{position:absolute;width:5px;height:5px;border:1px solid rgba(230,230,230,.28)}
+.framed .corner.tl{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.framed .corner.tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
+.framed .corner.bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
+.framed .corner.br{bottom:-1px;right:-1px;border-left:0;border-top:0}
+
+/* layout structure */
+#layout{position:relative;z-index:1;background:#000;padding-top:120px;padding-bottom:60px}
+main{display:flex;flex-direction:column;gap:80px}
+.hero-about{display:flex;flex-direction:column;gap:24px}
+.eyebrow{grid-column:1/-1;display:flex;align-items:center;gap:16px;color:var(--g1);font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.eyebrow .rule{flex:1}
+.about-header{grid-column:1/-1;display:flex;flex-direction:column;gap:18px}
+.about-header h1{color:var(--w1);text-wrap:pretty}
+.about-header .lede{color:var(--w2);max-width:52rem;font-weight:400}
+
+/* cards grid */
+.cards-section{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.about-card{grid-column:span 6;display:flex;flex-direction:column;gap:16px;padding:26px}
+.about-card.full{grid-column:span 12}
+.about-card.third{grid-column:span 4}
+.about-card .sec-tag{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--o)}
+@media(max-width:960px){
+  .about-card{grid-column:span 12}
+  .about-card.third{grid-column:span 12}
+}
+.about-card h3{color:var(--w1)}
+.about-card p{color:var(--w2);line-height:1.6}
+.about-card .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:12px}
+.about-card .tags span{font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.06);padding:3px 8px;border-radius:2px;color:var(--w1);border:1px solid rgba(255,255,255,.08)}
+
+/* contact banner */
+.contact-banner{grid-column:1/-1;padding:36px;display:flex;flex-direction:column;gap:16px}
+.contact-banner h2{color:var(--w1)}
+.contact-banner p{color:var(--w2);max-width:48rem}
+.contact-banner .mail{font-family:var(--mono);font-size: clamp(1.2rem, 3vw, 2rem);font-weight:600;color:var(--w1);margin-top:12px}
+.contact-banner .mail a:hover{color:var(--o);text-decoration:underline}
+
+/* Founders Section */
+.founders-section{grid-column:1/-1;display:flex;flex-direction:column;gap:20px;position:relative}
+.founders-tab-nav{display:flex;gap:12px;flex-wrap:wrap;z-index:2}
+.founder-tab-btn{display:inline-flex;align-items:center;gap:12px;padding:10px 22px;background:rgba(18,18,20,.7);border:1px solid rgba(255,255,255,.14);border-radius:2px;color:var(--w2);cursor:pointer;transition:all .2s ease;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.founder-tab-btn:hover{background:rgba(32,32,36,.9);color:#fff;border-color:rgba(255,255,255,.28)}
+.founder-tab-btn.active{background:rgba(255,77,0,.15);border-color:var(--o);color:#fff;box-shadow:0 0 16px rgba(255,77,0,.3), inset 0 1px 0 rgba(255,255,255,.25)}
+.founder-tab-btn .tab-idx{color:var(--o);font-weight:700}
+.founder-tab-btn .tab-loc{color:var(--g1);font-size:10px;letter-spacing:.08em}
+.founder-tab-btn.active .tab-loc{color:rgba(255,255,255,.7)}
+
+.founders-panels{width:100%}
+.founder-panel{position:relative;background:rgba(10,10,12,.7);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);padding:38px}
+.founder-grid{display:grid;grid-template-columns:280px 1fr;gap:40px;align-items:start}
+
+.founder-photo-wrap{position:relative;width:100%;max-width:280px;aspect-ratio:1/1.15;background:#0d0e12;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+.founder-photo{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(15%) contrast(105%);transition:filter .4s ease,transform .4s ease}
+.founder-photo-wrap:hover .founder-photo{filter:grayscale(0%) contrast(108%);transform:scale(1.02)}
+.founder-photo-wrap .photo-tag{position:absolute;bottom:8px;left:8px;z-index:2;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--o);background:rgba(0,0,0,.8);padding:3px 8px;border:1px solid rgba(255,77,0,.4)}
+
+.founder-info{display:flex;flex-direction:column;gap:18px}
+.founder-role{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--o)}
+.founder-name{color:var(--w1);margin-top:2px}
+.founder-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.founder-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--w1);border-radius:2px}
+.founder-badge.honor-badge{background:rgba(255,77,0,.15);border-color:rgba(255,77,0,.5);color:#ff8142;box-shadow:0 0 14px rgba(255,77,0,.25)}
+.founder-badge .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--o);box-shadow:0 0 6px var(--o)}
+
+.founder-desc{color:var(--w2);font-weight:400;line-height:1.6;text-wrap:pretty}
+
+.founder-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;padding-top:18px;border-top:1px solid var(--line);margin-top:6px}
+.founder-socials{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.social-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--w2);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.02em;border-radius:2px;transition:all .2s ease;text-decoration:none}
+.social-chip svg{width:14px;height:14px;fill:currentColor}
+.social-chip:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3);box-shadow:0 0 12px rgba(255,255,255,.2);transform:translateY(-1px)}
+.founder-contact-direct .direct-link{font-family:var(--mono);font-size:11px;color:var(--g1);display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.founder-contact-direct .direct-link .val{color:var(--w1);text-decoration:underline}
+.founder-contact-direct .direct-link:hover .val{color:var(--o)}
+
+/* footer */
+footer{position:relative;z-index:1;margin-top:80px;display:flex;flex-direction:column;gap:40px}
+.fcard-wrap{grid-column:1/-1;width:100%;max-width:var(--maxw);margin:0 auto;display:flex;justify-content:center;padding:48px var(--gutter)}
+.fcard{width:100%;max-width:38rem;margin:0 auto;padding:36px;display:flex;flex-direction:column;gap:16px;background:rgba(255,255,255,.02);border:1px solid var(--line)}
+.fcard .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--o)}
+.fcard h3{color:var(--w1)}
+.fcard .sub{color:var(--w2);max-width:44rem}
+.signup{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.signup input{flex:1;min-width:260px;max-width:420px;height:42px;padding:0 16px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:2px;color:#fff;font-family:var(--sans);font-size:14px}
+.signup input:focus{outline:none;border-color:rgba(255,255,255,.3)}
+.signup button{height:42px;padding:0 22px;background:#fff;color:#000;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;transition:all .2s;cursor:pointer}
+.signup button:hover{background:#f0f0f0;box-shadow:0 0 20px rgba(255,255,255,.4)}
+.fcard .fine{font-family:var(--mono);font-size:11px;color:var(--g1)}
+.mark{grid-column:1/-1;overflow:hidden}
+.mark svg{width:100%;height:auto;fill:rgba(255,255,255,.1)}
+.bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;padding:20px var(--gutter);border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--g1)}
+.bottom .links{display:flex;gap:18px;flex-wrap:wrap}
+.bottom .links a:hover{color:#fff}
+.bottom .copy{color:var(--g1)}
+
+@media(max-width:1080px){
+  #topnav .term .prompt{display:none}
+}
+@media(max-width:768px){
+  .about-card{grid-column:span 12}
+  #topnav .center{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav id="topnav" aria-label="Main Navigation">
+  <div class="pillbar">
+    <a class="logo" href="sublevel-studio.html#top" aria-label="VERTEX"><span class="wordmark">VERTEX</span></a>
+    <div class="center">
+      <a href="sublevel-studio.html#top">FLIP</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html" class="active">About</a>
+    </div>
+    <div class="right">
+      <div class="term" title="System Status"><span class="led"></span><span class="prompt">agent@vertex</span><span class="txt">online</span></div>
+      <a class="icon mail" href="mailto:founder@tryvertex.tech" aria-label="Email founders" title="founder@tryvertex.tech"><svg viewBox="0 0 20 20"><path d="M3 4.5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Zm.6 1.5 6.4 4.9L16.4 6H3.6ZM3.5 7.6v7.3h13V7.6L10 12.5 3.5 7.6Z"/></svg></a>
+      <a class="btn-join" href="sublevel-studio.html#waitlist" title="Join FLIP Waitlist">Join</a>
+    </div>
+  </div>
+</nav>
+
+<div class="vrules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+<div id="layout">
+<main>
+  <!-- Hero Section -->
+  <section class="grid-layout hero-about">
+    <div class="eyebrow">
+      <span data-ps>VERTEX // VISION &amp; ARCHITECTURE</span>
+      <hr class="rule">
+      <span data-ps>EST. 2026 · REV 10</span>
+    </div>
+    <div class="about-header">
+      <div class="framed label" data-ps><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><span style="font-family:var(--mono);font-size:11px;color:var(--o);letter-spacing:.1em;text-transform:uppercase;">About Vertex</span></div>
+      <h1 class="f-h0" data-ps>Empowering engineers with the tools of tomorrow.</h1>
+      <p class="f-h4 lede" data-ps>The tech stack hardware engineers and manufacturers rely on today was built for a world without AI. We're changing that.</p>
+    </div>
+  </section>
+
+  <!-- Vision & History Section -->
+  <section class="grid-layout cards-section">
+    <!-- The Vision -->
+    <div class="framed about-card full">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span class="sec-tag" data-ps>01 // THE VISION</span>
+      <h2 class="f-h2" data-ps>Compressing decades of engineering drafting into seconds.</h2>
+      <p class="f-p" data-ps>The physical world moves slower than software because hardware design still runs on paper, static PDFs, and legacy 2D linework. Behind every jet turbine, hydraulic pump, die-cast casing, and precision tooling block sits an engineering drawing.</p>
+      <p class="f-p" data-ps>Over 80% of active manufacturing inventory is locked in legacy sheets that modern CAM, simulation, and 3D modeling pipelines cannot parse. Senior tooling engineers lose 4 to 12 hours on every RFQ manually re-authoring CAD from scratch.</p>
+      <p class="f-p" data-ps>The hardest problems ahead are physical ones: aerospace, defense, clean energy, precision tooling, and robotics. They all start with a drawing. We're building the drawing intelligence layer to unlock the physical world.</p>
+      <div class="tags">
+        <span data-ps>2D Drawing Intelligence</span>
+        <span data-ps>Zero Drafting Backlog</span>
+        <span data-ps>Sub-Minute 3D CAD</span>
+        <span data-ps>Physical Engineering</span>
+      </div>
+    </div>
+
+    <!-- The History -->
+    <div class="framed about-card full">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span class="sec-tag" data-ps>02 // THE HISTORY</span>
+      <h2 class="f-h2" data-ps>Built from the factory floor, not from an ivory tower.</h2>
+      <p class="f-p" data-ps>We didn't invent Vertex inside a theoretical laboratory. We built it directly from the machine shop floor.</p>
+      <p class="f-p" data-ps>Partnered with precision tooling plants and die-casters in Ahmedabad with over fifteen years of production archives, we saw firsthand why legacy OCR and generative tools fail in manufacturing: silent passes, hallucinated radiuses, and unverified assumptions that scrap hundred-thousand-dollar tooling dies.</p>
+      <p class="f-p" data-ps>We founded Vertex to replace probabilistic guesswork with mathematical determinism: the frontier AI model reads the drawing and authors Python code; build123d and OpenCASCADE generate exact boundary-representation (B-Rep) STEP solids; and our dual-gate referee system validates every stated dimension against ground truth.</p>
+      <div class="tags">
+        <span data-ps>15+ Years Plant Archive</span>
+        <span data-ps>Shop Floor Provenance</span>
+        <span data-ps>Exalt Engineering Partner</span>
+        <span data-ps>OpenCASCADE B-Rep</span>
+      </div>
+    </div>
+
+    <!-- Principle 1 -->
+    <div class="framed about-card third">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span class="sec-tag" data-ps>PRINCIPLE // 01</span>
+      <h3 class="f-h3" data-ps>Code Over Hallucination</h3>
+      <p class="f-p" data-ps>The model authors; code generates. We believe geometry generation will commoditize while deterministic mathematical verification remains the durable wedge.</p>
+      <div class="tags">
+        <span data-ps>build123d</span>
+        <span data-ps>OpenCASCADE</span>
+        <span data-ps>Zero Meshes</span>
+      </div>
+    </div>
+
+    <!-- Principle 2 -->
+    <div class="framed about-card third">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span class="sec-tag" data-ps>PRINCIPLE // 02</span>
+      <h3 class="f-h3" data-ps>Four Honest Verdicts</h3>
+      <p class="f-p" data-ps>No silent approvals. Every run reports Verified, Needs Review, or Failed. Every unstated dimension is catalogued openly in an auditable ledger.</p>
+      <div class="tags">
+        <span data-ps>Size Gate</span>
+        <span data-ps>Form Gate IoU</span>
+        <span data-ps>Audit Ledger</span>
+      </div>
+    </div>
+
+    <!-- Principle 3 -->
+    <div class="framed about-card third">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span class="sec-tag" data-ps>PRINCIPLE // 03</span>
+      <h3 class="f-h3" data-ps>Air-Gapped IP Sovereignty</h3>
+      <p class="f-p" data-ps>Customer drawings and geometry never train external models. A self-contained 72.7 MB bundle engineered with zero network egress for defense and ITAR plants.</p>
+      <div class="tags">
+        <span data-ps>Zero Retention</span>
+        <span data-ps>72.7 MB Bundle</span>
+        <span data-ps>ITAR Ready</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-layout founders-section" id="founders">
+    <div class="framed label" style="grid-column:1/-1;"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><h2 class="f-h3" data-ps>Founders &amp; Leadership</h2></div>
+    
+    <div class="founders-tab-nav" role="tablist" aria-label="Founder profiles">
+      <button class="founder-tab-btn active" id="tab-btn-raahil" role="tab" aria-selected="true" aria-controls="panel-raahil" onclick="switchFounderTab('raahil')">
+        <span class="tab-idx">01</span>
+        <span class="tab-name" data-ps>Raahil Desai</span>
+        <span class="tab-loc">Ahmedabad · IN</span>
+      </button>
+      <button class="founder-tab-btn" id="tab-btn-shubh" role="tab" aria-selected="false" aria-controls="panel-shubh" onclick="switchFounderTab('shubh')">
+        <span class="tab-idx">02</span>
+        <span class="tab-name" data-ps>Shubh Patel</span>
+        <span class="tab-loc">Atlanta · US</span>
+      </button>
+    </div>
+
+    <div class="founders-panels">
+      <!-- Raahil Desai Panel -->
+      <div class="founder-panel active framed" id="panel-raahil" role="tabpanel" aria-labelledby="tab-btn-raahil">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div class="founder-grid">
+          <div class="founder-photo-wrap framed" data-ps>
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <img crossorigin="anonymous" src="/images/Raahil_desai.png" alt="Raahil Desai - Co-Founder" class="founder-photo">
+            <span class="photo-tag">FOUNDER // 01</span>
+          </div>
+          <div class="founder-info">
+            <div class="founder-header">
+              <span class="founder-role" data-ps>Co-Founder &amp; Engineering</span>
+              <h3 class="founder-name f-h1" data-ps>Raahil Desai</h3>
+              <div class="founder-badges">
+                <span class="founder-badge honor-badge" data-ps><span class="badge-dot"></span> NASA Space Apps finalist '25</span>
+                <span class="founder-badge" data-ps>Ahmedabad, India</span>
+                <span class="founder-badge" data-ps>Exalt Engineering Partner</span>
+              </div>
+            </div>
+            <p class="founder-desc f-h4" data-ps>Leading drawing intelligence architecture, vector extraction from legacy prints, and geometric solid generation with build123d &amp; OpenCASCADE. Partnered with discrete precision manufacturers to solve drawing redundancy at plant scale.</p>
+            <div class="founder-footer">
+              <div class="founder-socials">
+                <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-chip" aria-label="Raahil on X (Twitter)" title="X / Twitter">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 24.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  <span>@raahildesai</span>
+                </a>
+                <a href="https://linkedin.com/in" target="_blank" rel="noopener noreferrer" class="social-chip" aria-label="Raahil on LinkedIn" title="LinkedIn">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451c.979 0 1.778-.773 1.778-1.729V1.73C24 .774 23.205 0 22.225 0z"/></svg>
+                  <span>LinkedIn</span>
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-chip" aria-label="Raahil on Instagram" title="Instagram">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  <span>Instagram</span>
+                </a>
+              </div>
+              <div class="founder-contact-direct">
+                <a href="mailto:founder@tryvertex.tech" class="direct-link"><span class="lbl">Direct channel:</span> <span class="val">founder@tryvertex.tech</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shubh Patel Panel -->
+      <div class="founder-panel framed" id="panel-shubh" role="tabpanel" aria-labelledby="tab-btn-shubh" style="display:none;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div class="founder-grid">
+          <div class="founder-photo-wrap framed" data-ps>
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <img crossorigin="anonymous" src="/images/Shubh_patel.png" alt="Shubh Patel - Co-Founder" class="founder-photo">
+            <span class="photo-tag">FOUNDER // 02</span>
+          </div>
+          <div class="founder-info">
+            <div class="founder-header">
+              <span class="founder-role" data-ps>Co-Founder &amp; Engineering / GTM</span>
+              <h3 class="founder-name f-h1" data-ps>Shubh Patel</h3>
+              <div class="founder-badges">
+                <span class="founder-badge honor-badge" data-ps><span class="badge-dot"></span> ASME Y14.5 / ISO GPS Lead</span>
+                <span class="founder-badge" data-ps>Atlanta, GA · USA</span>
+                <span class="founder-badge" data-ps>Manufacturing GTM</span>
+              </div>
+            </div>
+            <p class="founder-desc f-h4" data-ps>Leading ASME Y14.5 and ISO GPS engineering rule verification, customer architecture for mid-market discrete manufacturing, and North American factory pilot rollouts. Transforming fragmented technical archives into actionable CAD models.</p>
+            <div class="founder-footer">
+              <div class="founder-socials">
+                <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-chip" aria-label="Shubh on X (Twitter)" title="X / Twitter">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 24.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  <span>@shubhpatel</span>
+                </a>
+                <a href="https://linkedin.com/in" target="_blank" rel="noopener noreferrer" class="social-chip" aria-label="Shubh on LinkedIn" title="LinkedIn">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451c.979 0 1.778-.773 1.778-1.729V1.73C24 .774 23.205 0 22.225 0z"/></svg>
+                  <span>LinkedIn</span>
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-chip" aria-label="Shubh on Instagram" title="Instagram">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  <span>Instagram</span>
+                </a>
+              </div>
+              <div class="founder-contact-direct">
+                <a href="mailto:founder@tryvertex.tech" class="direct-link"><span class="lbl">Direct channel:</span> <span class="val">founder@tryvertex.tech</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Banner -->
+  <section class="grid-layout">
+    <div class="framed contact-banner">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h2 class="f-h2" data-ps>Talk to the Founders</h2>
+      <p class="f-h4" data-ps>Whether you are a discrete manufacturer interested in a two-week paid archive diagnostic, or a CAM programmer looking for early access to FLIP 2D-to-3D, get in touch directly.</p>
+      <div class="mail" data-ps><a href="mailto:founder@tryvertex.tech">founder@tryvertex.tech</a></div>
+      <p class="f-p" style="color:var(--g1);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;">Raahil Desai (Ahmedabad) · Shubh Patel (Atlanta)</p>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer id="blog">
+  <div class="grid-layout"><hr class="rule" style="grid-column:1/-1"></div>
+
+  <div class="grid-layout fcard-wrap" id="waitlist">
+    <div class="fcard framed">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <p class="tag" data-ps>FLIP Early Access &amp; Waitlist</p>
+      <h3 class="f-h2" data-ps>Bring 2D legacy prints into 3D CAD.</h3>
+      <p class="sub f-h4" data-ps>Send any engineering drawing (DWG, DXF, or PDF) and receive a verified 3D STEP solid with honest dimension verification.</p>
+      <form class="signup" action="mailto:founder@tryvertex.tech" method="GET">
+        <input type="email" name="email" placeholder="engineer@plant.com" aria-label="Email address" required autocomplete="email">
+        <button type="submit">Join Waitlist</button>
+      </form>
+      <p class="fine">Zero data retention. Customer prints never train third-party models.</p>
+    </div>
+  </div>
+
+  <div class="grid-layout">
+    <div class="mark"><svg viewBox="0 0 1673 149" xmlns="http://www.w3.org/2000/svg" aria-label="VERTEX"><text x="50%" y="132" text-anchor="middle" font-family="Geist, 'Geist Fallback', Arial, sans-serif" font-weight="600" font-size="168" letter-spacing="40">VERTEX</text></svg></div>
+  </div>
+
+  <div class="grid-layout bottom">
+    <div class="links">
+      <a href="sublevel-studio.html#top">FLIP 2D→3D</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="sublevel-studio.html#showcase">Standards</a>
+      <a href="sublevel-studio.html#work">Features</a>
+      <a href="mailto:founder@tryvertex.tech">Contact</a>
+    </div>
+    <p class="copy">© 2026 Vertex Technologies Inc. (tryvertex.tech) · Drawing Intelligence for Mid-Market Manufacturers</p>
+  </div>
+</footer>
+</div>
+
+<script src="/js/particle-scroll.js"></script>
+<script>
+window.switchFounderTab = function(founder) {
+  var btnRaahil = document.getElementById('tab-btn-raahil');
+  var btnShubh = document.getElementById('tab-btn-shubh');
+  var panelRaahil = document.getElementById('panel-raahil');
+  var panelShubh = document.getElementById('panel-shubh');
+  if (!btnRaahil || !btnShubh || !panelRaahil || !panelShubh) return;
+
+  if (founder === 'raahil') {
+    btnRaahil.classList.add('active');
+    btnRaahil.setAttribute('aria-selected', 'true');
+    btnShubh.classList.remove('active');
+    btnShubh.setAttribute('aria-selected', 'false');
+    panelRaahil.classList.add('active');
+    panelRaahil.style.display = 'block';
+    panelShubh.classList.remove('active');
+    panelShubh.style.display = 'none';
+  } else {
+    btnShubh.classList.add('active');
+    btnShubh.setAttribute('aria-selected', 'true');
+    btnRaahil.classList.remove('active');
+    btnRaahil.setAttribute('aria-selected', 'false');
+    panelShubh.classList.add('active');
+    panelShubh.style.display = 'block';
+    panelRaahil.classList.remove('active');
+    panelRaahil.style.display = 'none';
+  }
+  if (window.__ps) {
+    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 60);
+  }
+};
+
+if (window.ParticleScroll && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  window.__ps = window.ParticleScroll.mountParticleScroll('[data-ps]', {
+    point: 0.68,
+    band: 330,
+    density: 2,
+    size: 1.25,
+    spread: 200,
+    gravity: 0.35,
+    drift: 0.9,
+    swirl: 70,
+    stagger: 0.55,
+    fade: 0.42,
+    settle: 0.7,
+    hold: 1.15,
+    smoothing: 0.26,
+    tintA: [1.0, 0.3, 0.0],
+    tintB: [1.0, 0.82, 0.2]
+  });
+}
+</script>
+</body>
+</html>
