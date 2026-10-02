@@ -626,7 +626,6 @@ body.machine #topnav,body.machine #layout{display:none}
 #crt-host{position:absolute;inset:0}
 #machine-close{position:absolute;top:18px;right:22px;z-index:2;font-family:var(--mono);font-size:12px;line-height:16px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--o);background:rgba(5,2,0,.7);border:1px solid rgba(255,77,0,.4);border-radius:9999px;padding:8px 14px;cursor:pointer;text-shadow:0 0 10px rgba(255,77,0,.6)}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.mobile-terminal-wrap{display:none}
 /* responsive */
 @media (max-width:1023px){
   .f-h0{font-size:2.875rem;line-height:2.45rem}
@@ -680,10 +679,9 @@ body.machine #topnav,body.machine #layout{display:none}
   footer .social{grid-column:1/-1;grid-row:3;align-items:flex-start;transform:none}
   footer .social .copy{text-align:left}
 
-  /* Mobile Machine Mode Terminal */
+  /* Mobile Machine Mode: Authentic ThreeUICrt WebGL Terminal */
   body.machine #machine {
-    display: flex !important;
-    flex-direction: column !important;
+    display: block !important;
     position: fixed !important;
     inset: 0 !important;
     width: 100% !important;
@@ -695,222 +693,48 @@ body.machine #topnav,body.machine #layout{display:none}
     opacity: 1 !important;
     overflow: hidden !important;
   }
+  body.machine #crt-host {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1 !important;
+  }
+  body.machine #machine-close {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    position: absolute !important;
+    top: max(16px, env(safe-area-inset-top)) !important;
+    right: 16px !important;
+    z-index: 10001 !important;
+    padding: 8px 16px !important;
+    min-height: 40px !important;
+    font-family: var(--mono);
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--o);
+    background: rgba(14, 6, 2, 0.85) !important;
+    border: 1px solid rgba(255, 90, 16, 0.45) !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 90, 16, 0.25);
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.machine #machine-close:active {
+    background: rgba(255, 90, 16, 0.25) !important;
+    transform: scale(0.96);
+  }
   body.machine #machine-scrim,
   body.machine #machine-scan {
     display: none !important;
   }
-  body.machine #crt-host,
-  body.machine #machine-close {
-    display: none !important;
-  }
-  .mobile-terminal-wrap {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: radial-gradient(circle at 50% 15%, rgba(255, 90, 16, 0.12) 0%, rgba(5, 2, 0, 0.98) 65%), #050200;
-    color: #ff5a10;
-    font-family: var(--mono);
-    overflow: hidden;
-    box-sizing: border-box;
-  }
-  .mobile-terminal-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: max(16px, env(safe-area-inset-top)) 16px 12px;
-    background: rgba(14, 6, 2, 0.96);
-    border-bottom: 1px solid rgba(255, 90, 16, 0.35);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
-    z-index: 10;
-    flex-shrink: 0;
-  }
-  .mobile-terminal-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff1e8;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .mobile-term-led {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #ff5a10;
-    box-shadow: 0 0 10px #ff5a10, 0 0 4px #fff;
-    animation: pulse 2s infinite;
-    flex-shrink: 0;
-  }
-  .mobile-term-prompt {
-    color: #ff5a10;
-    text-shadow: 0 0 8px rgba(255, 90, 16, 0.6);
-  }
-  .mobile-term-sub {
-    color: rgba(255, 210, 184, 0.6);
-    font-size: 11px;
-  }
-  .mobile-term-close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 14px;
-    min-height: 38px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: #ff5a10;
-    background: rgba(255, 90, 16, 0.14);
-    border: 1px solid rgba(255, 90, 16, 0.5);
-    border-radius: 4px;
-    cursor: pointer;
-    text-shadow: 0 0 8px rgba(255, 90, 16, 0.7);
-    box-shadow: 0 0 10px rgba(255, 90, 16, 0.2);
-    touch-action: manipulation;
-    flex-shrink: 0;
-  }
-  .mobile-term-close:active {
-    background: rgba(255, 90, 16, 0.3);
-    transform: scale(0.96);
-  }
-  .mobile-terminal-content {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 18px 16px max(36px, env(safe-area-inset-bottom));
-    font-size: 12px;
-    line-height: 1.55;
-    color: #ff7530;
-    box-sizing: border-box;
-  }
-  .mobile-term-banner {
-    font-size: 8px;
-    line-height: 9px;
-    color: #ff5a10;
-    text-shadow: 0 0 10px rgba(255, 90, 16, 0.8);
-    white-space: pre;
-    overflow-x: auto;
-    margin-bottom: 14px;
-  }
-  .mobile-term-nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 16px;
-  }
-  .mobile-term-pill {
-    font-size: 10px;
-    padding: 3px 7px;
-    background: rgba(255, 90, 16, 0.12);
-    border: 1px solid rgba(255, 90, 16, 0.35);
-    border-radius: 2px;
-    color: #ffd2b8;
-  }
-  .mobile-term-section-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff1e8;
-    text-shadow: 0 0 8px rgba(255, 200, 160, 0.6);
-    margin: 14px 0 6px;
-  }
-  .mobile-term-meta {
-    font-size: 11px;
-    color: #a8400f;
-    margin: 0 0 16px;
-    line-height: 1.45;
-  }
-  .mobile-term-divider {
-    font-size: 11px;
-    font-weight: 700;
-    color: #a8400f;
-    letter-spacing: 0.05em;
-    margin: 20px 0 10px;
-    text-shadow: 0 0 6px rgba(168, 64, 15, 0.5);
-  }
-  .mobile-term-kv {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-bottom: 12px;
-    font-size: 11px;
-  }
-  .mobile-term-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: baseline;
-  }
-  .mobile-term-key {
-    color: #ffd2b8;
-    font-weight: 600;
-  }
-  .mobile-term-dots {
-    color: rgba(168, 64, 15, 0.6);
-  }
-  .mobile-term-val {
-    color: #ff9d66;
-  }
-  .mobile-term-link {
-    color: #fff1e8;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .mobile-term-p {
-    font-size: 11.5px;
-    color: #ff8544;
-    line-height: 1.5;
-    margin: 8px 0;
-  }
-  .mobile-term-step {
-    margin: 12px 0;
-    padding: 10px;
-    background: rgba(255, 90, 16, 0.05);
-    border-left: 2px solid #ff5a10;
-  }
-  .mobile-term-h {
-    font-size: 12px;
-    font-weight: 700;
-    color: #fff1e8;
-    margin-bottom: 4px;
-  }
-  .mobile-term-tags {
-    font-size: 10px;
-    color: #ffd2b8;
-    margin-top: 6px;
-  }
-  .mobile-term-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 11px;
-    color: #ff8544;
-    margin: 8px 0;
-  }
-  .mobile-term-prompt-line {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 24px;
-    padding-top: 14px;
-    border-top: 1px dashed rgba(255, 90, 16, 0.3);
-    color: #ff5a10;
-    font-size: 12px;
-  }
-  .mobile-term-cursor {
-    display: inline-block;
-    width: 7px;
-    height: 13px;
-    background: #bdf8d2;
-    box-shadow: 0 0 8px rgba(189, 248, 210, 0.8);
-    animation: blink 1s steps(2) infinite;
-  }
 }
+
 @media (min-width:768px) and (max-width:1023px){.featured .masonry{columns:2}}
 @media (max-width:380px){#topnav .term .prompt{display:none}}
 @media (max-width:1080px){#topnav .term{min-width:0}}
@@ -2766,120 +2590,7 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
 <div id="machine-scan" aria-hidden="true"></div>
 <div id="machine" aria-label="Machine-readable index">
   <div id="crt-host"></div>
-  <button id="machine-close" class="f-nav">[esc] close</button>
-  <div id="mobile-terminal" class="mobile-terminal-wrap" aria-label="Mobile Machine Terminal">
-    <div class="mobile-terminal-bar">
-      <div class="mobile-terminal-title">
-        <span class="mobile-term-led"></span>
-        <span class="mobile-term-prompt">agent@vertex:~$</span>
-        <span class="mobile-term-sub">machine-view</span>
-      </div>
-      <button id="mobile-machine-close" class="mobile-term-close" type="button" aria-label="Close terminal">
-        ✕ CLOSE
-      </button>
-    </div>
-    <div class="mobile-terminal-content">
-      <div class="mobile-term-banner">
- ██   ██  ██████  ██████   ████████  ███████  ██   ██ 
- ██   ██  ██      ██   ██     ██     ██        ██ ██  
- ██   ██  █████   ██████      ██     █████      ███   
-  ██ ██   ██      ██   ██     ██     ██        ██ ██  
-   ███    ██████  ██   ██     ██     ███████  ██   ██ 
-      </div>
-      <div class="mobile-term-nav-links">
-        <span class="mobile-term-pill">/FLIP</span>
-        <span class="mobile-term-pill">/ARCHIVE</span>
-        <span class="mobile-term-pill">/VERIFY</span>
-        <span class="mobile-term-pill">/DIVERGENCE</span>
-        <span class="mobile-term-pill">/CHANGE_IMPACT</span>
-        <span class="mobile-term-pill">/BENCHMARKS</span>
-        <span class="mobile-term-pill">/ACCESS</span>
-      </div>
-
-      <div class="mobile-term-section-title">VERTEX (TRYVERTEX.TECH) :: DRAWING INTELLIGENCE ENGINE</div>
-      <p class="mobile-term-meta"># REVISION 10 · SYSTEM ACTIVE · ANY DRAWING IN -&gt; CHECKED 3D STEP OUT<br># PLAIN-TEXT SPEC &amp; CAPABILITY MATRIX FOR ENGINEERS, AGENTS, AND PLANTS.</p>
-
-      <div class="mobile-term-divider">── ABOUT ─────────────────────────────────────────────────────────</div>
-      <div class="mobile-term-kv">
-        <div class="mobile-term-row"><span class="mobile-term-key">NAME</span><span class="mobile-term-dots">..........</span><span class="mobile-term-val">VERTEX</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">FIRST_PRODUCT</span><span class="mobile-term-dots">.</span><span class="mobile-term-val">FLIP (DRAWING-TO-CHECKED-3D-STEP)</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">FOUNDED</span><span class="mobile-term-dots">.......</span><span class="mobile-term-val">2026</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">FOUNDERS</span><span class="mobile-term-dots">......</span><span class="mobile-term-val">RAAHIL DESAI (AHMEDABAD) &amp; SHUBH (ATLANTA)</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">DOMAIN</span><span class="mobile-term-dots">........</span><span class="mobile-term-val">TRYVERTEX.TECH</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">CONTACT</span><span class="mobile-term-dots">.......</span><span class="mobile-term-val"><a href="mailto:founder@tryvertex.tech" class="mobile-term-link">FOUNDER@TRYVERTEX.TECH</a></span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">DESIGN_PARTNER</span><span class="mobile-term-dots">.</span><span class="mobile-term-val">EXALT ENGINEERING (HT CLAMPS &amp; FORGED CONNECTORS)</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">AREA_SERVED</span><span class="mobile-term-dots">...</span><span class="mobile-term-val">GLOBAL (JOB SHOPS, CONTRACT MANUFACTURERS, FABRICATORS)</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">KNOWS_ABOUT</span><span class="mobile-term-dots">...</span><span class="mobile-term-val">2D-TO-3D CAD, B-REP SOLIDS, ASME Y14.5, GD&amp;T VERIFICATION, GEOMETRIC RETRIEVAL, OPENCASCADE, BUILD123D, CAM TOOLING, DIES</span></div>
-      </div>
-      <p class="mobile-term-p">VERTEX IS PITCHED AS AI IN MANUFACTURING. ITS FIRST PRODUCT IS FLIP: ANY ENGINEERING DRAWING IN — DWG, DXF, VECTOR PDF, SCANNED PRINTS, OR A PHONE PHOTO — AND A CHECKED 3D STEP SOLID OUT IN MINUTES.</p>
-      <p class="mobile-term-p">THE MODEL AUTHORS; CODE GENERATES; CODE DECIDES. EVERY STATED DIMENSION IS MEASURED ON THE SOLID, EVERY GUESSED SIZE IS NAMED, AND AN HONEST VERDICT IS GIVEN BEFORE ANY METAL IS CUT OR SCRAPPED.</p>
-
-      <div class="mobile-term-divider">── THE_FLIP_PIPELINE ─────────────────────────────────────────────</div>
-      <div class="mobile-term-step">
-        <div class="mobile-term-h">* 01 // UNIVERSAL INPUT INGESTION</div>
-        <p class="mobile-term-p">ANY SHEET GOES WHOLE TO THE AGENT WITHOUT LOSS OF CONTEXT. NATIVE DWG, DXF, HIGH-RES VECTOR PDF, CRUMPLED SHOP SCANS, AND MOBILE PHONE PHOTOS.</p>
-        <div class="mobile-term-tags">[NATIVE DWG/DXF] [VECTOR/RASTER PDF] [SHOP PRINTS] [PHONE CAPTURES]</div>
-      </div>
-      <div class="mobile-term-step">
-        <div class="mobile-term-h">* 02 // HARNESS &amp; VERIFY (AGENT AUTHORS, KERNEL GENERATES)</div>
-        <p class="mobile-term-p">A CLAUDE AGENT READS THE FULL SHEET AND WRITES A BUILD123D SCRIPT. CODE EXECUTES OPENCASCADE TO GENERATE A SINGLE WATERTIGHT B-REP SOLID.</p>
-        <div class="mobile-term-tags">[ZERO TRIANGLE MESHES] [EXACT B-REP SOLIDS] [STEP / CAD EXPORT]</div>
-      </div>
-      <div class="mobile-term-step">
-        <div class="mobile-term-h">* 03 // FOUR HONEST VERDICTS</div>
-        <p class="mobile-term-p">WE DO NOT HIDE FAILURES BEHIND DRAFTS OR REFUSAL THRESHOLDS. FLIP SHIPS AN HONEST VERDICT ON EVERY RUN:</p>
-        <div class="mobile-term-list">
-          <div>- VERIFIED ........ 0 FAILED DIMENSIONS; CONFIRMED AGAINST ANSWER KEY</div>
-          <div>- NEEDS REVIEW .... NAMED DEFECTS IN PLAIN WORDS (E.G. 'R3 FILLET MISSING')</div>
-          <div>- FAILED: NO MODEL  MULTI-BODY OCCURRENCE OR VIEW EXTRACTION CORRUPTION</div>
-          <div>- FAILED: SERVICE .. PROVIDER TIMEOUT (USER NOT CHARGED)</div>
-        </div>
-      </div>
-      <div class="mobile-term-step">
-        <div class="mobile-term-h">* 04 // THE 'WHAT FLIP GUESSED' LEDGER</div>
-        <p class="mobile-term-p">WHEREVER SIZES ARE UNSTATED (HEX DEPTH, UNNOTED RADII), FLIP NAMES EVERY CHOICE OPENLY IN A DEDICATED PANEL INSTEAD OF SILENTLY HALLUCINATING.</p>
-      </div>
-
-      <div class="mobile-term-divider">── ENTERPRISE_SUITE ──────────────────────────────────────────────</div>
-      <div class="mobile-term-list">
-        <div>- FLIP 2D-&gt;3D — ON-DEMAND STEP SOLIDS FOR CAM PROGRAMMERS &amp; LEGACY PRINTS.</div>
-        <div>- ARCHIVE SEARCH — GEOMETRIC RETRIEVAL ACROSS 10K+ DRAWINGS TO STOP RE-MANUFACTURING PARTS ALREADY SITTING IN BINS.</div>
-        <div>- DETERMINISTIC REVIEW — BYTE-IDENTICAL ASME Y14.5 &amp; ISO GPS EVALUATION CHECKING TOLERANCES, DATUMS, AND TITLE BLOCKS WITH AUDITABLE PROVENANCE.</div>
-        <div>- DRAWING &lt;-&gt; MODEL DIVERGENCE — PROJECTS 3D SOLIDS ONTO DRAWING LINEWORK TO CATCH FABRICATION DISCREPANCIES BEFORE PRODUCTION.</div>
-        <div>- CHANGE IMPACT ANALYSIS — DETERMINES IF A CUSTOMER VARIANT FITS AN EXISTING DIE ENVELOPE OR REQUIRES LAKHS IN NEW TOOLING.</div>
-      </div>
-
-      <div class="mobile-term-divider">── BENCHMARKS ────────────────────────────────────────────────────</div>
-      <div class="mobile-term-list">
-        <div>- STAR FIXTURE ........... 93-98% IoU MATCH AGAINST PROFESSIONAL SOLID</div>
-        <div>- BRACKET PHONE PHOTO .... 16 OF 16 PLACED DIMENSIONS VERIFIED (IoU 0.948)</div>
-        <div>- PUMP COVER ............. 10 OF 10 STATED SIZES DETERMINISTICALLY MATCHED</div>
-        <div>- DETERMINISM ............ BIT-IDENTICAL B-REP GEOMETRY CACHED ON SHA256</div>
-      </div>
-
-      <div class="mobile-term-divider">── CONTACT_&amp;_ACCESS ──────────────────────────────────────────────</div>
-      <div class="mobile-term-kv">
-        <div class="mobile-term-row"><span class="mobile-term-key">FOUNDERS</span><span class="mobile-term-dots">......</span><span class="mobile-term-val">RAAHIL DESAI &amp; SHUBH PATEL</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">EMAIL</span><span class="mobile-term-dots">.........</span><span class="mobile-term-val"><a href="mailto:founder@tryvertex.tech" class="mobile-term-link">FOUNDER@TRYVERTEX.TECH</a></span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">WEB</span><span class="mobile-term-dots">...........</span><span class="mobile-term-val">TRYVERTEX.TECH</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">FLIP_ACCESS</span><span class="mobile-term-dots">...</span><span class="mobile-term-val">SUBSCRIPTION WITH CONVERSION ALLOWANCE</span></div>
-        <div class="mobile-term-row"><span class="mobile-term-key">ARCHIVE_PILOT</span><span class="mobile-term-dots">.</span><span class="mobile-term-val">TWO-WEEK PAID AUDIT FOR MID-MARKET PLANTS ($3K-5K)</span></div>
-      </div>
-
-      <div class="mobile-term-divider">── FOR_AGENTS ────────────────────────────────────────────────────</div>
-      <div class="mobile-term-list">
-        <div>SPEC .......... /SPEC.MD</div>
-        <div>ARCHITECTURE .. /HARNESS-AND-VERIFY.MD</div>
-        <div>BENCHMARKS .... /BENCHMARKS.MD</div>
-        <div>INDEX ......... /INDEX.MD</div>
-      </div>
-
-      <div class="mobile-term-prompt-line">
-        <span class="mobile-term-prompt">vertex@terminal:~$</span>
-        <span class="mobile-term-cursor"></span>
-      </div>
-    </div>
-  </div>
+  <button id="machine-close" class="f-nav" type="button" aria-label="Close terminal">[✕] close</button>
   <pre class="sr-only"> ██   ██  ██████  ██████   ████████  ███████  ██   ██ 
  ██   ██  ██      ██   ██     ██     ██        ██ ██  
  ██   ██  █████   ██████      ██     █████      ███   
@@ -5079,8 +4790,8 @@ function createCrtRenderer(host, canvas, getOptions, LOG = AUTHORED_LOG) {
   const setStyle = (key, glow) => { const color = COLORS[key]; textContext.fillStyle = color.fill; textContext.shadowColor = glow ? color.glow : "transparent"; textContext.shadowBlur = glow ? fontSize * 0.38 : 0; };
   /* two passes per glyph: a soft phosphor halo, then the same glyph re-filled with
      the shadow off so the stroke core stays crisp at any backing resolution */
-  const drawScreen = (reveal) => { textContext.setTransform(1, 0, 0, 1, 0, 0); textContext.fillStyle = style.background; textContext.fillRect(0, 0, width, height); textContext.textAlign = "left"; textContext.textBaseline = "top"; textContext.font = `600 ${fontSize.toFixed(2)}px ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace`; let remaining = reveal, y = startY - scroll; caretX = Math.floor((width - MAX_CHARS * charWidth) / 2); caretY = y;
-    for (const line of LOG) { const length = lineLength(line), visible = reveal === Infinity ? Infinity : Math.min(remaining, length); if (y + lineHeight < 0 || y > height) { if (visible !== Infinity) remaining -= visible; y += lineHeight; if (visible !== Infinity && remaining <= 0) break; continue; } let x = Math.floor((width - MAX_CHARS * charWidth) / 2), drawn = 0; for (const item of line) { let text = item.t; if (visible !== Infinity) { const left = visible - drawn; if (left <= 0) break; if (left < text.length) text = text.slice(0, left); } if (text.length) { setStyle(item.c, true); textContext.fillText(text, x, y); setStyle(item.c, false); textContext.fillText(text, x, y); x += charWidth * text.length; } drawn += item.t.length; if (visible !== Infinity && drawn >= visible) break; } caretX = x; caretY = y; if (visible !== Infinity) remaining -= visible; y += lineHeight; if (visible !== Infinity && remaining <= 0) break; }
+  const drawScreen = (reveal) => { textContext.setTransform(1, 0, 0, 1, 0, 0); textContext.fillStyle = style.background; textContext.fillRect(0, 0, width, height); textContext.textAlign = "left"; textContext.textBaseline = "top"; textContext.font = `600 ${fontSize.toFixed(2)}px ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace`; let remaining = reveal, y = startY - scroll; caretX = Math.max(18, Math.floor((width - MAX_CHARS * charWidth) / 2)); caretY = y;
+    for (const line of LOG) { const length = lineLength(line), visible = reveal === Infinity ? Infinity : Math.min(remaining, length); if (y + lineHeight < 0 || y > height) { if (visible !== Infinity) remaining -= visible; y += lineHeight; if (visible !== Infinity && remaining <= 0) break; continue; } let x = Math.max(18, Math.floor((width - MAX_CHARS * charWidth) / 2)), drawn = 0; for (const item of line) { let text = item.t; if (visible !== Infinity) { const left = visible - drawn; if (left <= 0) break; if (left < text.length) text = text.slice(0, left); } if (text.length) { setStyle(item.c, true); textContext.fillText(text, x, y); setStyle(item.c, false); textContext.fillText(text, x, y); x += charWidth * text.length; } drawn += item.t.length; if (visible !== Infinity && drawn >= visible) break; } caretX = x; caretY = y; if (visible !== Infinity) remaining -= visible; y += lineHeight; if (visible !== Infinity && remaining <= 0) break; }
   };
   const drawCursor = () => { textContext.shadowColor = COLORS.p.glow; textContext.shadowBlur = fontSize * 0.42; textContext.fillStyle = "#bdf8d2"; textContext.fillRect(caretX, caretY + fontSize * 0.06, Math.max(charWidth * 0.92, 4), fontSize * 0.96); textContext.shadowBlur = 0; textContext.fillRect(caretX, caretY + fontSize * 0.06, Math.max(charWidth * 0.92, 4), fontSize * 0.96); };
   const uploadTexture = () => { gl.bindTexture(gl.TEXTURE_2D, texture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); textDirty = false; };
@@ -5088,7 +4799,12 @@ function createCrtRenderer(host, canvas, getOptions, LOG = AUTHORED_LOG) {
     const surface = style.surface, screenWidth = surface.mode === "fixed" ? surface.width : surface.mode === "cap" ? Math.min(nextWidth, surface.width) : nextWidth, screenHeight = surface.mode === "fixed" ? surface.height : Math.max(1, Math.round(screenWidth * nextHeight / nextWidth));
     if (canvas.width !== nextWidth || canvas.height !== nextHeight) { canvas.width = nextWidth; canvas.height = nextHeight; }
     if (textCanvas.width !== screenWidth || textCanvas.height !== screenHeight) { textCanvas.width = screenWidth; textCanvas.height = screenHeight; width = screenWidth; height = screenHeight; layout(); lastReveal = -1; lastBlink = -1; lastTextAt = 0; textDirty = true; }
-    gl.useProgram(program); gl.viewport(0, 0, nextWidth, nextHeight); gl.uniform2f(uResolution, nextWidth, nextHeight); gl.uniform1f(uScan, Math.max(120, Math.min(cssHeight * style.scanDensity, 900))); gl.uniform1f(uTriad, Math.max(2, style.triadCss * nextWidth / cssWidth)); };
+    gl.useProgram(program); gl.viewport(0, 0, nextWidth, nextHeight); gl.uniform2f(uResolution, nextWidth, nextHeight); gl.uniform1f(uScan, Math.max(120, Math.min(cssHeight * style.scanDensity, 900))); gl.uniform1f(uTriad, Math.max(2, style.triadCss * nextWidth / cssWidth));
+    const isPortrait = cssWidth < cssHeight || cssWidth <= 768;
+    const curveX = isPortrait ? Math.min(style.curve[0], 0.040) : style.curve[0];
+    const curveY = isPortrait ? Math.min(style.curve[1], 0.058) : style.curve[1];
+    gl.uniform2f(uCurve, curveX, curveY);
+  };
   const maybeRedrawText = (now) => { const reveal = done ? Infinity : Math.floor(typed), blink = Math.floor((now - startedAt) / 420) % 2 === 0 ? 1 : 0, due = !done ? now - lastTextAt > 42 : blink !== lastBlink || scroll !== lastScroll; if (reveal === lastReveal && blink === lastBlink && scroll === lastScroll && !due) return; if (!done && now - lastTextAt <= 42 && reveal === lastReveal && blink === lastBlink && scroll === lastScroll) return; drawScreen(reveal); if (blink) drawCursor(); lastTextAt = now; lastReveal = reveal; lastBlink = blink; lastScroll = scroll; textDirty = true; };
   applyStyle();
   return {
@@ -5122,7 +4838,10 @@ function mountCrt(host, options = {}, log) {
   const resizeObserver = new ResizeObserver(resize), intersection = new IntersectionObserver(([entry]) => { visible = entry?.isIntersecting ?? true; if (visible && !frame) frame = requestAnimationFrame(tick); if (!visible && frame) { cancelAnimationFrame(frame); frame = 0; } });
   resizeObserver.observe(host); intersection.observe(host); resize(); frame = requestAnimationFrame(tick);
   const onWheel = (e) => { renderer.scrollBy(e.deltaY); e.preventDefault(); }; host.addEventListener('wheel', onWheel, { passive: false });
-  let ty = null; host.addEventListener('touchstart', (e) => { ty = e.touches[0].clientY; }, { passive: true }); host.addEventListener('touchmove', (e) => { if (ty !== null) { renderer.scrollBy(ty - e.touches[0].clientY); ty = e.touches[0].clientY; } }, { passive: true });
+  let ty = null;
+  host.addEventListener('touchstart', (e) => { if (e.touches && e.touches[0]) ty = e.touches[0].clientY; }, { passive: true });
+  host.addEventListener('touchmove', (e) => { if (ty !== null && e.touches && e.touches[0]) { renderer.scrollBy((ty - e.touches[0].clientY) * 1.3); ty = e.touches[0].clientY; } }, { passive: true });
+  host.addEventListener('touchend', () => { ty = null; }, { passive: true });
   const onKey = (e) => { const step = { ArrowDown: 60, ArrowUp: -60, PageDown: 600, PageUp: -600, ' ': 600 }[e.key]; if (step !== undefined) { renderer.scrollBy(step); e.preventDefault(); } }; window.addEventListener('keydown', onKey);
   return { scrollBy: (d) => renderer.scrollBy(d), setOptions(next) { Object.assign(opts, next); }, destroy() { host.removeEventListener('wheel', onWheel); window.removeEventListener('keydown', onKey); if (frame) cancelAnimationFrame(frame); resizeObserver.disconnect(); intersection.disconnect(); renderer.dispose(); canvas.remove(); } };
 }
@@ -6096,27 +5815,32 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
       ? { speed: .75, switching: .09, switchingHeight: .035, acBeat: 1.4, grain: .22, scanlines: .5, jitter: .4 }
       : { speed: .5, switching: .05, switchingHeight: .02, acBeat: 1, grain: .1, scanlines: .1, jitter: .25 };
 
-    const isMobile = window.innerWidth <= 1023 || ('ontouchstart' in window && window.innerWidth <= 1080);
-    if (!isMobile) {
-      if (machine && !crt) { 
-        try { 
-          crt = window.ThreeUICrt.mountCrt(document.getElementById('crt-host'), { 
-            variant: 'terminal', speed: 1, typeSpeed: 14, motion: 1, hue: 0, saturation: 1, brightness: 1, opacity: 1, fixedFont: 17, colors: ORANGE, styleOverrides: SOFT_CRT 
-          }, VERTEX_LOG); 
-        } catch (e) { 
-          console.warn('CRT unavailable', e); 
-        } 
-      }
-      if (!machine && crt) { crt.destroy(); crt = null; }
-    } else {
-      if (crt) { crt.destroy(); crt = null; }
-      if (machine) {
-        const mobTerm = document.getElementById('mobile-terminal');
-        if (mobTerm) {
-          const content = mobTerm.querySelector('.mobile-terminal-content');
-          if (content) content.scrollTop = 0;
-        }
-      }
+    if (machine && !crt) { 
+      try { 
+        const isPortrait = window.innerWidth < window.innerHeight || window.innerWidth <= 768;
+        const crtOptions = { 
+          variant: 'terminal', 
+          speed: 1, 
+          typeSpeed: 14, 
+          motion: 1, 
+          hue: 0, 
+          saturation: 1, 
+          brightness: 1, 
+          opacity: 1, 
+          fixedFont: isPortrait ? 13 : 17, 
+          colors: ORANGE, 
+          styleOverrides: isPortrait 
+            ? { ...SOFT_CRT, curve: [0.038, 0.055], scanDepth: 0.20, vignette: 0.42 } 
+            : SOFT_CRT 
+        };
+        crt = window.ThreeUICrt.mountCrt(document.getElementById('crt-host'), crtOptions, VERTEX_LOG); 
+      } catch (e) { 
+        console.warn('CRT unavailable', e); 
+      } 
+    }
+    if (!machine && crt) {
+      crt.destroy();
+      crt = null;
     }
 
     term.setAttribute('aria-pressed', String(machine));
@@ -6124,7 +5848,11 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
     window.scrollTo(0, 0);
   }
 
+  let lastToggleTime = 0;
   function toggleMachineMode(e) {
+    const now = Date.now();
+    if (now - lastToggleTime < 350) return;
+    lastToggleTime = now;
     if (e && e.cancelable) e.preventDefault();
     setMode(document.body.classList.contains('machine') ? 'human' : 'machine');
   }
@@ -6133,12 +5861,17 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
   term.addEventListener('touchend', toggleMachineMode, { passive: false });
 
   const closeBtn = document.getElementById('machine-close');
-  if (closeBtn) closeBtn.addEventListener('click', () => setMode('human'));
-
-  const mobCloseBtn = document.getElementById('mobile-machine-close');
-  if (mobCloseBtn) {
-    mobCloseBtn.addEventListener('click', (e) => { if (e && e.cancelable) e.preventDefault(); setMode('human'); });
-    mobCloseBtn.addEventListener('touchend', (e) => { if (e && e.cancelable) e.preventDefault(); setMode('human'); }, { passive: false });
+  if (closeBtn) {
+    let lastCloseTime = 0;
+    const handleClose = (e) => {
+      const now = Date.now();
+      if (now - lastCloseTime < 350) return;
+      lastCloseTime = now;
+      if (e && e.cancelable) e.preventDefault();
+      setMode('human');
+    };
+    closeBtn.addEventListener('click', handleClose);
+    closeBtn.addEventListener('touchend', handleClose, { passive: false });
   }
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('machine')) setMode('human'); });
   document.addEventListener('keydown', (e) => { if (e.key === '/' && !/input|textarea/i.test(document.activeElement.tagName)) { e.preventDefault(); location.href = 'mailto:founder@tryvertex.tech'; } });
