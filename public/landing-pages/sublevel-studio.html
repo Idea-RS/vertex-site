@@ -625,8 +625,8 @@ body.machine #topnav,body.machine #layout{display:none}
 .threeui-background>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 #crt-host{position:absolute;inset:0}
 #machine-close{position:absolute;top:18px;right:22px;z-index:2;font-family:var(--mono);font-size:12px;line-height:16px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--o);background:rgba(5,2,0,.7);border:1px solid rgba(255,77,0,.4);border-radius:9999px;padding:8px 14px;cursor:pointer;text-shadow:0 0 10px rgba(255,77,0,.6)}
-#machine-close:hover{background:rgba(255,77,0,.15)}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mobile-terminal-wrap{display:none}
 /* responsive */
 @media (max-width:1023px){
   .f-h0{font-size:2.875rem;line-height:2.45rem}
@@ -659,10 +659,11 @@ body.machine #topnav,body.machine #layout{display:none}
   footer .social{grid-column:1/-1;grid-row:2;justify-content:flex-start}
   footer .copy{grid-column:1/-1;grid-row:3}
   /* the status chip has to give way or it pushes the icons out of the bar */
-  #topnav .right{gap:5px;min-width:0}
-  #topnav .term{min-width:0;padding:0 9px}
-  #topnav .term .prompt{display:none}
-  #topnav .term .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:104px}
+  #topnav .right{gap:6px;min-width:0}
+  #topnav .term{min-width:0;padding:0 10px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  #topnav .term .prompt{display:inline;color:rgba(200,200,198,.7)}
+  #topnav .term .prompt::after{content:" ~ $";color:var(--g1)}
+  #topnav .term .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:96px}
   .caps h2{grid-column:1/-1}
   .caps .cols .inner{grid-column:1/-1;grid-template-columns:repeat(2,minmax(0,1fr))}
   .caps .cap{grid-column:span 1}
@@ -678,9 +679,241 @@ body.machine #topnav,body.machine #layout{display:none}
   footer .news{grid-column:1/-1;grid-row:2}
   footer .social{grid-column:1/-1;grid-row:3;align-items:flex-start;transform:none}
   footer .social .copy{text-align:left}
+
+  /* Mobile Machine Mode Terminal */
+  body.machine #machine {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    height: 100svh !important;
+    z-index: 9999 !important;
+    background: #050200 !important;
+    mix-blend-mode: normal !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+  }
+  body.machine #machine-scrim,
+  body.machine #machine-scan {
+    display: none !important;
+  }
+  body.machine #crt-host,
+  body.machine #machine-close {
+    display: none !important;
+  }
+  .mobile-terminal-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: radial-gradient(circle at 50% 15%, rgba(255, 90, 16, 0.12) 0%, rgba(5, 2, 0, 0.98) 65%), #050200;
+    color: #ff5a10;
+    font-family: var(--mono);
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .mobile-terminal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: max(16px, env(safe-area-inset-top)) 16px 12px;
+    background: rgba(14, 6, 2, 0.96);
+    border-bottom: 1px solid rgba(255, 90, 16, 0.35);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    z-index: 10;
+    flex-shrink: 0;
+  }
+  .mobile-terminal-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff1e8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mobile-term-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff5a10;
+    box-shadow: 0 0 10px #ff5a10, 0 0 4px #fff;
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+  }
+  .mobile-term-prompt {
+    color: #ff5a10;
+    text-shadow: 0 0 8px rgba(255, 90, 16, 0.6);
+  }
+  .mobile-term-sub {
+    color: rgba(255, 210, 184, 0.6);
+    font-size: 11px;
+  }
+  .mobile-term-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    min-height: 38px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #ff5a10;
+    background: rgba(255, 90, 16, 0.14);
+    border: 1px solid rgba(255, 90, 16, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
+    text-shadow: 0 0 8px rgba(255, 90, 16, 0.7);
+    box-shadow: 0 0 10px rgba(255, 90, 16, 0.2);
+    touch-action: manipulation;
+    flex-shrink: 0;
+  }
+  .mobile-term-close:active {
+    background: rgba(255, 90, 16, 0.3);
+    transform: scale(0.96);
+  }
+  .mobile-terminal-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 18px 16px max(36px, env(safe-area-inset-bottom));
+    font-size: 12px;
+    line-height: 1.55;
+    color: #ff7530;
+    box-sizing: border-box;
+  }
+  .mobile-term-banner {
+    font-size: 8px;
+    line-height: 9px;
+    color: #ff5a10;
+    text-shadow: 0 0 10px rgba(255, 90, 16, 0.8);
+    white-space: pre;
+    overflow-x: auto;
+    margin-bottom: 14px;
+  }
+  .mobile-term-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .mobile-term-pill {
+    font-size: 10px;
+    padding: 3px 7px;
+    background: rgba(255, 90, 16, 0.12);
+    border: 1px solid rgba(255, 90, 16, 0.35);
+    border-radius: 2px;
+    color: #ffd2b8;
+  }
+  .mobile-term-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff1e8;
+    text-shadow: 0 0 8px rgba(255, 200, 160, 0.6);
+    margin: 14px 0 6px;
+  }
+  .mobile-term-meta {
+    font-size: 11px;
+    color: #a8400f;
+    margin: 0 0 16px;
+    line-height: 1.45;
+  }
+  .mobile-term-divider {
+    font-size: 11px;
+    font-weight: 700;
+    color: #a8400f;
+    letter-spacing: 0.05em;
+    margin: 20px 0 10px;
+    text-shadow: 0 0 6px rgba(168, 64, 15, 0.5);
+  }
+  .mobile-term-kv {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 12px;
+    font-size: 11px;
+  }
+  .mobile-term-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: baseline;
+  }
+  .mobile-term-key {
+    color: #ffd2b8;
+    font-weight: 600;
+  }
+  .mobile-term-dots {
+    color: rgba(168, 64, 15, 0.6);
+  }
+  .mobile-term-val {
+    color: #ff9d66;
+  }
+  .mobile-term-link {
+    color: #fff1e8;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .mobile-term-p {
+    font-size: 11.5px;
+    color: #ff8544;
+    line-height: 1.5;
+    margin: 8px 0;
+  }
+  .mobile-term-step {
+    margin: 12px 0;
+    padding: 10px;
+    background: rgba(255, 90, 16, 0.05);
+    border-left: 2px solid #ff5a10;
+  }
+  .mobile-term-h {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff1e8;
+    margin-bottom: 4px;
+  }
+  .mobile-term-tags {
+    font-size: 10px;
+    color: #ffd2b8;
+    margin-top: 6px;
+  }
+  .mobile-term-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+    color: #ff8544;
+    margin: 8px 0;
+  }
+  .mobile-term-prompt-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(255, 90, 16, 0.3);
+    color: #ff5a10;
+    font-size: 12px;
+  }
+  .mobile-term-cursor {
+    display: inline-block;
+    width: 7px;
+    height: 13px;
+    background: #bdf8d2;
+    box-shadow: 0 0 8px rgba(189, 248, 210, 0.8);
+    animation: blink 1s steps(2) infinite;
+  }
 }
 @media (min-width:768px) and (max-width:1023px){.featured .masonry{columns:2}}
-@media (max-width:1080px){#topnav .term{min-width:0}#topnav .term .prompt{display:none}}
+@media (max-width:380px){#topnav .term .prompt{display:none}}
+@media (max-width:1080px){#topnav .term{min-width:0}}
 
 /* ========================================================
    WAITLIST MODE (Launch Mode)
@@ -2534,6 +2767,119 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
 <div id="machine" aria-label="Machine-readable index">
   <div id="crt-host"></div>
   <button id="machine-close" class="f-nav">[esc] close</button>
+  <div id="mobile-terminal" class="mobile-terminal-wrap" aria-label="Mobile Machine Terminal">
+    <div class="mobile-terminal-bar">
+      <div class="mobile-terminal-title">
+        <span class="mobile-term-led"></span>
+        <span class="mobile-term-prompt">agent@vertex:~$</span>
+        <span class="mobile-term-sub">machine-view</span>
+      </div>
+      <button id="mobile-machine-close" class="mobile-term-close" type="button" aria-label="Close terminal">
+        ✕ CLOSE
+      </button>
+    </div>
+    <div class="mobile-terminal-content">
+      <div class="mobile-term-banner">
+ ██   ██  ██████  ██████   ████████  ███████  ██   ██ 
+ ██   ██  ██      ██   ██     ██     ██        ██ ██  
+ ██   ██  █████   ██████      ██     █████      ███   
+  ██ ██   ██      ██   ██     ██     ██        ██ ██  
+   ███    ██████  ██   ██     ██     ███████  ██   ██ 
+      </div>
+      <div class="mobile-term-nav-links">
+        <span class="mobile-term-pill">/FLIP</span>
+        <span class="mobile-term-pill">/ARCHIVE</span>
+        <span class="mobile-term-pill">/VERIFY</span>
+        <span class="mobile-term-pill">/DIVERGENCE</span>
+        <span class="mobile-term-pill">/CHANGE_IMPACT</span>
+        <span class="mobile-term-pill">/BENCHMARKS</span>
+        <span class="mobile-term-pill">/ACCESS</span>
+      </div>
+
+      <div class="mobile-term-section-title">VERTEX (TRYVERTEX.TECH) :: DRAWING INTELLIGENCE ENGINE</div>
+      <p class="mobile-term-meta"># REVISION 10 · SYSTEM ACTIVE · ANY DRAWING IN -&gt; CHECKED 3D STEP OUT<br># PLAIN-TEXT SPEC &amp; CAPABILITY MATRIX FOR ENGINEERS, AGENTS, AND PLANTS.</p>
+
+      <div class="mobile-term-divider">── ABOUT ─────────────────────────────────────────────────────────</div>
+      <div class="mobile-term-kv">
+        <div class="mobile-term-row"><span class="mobile-term-key">NAME</span><span class="mobile-term-dots">..........</span><span class="mobile-term-val">VERTEX</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">FIRST_PRODUCT</span><span class="mobile-term-dots">.</span><span class="mobile-term-val">FLIP (DRAWING-TO-CHECKED-3D-STEP)</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">FOUNDED</span><span class="mobile-term-dots">.......</span><span class="mobile-term-val">2026</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">FOUNDERS</span><span class="mobile-term-dots">......</span><span class="mobile-term-val">RAAHIL DESAI (AHMEDABAD) &amp; SHUBH (ATLANTA)</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">DOMAIN</span><span class="mobile-term-dots">........</span><span class="mobile-term-val">TRYVERTEX.TECH</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">CONTACT</span><span class="mobile-term-dots">.......</span><span class="mobile-term-val"><a href="mailto:founder@tryvertex.tech" class="mobile-term-link">FOUNDER@TRYVERTEX.TECH</a></span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">DESIGN_PARTNER</span><span class="mobile-term-dots">.</span><span class="mobile-term-val">EXALT ENGINEERING (HT CLAMPS &amp; FORGED CONNECTORS)</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">AREA_SERVED</span><span class="mobile-term-dots">...</span><span class="mobile-term-val">GLOBAL (JOB SHOPS, CONTRACT MANUFACTURERS, FABRICATORS)</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">KNOWS_ABOUT</span><span class="mobile-term-dots">...</span><span class="mobile-term-val">2D-TO-3D CAD, B-REP SOLIDS, ASME Y14.5, GD&amp;T VERIFICATION, GEOMETRIC RETRIEVAL, OPENCASCADE, BUILD123D, CAM TOOLING, DIES</span></div>
+      </div>
+      <p class="mobile-term-p">VERTEX IS PITCHED AS AI IN MANUFACTURING. ITS FIRST PRODUCT IS FLIP: ANY ENGINEERING DRAWING IN — DWG, DXF, VECTOR PDF, SCANNED PRINTS, OR A PHONE PHOTO — AND A CHECKED 3D STEP SOLID OUT IN MINUTES.</p>
+      <p class="mobile-term-p">THE MODEL AUTHORS; CODE GENERATES; CODE DECIDES. EVERY STATED DIMENSION IS MEASURED ON THE SOLID, EVERY GUESSED SIZE IS NAMED, AND AN HONEST VERDICT IS GIVEN BEFORE ANY METAL IS CUT OR SCRAPPED.</p>
+
+      <div class="mobile-term-divider">── THE_FLIP_PIPELINE ─────────────────────────────────────────────</div>
+      <div class="mobile-term-step">
+        <div class="mobile-term-h">* 01 // UNIVERSAL INPUT INGESTION</div>
+        <p class="mobile-term-p">ANY SHEET GOES WHOLE TO THE AGENT WITHOUT LOSS OF CONTEXT. NATIVE DWG, DXF, HIGH-RES VECTOR PDF, CRUMPLED SHOP SCANS, AND MOBILE PHONE PHOTOS.</p>
+        <div class="mobile-term-tags">[NATIVE DWG/DXF] [VECTOR/RASTER PDF] [SHOP PRINTS] [PHONE CAPTURES]</div>
+      </div>
+      <div class="mobile-term-step">
+        <div class="mobile-term-h">* 02 // HARNESS &amp; VERIFY (AGENT AUTHORS, KERNEL GENERATES)</div>
+        <p class="mobile-term-p">A CLAUDE AGENT READS THE FULL SHEET AND WRITES A BUILD123D SCRIPT. CODE EXECUTES OPENCASCADE TO GENERATE A SINGLE WATERTIGHT B-REP SOLID.</p>
+        <div class="mobile-term-tags">[ZERO TRIANGLE MESHES] [EXACT B-REP SOLIDS] [STEP / CAD EXPORT]</div>
+      </div>
+      <div class="mobile-term-step">
+        <div class="mobile-term-h">* 03 // FOUR HONEST VERDICTS</div>
+        <p class="mobile-term-p">WE DO NOT HIDE FAILURES BEHIND DRAFTS OR REFUSAL THRESHOLDS. FLIP SHIPS AN HONEST VERDICT ON EVERY RUN:</p>
+        <div class="mobile-term-list">
+          <div>- VERIFIED ........ 0 FAILED DIMENSIONS; CONFIRMED AGAINST ANSWER KEY</div>
+          <div>- NEEDS REVIEW .... NAMED DEFECTS IN PLAIN WORDS (E.G. 'R3 FILLET MISSING')</div>
+          <div>- FAILED: NO MODEL  MULTI-BODY OCCURRENCE OR VIEW EXTRACTION CORRUPTION</div>
+          <div>- FAILED: SERVICE .. PROVIDER TIMEOUT (USER NOT CHARGED)</div>
+        </div>
+      </div>
+      <div class="mobile-term-step">
+        <div class="mobile-term-h">* 04 // THE 'WHAT FLIP GUESSED' LEDGER</div>
+        <p class="mobile-term-p">WHEREVER SIZES ARE UNSTATED (HEX DEPTH, UNNOTED RADII), FLIP NAMES EVERY CHOICE OPENLY IN A DEDICATED PANEL INSTEAD OF SILENTLY HALLUCINATING.</p>
+      </div>
+
+      <div class="mobile-term-divider">── ENTERPRISE_SUITE ──────────────────────────────────────────────</div>
+      <div class="mobile-term-list">
+        <div>- FLIP 2D-&gt;3D — ON-DEMAND STEP SOLIDS FOR CAM PROGRAMMERS &amp; LEGACY PRINTS.</div>
+        <div>- ARCHIVE SEARCH — GEOMETRIC RETRIEVAL ACROSS 10K+ DRAWINGS TO STOP RE-MANUFACTURING PARTS ALREADY SITTING IN BINS.</div>
+        <div>- DETERMINISTIC REVIEW — BYTE-IDENTICAL ASME Y14.5 &amp; ISO GPS EVALUATION CHECKING TOLERANCES, DATUMS, AND TITLE BLOCKS WITH AUDITABLE PROVENANCE.</div>
+        <div>- DRAWING &lt;-&gt; MODEL DIVERGENCE — PROJECTS 3D SOLIDS ONTO DRAWING LINEWORK TO CATCH FABRICATION DISCREPANCIES BEFORE PRODUCTION.</div>
+        <div>- CHANGE IMPACT ANALYSIS — DETERMINES IF A CUSTOMER VARIANT FITS AN EXISTING DIE ENVELOPE OR REQUIRES LAKHS IN NEW TOOLING.</div>
+      </div>
+
+      <div class="mobile-term-divider">── BENCHMARKS ────────────────────────────────────────────────────</div>
+      <div class="mobile-term-list">
+        <div>- STAR FIXTURE ........... 93-98% IoU MATCH AGAINST PROFESSIONAL SOLID</div>
+        <div>- BRACKET PHONE PHOTO .... 16 OF 16 PLACED DIMENSIONS VERIFIED (IoU 0.948)</div>
+        <div>- PUMP COVER ............. 10 OF 10 STATED SIZES DETERMINISTICALLY MATCHED</div>
+        <div>- DETERMINISM ............ BIT-IDENTICAL B-REP GEOMETRY CACHED ON SHA256</div>
+      </div>
+
+      <div class="mobile-term-divider">── CONTACT_&amp;_ACCESS ──────────────────────────────────────────────</div>
+      <div class="mobile-term-kv">
+        <div class="mobile-term-row"><span class="mobile-term-key">FOUNDERS</span><span class="mobile-term-dots">......</span><span class="mobile-term-val">RAAHIL DESAI &amp; SHUBH PATEL</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">EMAIL</span><span class="mobile-term-dots">.........</span><span class="mobile-term-val"><a href="mailto:founder@tryvertex.tech" class="mobile-term-link">FOUNDER@TRYVERTEX.TECH</a></span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">WEB</span><span class="mobile-term-dots">...........</span><span class="mobile-term-val">TRYVERTEX.TECH</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">FLIP_ACCESS</span><span class="mobile-term-dots">...</span><span class="mobile-term-val">SUBSCRIPTION WITH CONVERSION ALLOWANCE</span></div>
+        <div class="mobile-term-row"><span class="mobile-term-key">ARCHIVE_PILOT</span><span class="mobile-term-dots">.</span><span class="mobile-term-val">TWO-WEEK PAID AUDIT FOR MID-MARKET PLANTS ($3K-5K)</span></div>
+      </div>
+
+      <div class="mobile-term-divider">── FOR_AGENTS ────────────────────────────────────────────────────</div>
+      <div class="mobile-term-list">
+        <div>SPEC .......... /SPEC.MD</div>
+        <div>ARCHITECTURE .. /HARNESS-AND-VERIFY.MD</div>
+        <div>BENCHMARKS .... /BENCHMARKS.MD</div>
+        <div>INDEX ......... /INDEX.MD</div>
+      </div>
+
+      <div class="mobile-term-prompt-line">
+        <span class="mobile-term-prompt">vertex@terminal:~$</span>
+        <span class="mobile-term-cursor"></span>
+      </div>
+    </div>
+  </div>
   <pre class="sr-only"> ██   ██  ██████  ██████   ████████  ███████  ██   ██ 
  ██   ██  ██      ██   ██     ██     ██        ██ ██  
  ██   ██  █████   ██████      ██     █████      ███   
@@ -5749,14 +6095,51 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
     window.VHS = machine
       ? { speed: .75, switching: .09, switchingHeight: .035, acBeat: 1.4, grain: .22, scanlines: .5, jitter: .4 }
       : { speed: .5, switching: .05, switchingHeight: .02, acBeat: 1, grain: .1, scanlines: .1, jitter: .25 };
-    if (machine && !crt) { try { crt = window.ThreeUICrt.mountCrt(document.getElementById('crt-host'), { variant: 'terminal', speed: 1, typeSpeed: 14, motion: 1, hue: 0, saturation: 1, brightness: 1, opacity: 1, fixedFont: 17, colors: ORANGE, styleOverrides: SOFT_CRT }, VERTEX_LOG); } catch (e) { console.warn('CRT unavailable', e); } }
-    if (!machine && crt) { crt.destroy(); crt = null; }
+
+    const isMobile = window.innerWidth <= 1023 || ('ontouchstart' in window && window.innerWidth <= 1080);
+    if (!isMobile) {
+      if (machine && !crt) { 
+        try { 
+          crt = window.ThreeUICrt.mountCrt(document.getElementById('crt-host'), { 
+            variant: 'terminal', speed: 1, typeSpeed: 14, motion: 1, hue: 0, saturation: 1, brightness: 1, opacity: 1, fixedFont: 17, colors: ORANGE, styleOverrides: SOFT_CRT 
+          }, VERTEX_LOG); 
+        } catch (e) { 
+          console.warn('CRT unavailable', e); 
+        } 
+      }
+      if (!machine && crt) { crt.destroy(); crt = null; }
+    } else {
+      if (crt) { crt.destroy(); crt = null; }
+      if (machine) {
+        const mobTerm = document.getElementById('mobile-terminal');
+        if (mobTerm) {
+          const content = mobTerm.querySelector('.mobile-terminal-content');
+          if (content) content.scrollTop = 0;
+        }
+      }
+    }
+
     term.setAttribute('aria-pressed', String(machine));
     type(machine ? 'machine view · esc' : STATUS[si]);
     window.scrollTo(0, 0);
   }
-  term.addEventListener('click', () => setMode(document.body.classList.contains('machine') ? 'human' : 'machine'));
-  document.getElementById('machine-close').addEventListener('click', () => setMode('human'));
+
+  function toggleMachineMode(e) {
+    if (e && e.cancelable) e.preventDefault();
+    setMode(document.body.classList.contains('machine') ? 'human' : 'machine');
+  }
+
+  term.addEventListener('click', toggleMachineMode);
+  term.addEventListener('touchend', toggleMachineMode, { passive: false });
+
+  const closeBtn = document.getElementById('machine-close');
+  if (closeBtn) closeBtn.addEventListener('click', () => setMode('human'));
+
+  const mobCloseBtn = document.getElementById('mobile-machine-close');
+  if (mobCloseBtn) {
+    mobCloseBtn.addEventListener('click', (e) => { if (e && e.cancelable) e.preventDefault(); setMode('human'); });
+    mobCloseBtn.addEventListener('touchend', (e) => { if (e && e.cancelable) e.preventDefault(); setMode('human'); }, { passive: false });
+  }
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('machine')) setMode('human'); });
   document.addEventListener('keydown', (e) => { if (e.key === '/' && !/input|textarea/i.test(document.activeElement.tagName)) { e.preventDefault(); location.href = 'mailto:founder@tryvertex.tech'; } });
   document.querySelectorAll('a[href="#waitlist"]').forEach(el => {
