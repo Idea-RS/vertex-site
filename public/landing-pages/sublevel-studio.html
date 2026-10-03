@@ -1523,7 +1523,7 @@ function createDriveTerrain(root, tcv, rcv, options) {
     spanPad: 1.26,
   };
 
-  let DPR = 1, W = 0, H = 0, RW = 0, RH = 0, CW = 0, CH = 0;
+  let DPR = 1, W = 0, H = 0, RW = 0, RH = 0, CW = 0, CH = 0, isMobile = false;
   let camX = 0, camY = P.camY, tgtX = 0, tgtY = P.camY;
   let F = 1000, OX = 0, OY = 0, phase = 0;
 
@@ -1650,7 +1650,7 @@ function createDriveTerrain(root, tcv, rcv, options) {
   }
 
   function resize() {
-    const isMobile = window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
+    isMobile = window.innerWidth <= 768 || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
     DPR = Math.min(isMobile ? 1.5 : 2, window.devicePixelRatio || 1);
     const rootRect = root.getBoundingClientRect();
     CW = Math.max(1, Math.round(rootRect.width));
@@ -1830,7 +1830,7 @@ function createDriveTerrain(root, tcv, rcv, options) {
       /* the transverse line: one run per visible stretch, bisected at the edges
          so a run ends on the true silhouette rather than on a sample */
       const span = (W * 0.5 / F) * z * P.spanPad;
-      const nS = 84;
+      const nS = isMobile ? 48 : 84;
       tx.beginPath();
       let open = false, prevVis = false, prevX = 0;
       for (let j = 0; j < nS; j += 1) {
