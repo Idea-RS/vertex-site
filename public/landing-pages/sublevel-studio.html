@@ -820,8 +820,8 @@ body.waitlist-mode footer .fcard-wrap {
   z-index: 2;
   width: 100%;
   max-width: 38rem;
-  opacity: 0;
-  visibility: hidden;
+  opacity: 1;
+  visibility: visible;
   pointer-events: none;
 }
 body.waitlist-mode footer .fcard-wrap.is-revealing,
@@ -2103,7 +2103,7 @@ function createDriveTerrain(root, tcv, rcv, options) {
   }
 
   /* ------------------------------------------------------------ loop ---- */
-  const DUR = 1500;
+  const DUR = 1400;
   let revealT = 0, playing = false, done = false, armed = true, inView = false;
   let last = 0, drift = 0, lastFrameAt = 0, rafId = 0;
   const easeOut = (t) => 1 - Math.pow(1 - t, 2.6);
@@ -2159,6 +2159,9 @@ function createDriveTerrain(root, tcv, rcv, options) {
     if (!armed) return;
     armed = false; done = false; playing = true; revealT = 0;
     rcv.style.display = ""; drawReveal(0);
+    if (typeof window.__onBgRevealStart === "function") {
+      try { window.__onBgRevealStart(); } catch (_) {}
+    }
   }
 
   /* ----------------------------------------------------------- input ---- */
@@ -2444,7 +2447,7 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
         const CELL = isMobile ? 10 : 7;
         const BAND = 0.20;
         const SOFT = 0.055;
-        const W_DUR = 1850;
+        const W_DUR = 1400;
         const easeOut = (t) => 1 - Math.pow(1 - t, 2.6);
         const BG = '#060608';
         const dCell = Math.max(4, Math.round(CELL * dpr));
@@ -2567,22 +2570,14 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
       }
     }
 
-    let sequenceTriggered = false;
-    function onBgDone() {
-      if (sequenceTriggered) return;
-      sequenceTriggered = true;
-      // Wait for 0.5 seconds after background animation finishes, then trigger waitlist container animation
-      setTimeout(startSweep, 500);
+    window.__onBgRevealStart = startSweep;
+    window.__onBgRevealDone = startSweep;
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => { requestAnimationFrame(startSweep); });
+    } else {
+      requestAnimationFrame(startSweep);
     }
-
-    window.__onBgRevealDone = onBgDone;
-
-    // Safety fallback: if background doesn't trigger within 2.5s, trigger it
-    setTimeout(() => {
-      if (!sequenceTriggered && document.body.classList.contains('waitlist-mode')) {
-        onBgDone();
-      }
-    }, 2500);
   })();
 </script>
 
