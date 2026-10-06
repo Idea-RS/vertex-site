@@ -820,8 +820,8 @@ body.waitlist-mode footer .fcard-wrap {
   z-index: 2;
   width: 100%;
   max-width: 38rem;
-  opacity: 1;
-  visibility: visible;
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 body.waitlist-mode footer .fcard-wrap.is-revealing,
@@ -2157,11 +2157,8 @@ function createDriveTerrain(root, tcv, rcv, options) {
 
   function start() {
     if (!armed) return;
-    armed = false; done = false; playing = true; revealT = 0;
+    armed = false; done = false; playing = true; revealT = 0; last = 0; lastFrameAt = 0;
     rcv.style.display = ""; drawReveal(0);
-    if (typeof window.__onBgRevealStart === "function") {
-      try { window.__onBgRevealStart(); } catch (_) {}
-    }
   }
 
   /* ----------------------------------------------------------- input ---- */
@@ -2212,7 +2209,6 @@ function createDriveTerrain(root, tcv, rcv, options) {
 
     if (document.body.classList.contains('waitlist-mode')) {
       inView = true;
-      resize();
       start();
     }
 
@@ -2345,7 +2341,6 @@ function mountTerrainPlume(host, props) {
         gl.uniform2f(resolutionUniform, width, height);
       };
       const render = (now = performance.now()) => {
-        resize();
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1f(timeUniform, ((now - startedAt) / 1000) * options.speed);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -2363,7 +2358,7 @@ function mountTerrainPlume(host, props) {
         isVisible = entries.some((entry) => entry.isIntersecting);
         syncPlayback();
       }, { threshold: 0.08 });
-      const resizeObserver = new ResizeObserver(() => render());
+      const resizeObserver = new ResizeObserver(() => { resize(); render(); });
       canvas.addEventListener("webglcontextlost", (event) => { event.preventDefault(); stop(); mount.dataset.webglState = "lost"; });
       const rect = mount.getBoundingClientRect();
       isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
@@ -2372,6 +2367,7 @@ function mountTerrainPlume(host, props) {
       document.addEventListener("visibilitychange", syncPlayback);
       reducedMotion.addEventListener && reducedMotion.addEventListener("change", syncPlayback);
       canvas.dataset.animationActive = "false";
+      resize();
       render();
       syncPlayback();
     }
@@ -2401,13 +2397,10 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
     const waitlist = document.getElementById('waitlist');
     if (!waitlist) return;
 
-    if (!document.body.classList.contains('waitlist-mode')) {
+    if (!document.body.classList.contains('waitlist-mode') || matchMedia('(prefers-reduced-motion: reduce)').matches) {
       waitlist.classList.add('revealed');
-      return;
-    }
-
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      waitlist.classList.add('revealed');
+      const f = waitlist.querySelector('.fcard');
+      if (f) f.classList.add('revealed');
       return;
     }
 
@@ -2447,7 +2440,7 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
         const CELL = isMobile ? 10 : 7;
         const BAND = 0.20;
         const SOFT = 0.055;
-        const W_DUR = 1400;
+        const W_DUR = 1200;
         const easeOut = (t) => 1 - Math.pow(1 - t, 2.6);
         const BG = '#060608';
         const dCell = Math.max(4, Math.round(CELL * dpr));
@@ -2519,24 +2512,17 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
         cvCard.style.pointerEvents = 'none';
         cvCard.style.display = 'block';
         drawCardReveal(0);
-        fcard.appendChild(cvCard);
-        void cvCard.offsetHeight;
+
         waitlist.classList.add('is-revealing');
         fcard.classList.add('is-revealing');
+        fcard.appendChild(cvCard);
 
-        const t0 = performance.now();
+        let t0 = 0;
         let running = true;
-        let lastTick = 0;
 
-        function frame() {
+        function frame(now) {
           if (!running) return;
-          const now = performance.now();
-          if (now - lastTick < 8) {
-            requestAnimationFrame(frame);
-            return;
-          }
-          lastTick = now;
-
+          if (!t0) t0 = now;
           const elapsed = now - t0;
           const p = Math.min(1, elapsed / W_DUR);
           const ep = easeOut(p);
@@ -2553,31 +2539,33 @@ if (window.ThreeUITerrainPlume && !window.__plume) {
             return;
           }
 
-          if (document.hidden) {
-            requestAnimationFrame(frame);
-            return;
-          }
           requestAnimationFrame(frame);
         }
 
-        frame();
+        requestAnimationFrame(frame);
       } catch (err) {
         console.error('Waitlist reveal error:', err);
         waitlist.classList.remove('is-revealing');
         waitlist.classList.add('revealed');
-        fcard.classList.remove('is-revealing');
-        fcard.classList.add('revealed');
+        const f = waitlist.querySelector('.fcard');
+        if (f) {
+          f.classList.remove('is-revealing');
+          f.classList.add('revealed');
+        }
       }
     }
 
-    window.__onBgRevealStart = startSweep;
-    window.__onBgRevealDone = startSweep;
+    // Sequence callback: trigger sequentially AFTER background reveal completes
+    window.__onBgRevealDone = () => {
+      setTimeout(startSweep, 100);
+    };
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => { requestAnimationFrame(startSweep); });
-    } else {
-      requestAnimationFrame(startSweep);
-    }
+    // Safety timeout in case background animation was reduced or finished early
+    setTimeout(() => {
+      if (!started && document.body.classList.contains('waitlist-mode')) {
+        startSweep();
+      }
+    }, 2200);
   })();
 </script>
 
@@ -4781,7 +4769,7 @@ function createCrtRenderer(host, canvas, getOptions, LOG = AUTHORED_LOG) {
   const texture = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, texture); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.uniform1i(uTexture, 0);
   let width = 1, height = 1, cssWidth = 1, cssHeight = 1, fontSize = 14, lineHeight = 20, startY = 0, charWidth = 8, caretX = 0, caretY = 0, typed = 0, done = false, textDirty = true, lastTextAt = 0, lastReveal = -1, lastBlink = -1, variant = "terminal", style = crtStyle(variant, getOptions().styleOverrides); const startedAt = performance.now();
   const applyStyle = () => { gl.useProgram(program); gl.uniform2f(uCurve, style.curve[0], style.curve[1]); gl.uniform1f(uScanDepth, style.scanDepth); gl.uniform1f(uGrille, style.grille); gl.uniform1f(uChroma, style.chroma); gl.uniform1f(uBar, style.bar); gl.uniform1f(uFlicker, style.flicker); gl.uniform1f(uGrain, style.grain); gl.uniform1f(uNoise, style.noise); gl.uniform1f(uVignette, style.vignette); gl.uniform1f(uMono, style.mono); gl.uniform1f(uGain, style.gain); gl.uniform1f(uHalo, style.halo); gl.uniform3f(uSheen, style.sheen[0], style.sheen[1], style.sheen[2]); gl.uniform3f(uRoom, style.room[0], style.room[1], style.room[2]); const filter = style.filtering === "nearest" ? gl.NEAREST : gl.LINEAR; gl.bindTexture(gl.TEXTURE_2D, texture); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter); };
-  const layout = () => { const ff = getOptions().fixedFont; if (ff) { const density = width / Math.max(1, cssWidth); fontSize = Math.max(5, Math.min(ff * density, width * 0.86 / (Math.max(MAX_CHARS, 1) * 0.62))); lineHeight = fontSize * 1.42; startY = height * 0.09; contentHeight = LOG.length * lineHeight; } else { startY = height * 0.135; lineHeight = height * 0.74 / LOG.length; fontSize = Math.max(5, Math.min(lineHeight * 0.8, width * 0.88 / (Math.max(MAX_CHARS, 1) * 0.62))); } textContext.font = `600 ${fontSize.toFixed(2)}px ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace`; charWidth = textContext.measureText("M").width || fontSize * 0.6; };
+  const layout = () => { const ff = getOptions().fixedFont; const isPortrait = cssWidth <= 768 || cssWidth < cssHeight; const safeFactor = isPortrait ? 0.76 : 0.86; if (ff) { const density = width / Math.max(1, cssWidth); fontSize = Math.max(5, Math.min(ff * density, width * safeFactor / (Math.max(MAX_CHARS, 1) * 0.62))); lineHeight = fontSize * 1.42; startY = height * (isPortrait ? 0.08 : 0.09); contentHeight = LOG.length * lineHeight; } else { startY = height * 0.135; lineHeight = height * 0.74 / LOG.length; fontSize = Math.max(5, Math.min(lineHeight * 0.8, width * safeFactor / (Math.max(MAX_CHARS, 1) * 0.62))); } textContext.font = `600 ${fontSize.toFixed(2)}px ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace`; charWidth = textContext.measureText("M").width || fontSize * 0.6; };
   const setStyle = (key, glow) => { const color = COLORS[key]; textContext.fillStyle = color.fill; textContext.shadowColor = glow ? color.glow : "transparent"; textContext.shadowBlur = glow ? fontSize * 0.38 : 0; };
   /* two passes per glyph: a soft phosphor halo, then the same glyph re-filled with
      the shadow off so the stroke core stays crisp at any backing resolution */
@@ -5822,7 +5810,7 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
           saturation: 1, 
           brightness: 1, 
           opacity: 1, 
-          fixedFont: isPortrait ? 13 : 17, 
+          fixedFont: isPortrait ? 10.5 : 17, 
           colors: ORANGE, 
           styleOverrides: isPortrait 
             ? { ...SOFT_CRT, curve: [0.038, 0.055], scanDepth: 0.20, vignette: 0.42 } 
