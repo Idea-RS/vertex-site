@@ -6231,7 +6231,9 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
   if (!lbl) return;
   var joined = false;
   new MutationObserver(function () {
-    // "Welcome aboard" is the label only a new join gets; "Already registered" is not counted
+    // The waitlist count depends on this exact button text: the submit handler above sets "Welcome aboard" only for a
+    // new join ("Already registered" is not counted). Change that wording and waitlist_joined silently stops firing.
+    // DEFERRED (Startup-IDEA DEFERRED.md): send waitlist_joined from the submit success path when the form is next touched.
     if (lbl.textContent === 'Welcome aboard') { if (!joined) send('waitlist_joined'); joined = true; }
     else joined = false;
   }).observe(lbl, { childList: true, characterData: true, subtree: true });
