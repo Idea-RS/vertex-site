@@ -6206,5 +6206,36 @@ window.__sheet = {group, mat, uni, renderer, scene, camera, mesh,
   }
 })();
 </script>
+<script>
+/* Analytics: tell the site around this frame (src/posthog.ts) about the main buttons and a joined waitlist. Nothing
+   on the page changes, and the waitlist form's own code is not touched: a join is read off its button label. */
+(function analytics() {
+  if (window.parent === window) return;
+  function send(event, cta) {
+    try { window.parent.postMessage({ type: 'vertex:analytics', event: event, cta: cta }, location.origin); } catch (_) {}
+  }
+  var CTAS = [
+    ['#topnav .btn-join', 'join_nav'],
+    ['.menu-nav a[href="#waitlist"]', 'join_menu'],
+    ['#topnav a.icon.mail', 'email_nav'],
+    ['.menu-nav a[href^="mailto:"]', 'email_menu'],
+    ['.direct-link', 'email_founders'],
+    ['footer a[href^="mailto:"]', 'email_footer'],
+  ];
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    for (var i = 0; i < CTAS.length; i++) if (t.closest(CTAS[i][0])) return send('cta_clicked', CTAS[i][1]);
+  }, true);
+  var lbl = document.querySelector('footer .signup .lbl');
+  if (!lbl) return;
+  var joined = false;
+  new MutationObserver(function () {
+    // "Welcome aboard" is the label only a new join gets; "Already registered" is not counted
+    if (lbl.textContent === 'Welcome aboard') { if (!joined) send('waitlist_joined'); joined = true; }
+    else joined = false;
+  }).observe(lbl, { childList: true, characterData: true, subtree: true });
+})();
+</script>
 </body>
 </html>

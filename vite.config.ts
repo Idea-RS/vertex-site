@@ -4,6 +4,8 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  // the PostHog project key keeps the name it has on the app (NEXT_PUBLIC_POSTHOG_KEY); VITE_ is Vite's own prefix
+  envPrefix: ['VITE_', 'NEXT_PUBLIC_POSTHOG_KEY'],
   resolve: {
     alias: {
       '@designcodeio/threeui/style.css': path.resolve(__dirname, 'src/shaders/threeui.css'),
